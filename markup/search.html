@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700,800&amp;subset=cyrillic-ext" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" media="screen" href="./css/normalize.css" />
+  <link rel="stylesheet" type="text/css" media="screen" href="./css/main.css" />
+  <title>Cinemaddict</title>
+</head>
+<body>
+
+<header class="header">
+  <h1 class="header__logo logo">Cinemaddict</h1>
+
+  <form class="header__search search">
+    <input type="text" name="search" class="search__field" placeholder="Search movies" value="popeye">
+    <svg fill="#7171D8" class="search__film-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="19" viewBox="0 0 20 19">
+      <path fill-rule="nonzero" d="M2 0v4.524h2.833V0h11.334v4.524H19V0h1v19h-1v-4.524h-2.833V19H4.833v-4.524H2V19H0V0h2zm0 7.238v4.524h2.833V7.238H2zm14.167 0v4.524H19V7.238h-2.833z"/>
+    </svg>
+    <button type="submit" class="visually-hidden">Search</button>
+    <button class="search__reset" type="reset">Reset</button>
+  </form>
+  <section class="header__profile profile">
+    <p class="profile__rating">Movie Buff</p>
+    <img class="profile__avatar" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
+  </section>
+</header>
+
+<main class="main">
+  <div class="result">
+    <p class="result__text">Result <span class="result__count">1</span></p>
+  </div>
+
+  <section class="films">
+    <section class="films-list">
+      <h2 class="films-list__title visually-hidden">All movies. Upcoming</h2>
+
+      <div class="films-list__container">
+        <article class="film-card">
+          <h3 class="film-card__title">Popeye the Sailor Meets Sindbad the Sailor</h3>
+          <p class="film-card__rating">6.3</p>
+          <p class="film-card__info">
+            <span class="film-card__year">1936</span>
+            <span class="film-card__duration">16m</span>
+            <span class="film-card__genre">Cartoon</span>
+          </p>
+          <img src="./images/posters/popeye-meets-sinbad.png" alt="" class="film-card__poster">
+          <p class="film-card__description">In this short, Sindbad the Sailor (presumably Bluto playing a "role") proclaims himself, in song, to be the greatest sailor, adventurer and…</p>
+          <a class="film-card__comments">0 comments</a>
+          <form class="film-card__controls">
+            <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist film-card__controls-item--active">Add to watchlist</button>
+            <button class="film-card__controls-item button film-card__controls-item--mark-as-watched film-card__controls-item--active">Mark as watched</button>
+            <button class="film-card__controls-item button film-card__controls-item--favorite film-card__controls-item--active">Mark as favorite</button>
+          </form>
+        </article>
+      </div>
+    </section>
+</main>
+
+
+<footer class="footer">
+  <section class="footer__logo logo logo--smaller">Cinemaddict</section>
+  <section class="footer__statistics">
+    <p>130 291 movies inside</p>
+  </section>
+</footer>
+
+</body>
+</html>
