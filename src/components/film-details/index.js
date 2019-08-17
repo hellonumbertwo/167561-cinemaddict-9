@@ -1,7 +1,7 @@
 import {createControlsTemplate} from "./controls";
 import {createCommentsListTemplate} from "./comments-list";
 import {createCommentFormTemplate} from "./comment-form";
-import {createDataTemplate} from "./data";
+import {createFilmInfoTemplate} from "./film-info";
 
 export const createPopupTemplate = () => `
 <section class="film-details">
@@ -10,7 +10,7 @@ export const createPopupTemplate = () => `
       <div class="film-details__close">
         <button class="film-details__close-btn" type="button">close</button>
       </div>
-        ${createDataTemplate()}
+        ${createFilmInfoTemplate()}
         ${createControlsTemplate()}
     </div>
 
