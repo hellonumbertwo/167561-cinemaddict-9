@@ -1,15 +1,7 @@
 import {createCardTemplate} from "./card";
 
-const renderList = (n) => {
-  let template = ``;
-  for (let i = 0; i < n; i++) {
-    template += createCardTemplate();
-  }
-  return template;
-};
-
-export const createCardsListTemplate = (amountOfCArds) => `
+export const createCardsListTemplate = (cardsList) => `
     <div class="films-list__container">
-        ${renderList(amountOfCArds)}
+        ${cardsList.map((card) => createCardTemplate(card)).join(``)}
     </div>
 `;
