@@ -1,18 +1,16 @@
 import {createCardsListTemplate} from "./cardsList";
 import {createShowMoreButtonTemplate} from "./show-more-button";
-import moviesList from "./../../store/index";
 
-console.log(moviesList);
+export const createContentTemplate = (moviesList) => {
+  const topRatedMoviesList = moviesList
+    .sort((a, b) => b.rate - a.rate)
+    .slice(0, 2);
 
-const topRatedMoviesList = moviesList
-  .sort((a, b) => b.rate - a.rate)
-  .slice(0, 2);
+  const mostCommentedMoviesList = moviesList.sort(
+      (a, b) => b.commentsAmount - a.commentsAmount
+  );
 
-const mostCommentedMoviesList = moviesList
-  .sort((a, b) => b.commentsAmount - a.commentsAmount)
-  .slice(0, 2);
-
-export const createContentTemplate = () => `
+  return `
     <section class="films">
         <section class="films-list">
             ${createCardsListTemplate(moviesList)}
@@ -27,4 +25,5 @@ export const createContentTemplate = () => `
             ${createCardsListTemplate(mostCommentedMoviesList)}
         </section>
     </section>
-`;
+  `;
+};

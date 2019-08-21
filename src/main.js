@@ -4,7 +4,10 @@ import {createFiltersTemplate} from "./components/filters";
 import {createSortingTemplate} from "./components/sorting";
 import {createContentTemplate} from "./components/content/index";
 import {createStatysticsTemplate} from "./components/statystics";
-// import {createPopupTemplate} from "./components/film-details/index";
+import {createPopupTemplate} from "./components/film-details/index";
+import moviesList from "./store/index";
+
+console.log(moviesList);
 
 const render = (container, component) => {
   container.insertAdjacentHTML(`beforeend`, component);
@@ -26,7 +29,7 @@ render(
       ${createFiltersTemplate()}
       ${createStatysticsTemplate()}
       ${createSortingTemplate()}
-      ${createContentTemplate()}
+      ${createContentTemplate(moviesList)}
+      ${createPopupTemplate(moviesList[0])}
     `
 );
-// ${ createPopupTemplate() }

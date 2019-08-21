@@ -8,7 +8,7 @@ export const createCardTemplate = ({
   isInWatchList,
   isWatched,
   isFavorite,
-  commentsAmount,
+  comments,
   releaseDate
 }) => `
     <article class="film-card">
@@ -21,7 +21,7 @@ export const createCardTemplate = ({
         </p>
         <img src="./images/posters/${poster}" alt="" class="film-card__poster">
         <p class="film-card__description">${description}</p>
-        <a class="film-card__comments">${commentsAmount} comments</a>
+        <a class="film-card__comments">${comments.length} comments</a>
         <form class="film-card__controls">
             <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist ${
   isInWatchList ? `film-card__controls-item--active` : ``

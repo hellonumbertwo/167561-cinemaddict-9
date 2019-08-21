@@ -1,3 +1,5 @@
+import {createCommentsList} from "./comments";
+
 const AMOUNT_OF_MOVIES = 24;
 
 const getDescription = () =>
@@ -127,7 +129,7 @@ const createMovie = () => {
     ageRestriction: [`0+`, `6+`, `12+`, `16+`, `18+`][
       Math.floor(Math.random() * 5)
     ],
-    commentsAmount: Math.round(Math.random() * 100)
+    comments: createCommentsList()
   };
 };
 
