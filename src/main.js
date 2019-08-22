@@ -5,8 +5,9 @@ import {createSortingTemplate} from "./components/sorting";
 import {createContentTemplate} from "./components/content/index";
 import {createStatysticsTemplate} from "./components/statystics";
 import {createPopupTemplate} from "./components/film-details/index";
-import moviesList from "./store/index";
+import moviesList from "./store/movies";
 
+/* TODO: удалить*/
 console.log(moviesList);
 
 const render = (container, component) => {

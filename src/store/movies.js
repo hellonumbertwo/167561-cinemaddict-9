@@ -1,28 +1,10 @@
 import {createCommentsList} from "./comments";
+import {
+  getRandomDate as getReleaseDate,
+  getFishText as getDescription
+} from "../utils/index";
 
 const AMOUNT_OF_MOVIES = 24;
-
-const getDescription = () =>
-  [
-    `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
-    `Cras aliquet varius magna, non porta ligula feugiat eget.`,
-    `Fusce tristique felis at fermentum pharetra.`,
-    `Aliquam id orci ut lectus varius viverra.`,
-    `Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.`,
-    `Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.`,
-    `Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui.`,
-    `Sed sed nisi sed augue convallis suscipit in sed felis.`,
-    `Aliquam erat volutpat.`,
-    `Nunc fermentum tortor ac porta dapibus.`,
-    `In rutrum ac purus sit amet tempus.`
-  ]
-    .reduce((set, sentance) => {
-      if (set.length < 3 && Math.random() < 0.25) {
-        set.push(sentance);
-      }
-      return set;
-    }, [])
-    .join(` `);
 
 const getRuntime = () => {
   //минимум час
@@ -92,16 +74,10 @@ const getFilmVisualAndCast = () => {
   ][Math.floor(Math.random() * 7)];
 };
 
-const getreleaseDate = () => {
-  const from = new Date(`01/01/1930`).getTime();
-  const to = Date.now();
-  return new Date(from + Math.random() * (to - from));
-};
-
 const createMovie = () => {
   return {
     ...getFilmVisualAndCast(),
-    releaseDate: getreleaseDate(),
+    releaseDate: getReleaseDate(`01/01/1930`),
     runtime: getRuntime(),
     country: [
       `USA`,
@@ -121,7 +97,7 @@ const createMovie = () => {
       `Thriller`,
       `Drama`
     ][Math.floor(Math.random() * 7)],
-    rate: Math.round(Math.random() * 10 * 10) / 10,
+    rate: Math.round(Math.random() * 9 * 10) / 10,
     description: getDescription(),
     isWatched: !!Math.round(Math.random()),
     isFavorite: !!Math.round(Math.random()),

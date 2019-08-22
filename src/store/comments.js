@@ -1,8 +1,23 @@
+import {getFishText, getRandomDate} from "./../utils/index";
+
+const getTheRandomAuthor = () => {
+  const name = [`John`, `Chris`, `Elliot`, `Bob`, `Perry`, `Carla`][
+    Math.floor(Math.random() * 6)
+  ];
+  const surname = [`Dorian`, `Turk`, `Reid`, `Kelso`, `Cox`, `Espinosa`][
+    Math.floor(Math.random() * 6)
+  ];
+  return `${name} ${surname}`;
+};
+
 const createComment = () => {
   return {
-    author: `Author`,
-    text: `IMHO`,
-    date: `today`
+    emoji: [`angry.png`, `puke.png`, `sleeping.png`, `smile.png`, `trophy.png`][
+      Math.floor(Math.random() * 5)
+    ],
+    author: getTheRandomAuthor(),
+    text: getFishText(),
+    date: getRandomDate(new Date().setFullYear(new Date().getFullYear() - 5))
   };
 };
 
