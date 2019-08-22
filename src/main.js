@@ -4,7 +4,7 @@ import {createFiltersTemplate} from "./components/filters";
 import {createSortingTemplate} from "./components/sorting";
 import {createContentTemplate} from "./components/content/index";
 import {createStatysticsTemplate} from "./components/statystics";
-import {createPopupTemplate} from "./components/film-details/index";
+// import {createPopupTemplate} from "./components/film-details/index";
 import moviesList from "./store/movies";
 
 /* TODO: удалить*/
@@ -31,6 +31,7 @@ render(
       ${createStatysticsTemplate()}
       ${createSortingTemplate()}
       ${createContentTemplate(moviesList)}
-      ${createPopupTemplate(moviesList[0])}
     `
 );
+/* TODO: вернуть попап
+ ${createPopupTemplate(moviesList[0])} */
