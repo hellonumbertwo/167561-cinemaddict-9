@@ -1,14 +1,19 @@
 import {formatRuntime} from "./../../utils/index";
 
-/* TODO: Если описание фильма больше 140 символов, то в карточке отображается 139 символов описания и знак многоточие (…) */
-/* TODO: Фильм может относится к нескольким жанрам. Если фильм относится к нескольким жанрам, выводите «Genres», иначе «Genre». */
-export const createCardTemplate = ({
+const getDescription = (string) => {
+  if (string.length > 140) {
+    return string.slice(0, 140) + `...`;
+  }
+  return string;
+};
+
+export const createMovieTemplate = ({
   title,
   poster,
   rate,
   runtime,
   description,
-  genre,
+  genresList,
   isInWatchList,
   isWatched,
   isFavorite,
@@ -23,10 +28,10 @@ export const createCardTemplate = ({
             <span class="film-card__duration">${
   formatRuntime(runtime).hours
 }h ${formatRuntime(runtime).minutes}m</span>
-            <span class="film-card__genre">${genre}</span>
+            <span class="film-card__genre">${genresList.join(`, `)}</span>
         </p>
         <img src="./images/posters/${poster}" alt="" class="film-card__poster">
-        <p class="film-card__description">${description}</p>
+        <p class="film-card__description">${getDescription(description)}</p>
         <a class="film-card__comments">${comments.length} comments</a>
         <form class="film-card__controls">
             <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist ${

@@ -1,3 +1,5 @@
+import {formatRuntime} from "./../../../utils/index";
+
 export const createFilmInfoTemplate = ({
   ageRestriction,
   title,
@@ -9,7 +11,7 @@ export const createFilmInfoTemplate = ({
   runtime,
   country,
   description,
-  genre
+  genresList
 }) => `
   <div class="film-details__info-wrap">
     <div class="film-details__poster">
@@ -45,20 +47,23 @@ export const createFilmInfoTemplate = ({
         </tr>
         <tr class="film-details__row">
           <td class="film-details__term">Release Date</td>
-          <td class="film-details__cell">${releaseDate.getFullYear()}</td>
+          <td class="film-details__cell">${releaseDate.toLocaleDateString()}</td>
         </tr>
         <tr class="film-details__row">
           <td class="film-details__term">Runtime</td>
-          <td class="film-details__cell">${runtime}</td>
+          <td class="film-details__cell">
+          ${formatRuntime(runtime).hours}h
+          ${formatRuntime(runtime).minutes}m</td>
         </tr>
         <tr class="film-details__row">
           <td class="film-details__term">Country</td>
           <td class="film-details__cell">${country}</td>
         </tr>
         <tr class="film-details__row">
-          <td class="film-details__term">Genres</td>
+          <td class="film-details__term">
+          ${genresList.length > 1 ? `Genres` : `Genre`}</td>
           <td class="film-details__cell">
-            <span class="film-details__genre">${genre}</span>
+            <span class="film-details__genre">${genresList.join(`, `)}</span>
           </td>
         </tr>
       </table>

@@ -1,4 +1,4 @@
-import moviesList from "./../store/movies";
+import {moviesList} from "./movies-list";
 
 const createFilters = () => {
   return [

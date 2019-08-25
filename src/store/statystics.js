@@ -1,9 +1,10 @@
-import moviesList from "./movies";
+import {moviesList} from "./movies-list";
 
 const getFavoriteGenre = () => {
   const genresStats = moviesList
     .filter((movie) => !!movie.isFavorite)
-    .map(({genre}) => genre)
+    .map(({genresList}) => genresList)
+    .flat()
     .reduce((obj, genre) => {
       obj[genre] = obj[genre] + 1 || 1;
       return obj;

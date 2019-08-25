@@ -1,5 +1,10 @@
+export const render = (nodeId, component) => {
+  const container = document.getElementById(nodeId);
+  container.insertAdjacentHTML(`beforeend`, component);
+};
+
 export const getFishText = () =>
-  /* TODO: может получить пустую строку */
+  // 1-3 рандомных предложения, но обязательно хотя бы одно
   [
     `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
     `Cras aliquet varius magna, non porta ligula feugiat eget.`,
@@ -13,12 +18,8 @@ export const getFishText = () =>
     `Nunc fermentum tortor ac porta dapibus.`,
     `In rutrum ac purus sit amet tempus.`
   ]
-    .reduce((set, sentance) => {
-      if (set.length < 3 && Math.random() < 0.25) {
-        set.push(sentance);
-      }
-      return set;
-    }, [])
+    .sort(() => Math.random() - Math.random())
+    .slice(0, Math.ceil(Math.random() * 3))
     .join(` `);
 
 export const getRandomDate = (startDate) => {

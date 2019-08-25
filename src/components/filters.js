@@ -1,4 +1,4 @@
-import filtersList from "./../store/filters";
+import filtersList from "./../store/filters-list";
 
 export const createFiltersTemplate = () => `
     <nav class="main-navigation">

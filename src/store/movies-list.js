@@ -4,12 +4,19 @@ import {
   getFishText as getDescription
 } from "../utils/index";
 
-const AMOUNT_OF_MOVIES = 24;
+const NUMBER_OF_MOVIES = 34;
+const SHOW_MOVIES_STEP = 5;
 
 const getRuntime = () => {
   //минимум час
   return Math.random() * 1000 * 60 * 60 + 60000 * 60;
 };
+
+//1-3 жанра на фильм
+const getGenresList = () =>
+  [`Action`, `Horror`, `Noir`, `Comedy`, `History`, `Thriller`, `Drama`]
+    .sort(() => Math.random() - Math.random())
+    .slice(0, Math.ceil(Math.random() * 3));
 
 const getFilmVisualAndCast = () => {
   return [
@@ -79,15 +86,7 @@ const createMovie = () => {
       `Italy`,
       `Brazil`
     ][Math.floor(Math.random() * 7)],
-    genre: [
-      `Action`,
-      `Horror`,
-      `Noir`,
-      `Comedy`,
-      `Documentary`,
-      `Thriller`,
-      `Drama`
-    ][Math.floor(Math.random() * 7)],
+    genresList: getGenresList(),
     rate: Math.round(Math.random() * 9 * 10) / 10,
     description: getDescription(),
     isWatched: !!Math.round(Math.random()),
@@ -102,10 +101,12 @@ const createMovie = () => {
 
 const createMoviesList = () => {
   let moviesList = [];
-  for (let i = 0; i < AMOUNT_OF_MOVIES; i++) {
+  for (let i = 0; i < NUMBER_OF_MOVIES; i++) {
     moviesList.push(createMovie());
   }
   return moviesList;
 };
 
-export default createMoviesList();
+const moviesList = createMoviesList();
+
+export {SHOW_MOVIES_STEP, moviesList};

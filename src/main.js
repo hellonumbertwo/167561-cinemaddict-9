@@ -2,37 +2,42 @@ import {createSearchTemplate} from "./components/search";
 import {createProfileTemplate} from "./components/profile";
 import {createFiltersTemplate} from "./components/filters";
 import {createSortingTemplate} from "./components/sorting";
-import {createContentTemplate} from "./components/content/index";
+import {createContentTemplate} from "./components/content";
 import {createStatysticsTemplate} from "./components/statystics";
-// import {createPopupTemplate} from "./components/film-details/index";
-import moviesList from "./store/movies";
+import {createPopupTemplate} from "./components/movie/movie-details/movie-details";
+import {createFooterTemplate} from "./components/footer";
+import {moviesList} from "./store/movies-list";
 import {statystics} from "./store/statystics";
-
-/* TODO: удалить*/
-console.log(moviesList);
-
-const render = (container, component) => {
-  container.insertAdjacentHTML(`beforeend`, component);
-};
-
-const header = document.querySelector(`#header`);
-const main = document.querySelector(`#main`);
+import {render} from "./utils/index";
+import {showMoreMovies} from "./components/movies-list/handle-movies-list";
 
 render(
-    header,
+    `header`,
     `
-      ${createSearchTemplate()}
-      ${createProfileTemplate(statystics)}
-    `
+    ${createSearchTemplate()}
+    ${createProfileTemplate(statystics)}
+  `
 );
 render(
-    main,
+    `main`,
     `
-      ${createFiltersTemplate()}
-      ${createStatysticsTemplate(statystics)}
-      ${createSortingTemplate()}
-      ${createContentTemplate(moviesList)}
-    `
+    ${createFiltersTemplate()}
+    ${createStatysticsTemplate(statystics)}
+    ${createSortingTemplate()}
+    ${createContentTemplate(moviesList)}
+    ${createPopupTemplate(moviesList[0])}
+  `
 );
-/* TODO: вернуть попап
- ${createPopupTemplate(moviesList[0])} */
+
+render(`footer`, `${createFooterTemplate()}`);
+
+const showMoreButton = document.getElementById(`show-more`);
+if (showMoreButton) {
+  showMoreButton.addEventListener(
+      `click`,
+      function () {
+        showMoreMovies();
+      },
+      false
+  );
+}
