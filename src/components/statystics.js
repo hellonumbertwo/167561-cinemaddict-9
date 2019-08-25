@@ -1,9 +1,16 @@
-export const createStatysticsTemplate = () => `
+import {formatRuntime} from "./../utils/index";
+
+export const createStatysticsTemplate = ({
+  status,
+  totalDuration,
+  watchedMoviesNumber,
+  favoriteGenre
+}) => `
 <section class="statistic">
 <p class="statistic__rank">
-  Your rank 
-  <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35"> 
-  <span class="statistic__rank-label">Sci-Fighter</span>
+  Your rank
+  <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
+  <span class="statistic__rank-label">${status}</span>
 </p>
 
 <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
@@ -28,15 +35,19 @@ export const createStatysticsTemplate = () => `
 <ul class="statistic__text-list">
   <li class="statistic__text-item">
     <h4 class="statistic__item-title">You watched</h4>
-    <p class="statistic__item-text">22 <span class="statistic__item-description">movies</span></p>
+    <p class="statistic__item-text">${watchedMoviesNumber} <span class="statistic__item-description">movies</span></p>
   </li>
   <li class="statistic__text-item">
     <h4 class="statistic__item-title">Total duration</h4>
-    <p class="statistic__item-text">130 <span class="statistic__item-description">h</span> 22 <span class="statistic__item-description">m</span></p>
+    <p class="statistic__item-text">${
+  formatRuntime(totalDuration).hours
+} <span class="statistic__item-description">h</span>${
+  formatRuntime(totalDuration).minutes
+}<span class="statistic__item-description">m</span></p>
   </li>
   <li class="statistic__text-item">
     <h4 class="statistic__item-title">Top genre</h4>
-    <p class="statistic__item-text">Sci-Fi</p>
+    <p class="statistic__item-text">${favoriteGenre}</p>
   </li>
 </ul>
 

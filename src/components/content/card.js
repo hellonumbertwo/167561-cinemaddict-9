@@ -1,3 +1,5 @@
+import {formatRuntime} from "./../../utils/index";
+
 /* TODO: Если описание фильма больше 140 символов, то в карточке отображается 139 символов описания и знак многоточие (…) */
 /* TODO: Фильм может относится к нескольким жанрам. Если фильм относится к нескольким жанрам, выводите «Genres», иначе «Genre». */
 export const createCardTemplate = ({
@@ -18,7 +20,9 @@ export const createCardTemplate = ({
         <p class="film-card__rating">${rate}</p>
         <p class="film-card__info">
             <span class="film-card__year">${releaseDate.getFullYear()}</span>
-            <span class="film-card__duration">${runtime}</span>
+            <span class="film-card__duration">${
+  formatRuntime(runtime).hours
+}h ${formatRuntime(runtime).minutes}m</span>
             <span class="film-card__genre">${genre}</span>
         </p>
         <img src="./images/posters/${poster}" alt="" class="film-card__poster">

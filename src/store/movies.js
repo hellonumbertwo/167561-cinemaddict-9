@@ -8,16 +8,7 @@ const AMOUNT_OF_MOVIES = 24;
 
 const getRuntime = () => {
   //минимум час
-  const num = (Math.round((Math.random() + 1) * 100) / 100).toString();
-  return num
-    .split(`.`)
-    .map((item, index) => {
-      if (index === 0) {
-        return `${item}h`;
-      }
-      return `${item}m`;
-    })
-    .join(` `);
+  return Math.random() * 1000 * 60 * 60 + 60000 * 60;
 };
 
 const getFilmVisualAndCast = () => {

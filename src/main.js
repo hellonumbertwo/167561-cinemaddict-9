@@ -6,6 +6,7 @@ import {createContentTemplate} from "./components/content/index";
 import {createStatysticsTemplate} from "./components/statystics";
 // import {createPopupTemplate} from "./components/film-details/index";
 import moviesList from "./store/movies";
+import {statystics} from "./store/statystics";
 
 /* TODO: удалить*/
 console.log(moviesList);
@@ -21,14 +22,14 @@ render(
     header,
     `
       ${createSearchTemplate()}
-      ${createProfileTemplate()}
+      ${createProfileTemplate(statystics)}
     `
 );
 render(
     main,
     `
       ${createFiltersTemplate()}
-      ${createStatysticsTemplate()}
+      ${createStatysticsTemplate(statystics)}
       ${createSortingTemplate()}
       ${createContentTemplate(moviesList)}
     `
