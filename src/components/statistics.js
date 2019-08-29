@@ -1,6 +1,6 @@
-import {formatRuntime} from "./../utils/index";
+import {formatDuration} from "../utils/index";
 
-export const createStatysticsTemplate = ({
+export const createstatisticsTemplate = ({
   status,
   totalDuration,
   watchedMoviesNumber,
@@ -40,9 +40,9 @@ export const createStatysticsTemplate = ({
   <li class="statistic__text-item">
     <h4 class="statistic__item-title">Total duration</h4>
     <p class="statistic__item-text">${
-  formatRuntime(totalDuration).hours
+  formatDuration(totalDuration).hours
 } <span class="statistic__item-description">h</span>${
-  formatRuntime(totalDuration).minutes
+  formatDuration(totalDuration).minutes
 }<span class="statistic__item-description">m</span></p>
   </li>
   <li class="statistic__text-item">

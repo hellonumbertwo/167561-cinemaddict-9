@@ -1,4 +1,4 @@
-import {formatRuntime} from "./../../../utils/index";
+import {formatDuration} from "./../../../utils/index";
 
 export const createFilmInfoTemplate = ({
   ageRestriction,
@@ -8,7 +8,7 @@ export const createFilmInfoTemplate = ({
   writters,
   starring,
   releaseDate,
-  runtime,
+  duration,
   country,
   description,
   genresList
@@ -52,8 +52,8 @@ export const createFilmInfoTemplate = ({
         <tr class="film-details__row">
           <td class="film-details__term">Runtime</td>
           <td class="film-details__cell">
-          ${formatRuntime(runtime).hours}h
-          ${formatRuntime(runtime).minutes}m</td>
+          ${formatDuration(duration).hours}h
+          ${formatDuration(duration).minutes}m</td>
         </tr>
         <tr class="film-details__row">
           <td class="film-details__term">Country</td>

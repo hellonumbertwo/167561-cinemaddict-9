@@ -1,6 +1,4 @@
-import filtersList from "./../store/filters-list";
-
-export const createFiltersTemplate = () => `
+export const createFiltersTemplate = (filtersList) => `
     <nav class="main-navigation">
       ${filtersList
         .map(

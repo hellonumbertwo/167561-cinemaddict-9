@@ -1,4 +1,4 @@
-import {getFishText, getRandomDate} from "./../utils/index";
+import {getFishText, getRandomDate} from "../utils/index";
 
 const getTheRandomAuthor = () => {
   const name = [`John`, `Chris`, `Elliot`, `Bob`, `Perry`, `Carla`][

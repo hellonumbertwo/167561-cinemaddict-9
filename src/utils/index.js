@@ -28,7 +28,7 @@ export const getRandomDate = (startDate) => {
   return new Date(from + Math.random() * (to - from));
 };
 
-export const formatRuntime = (ms) => {
+export const formatDuration = (ms) => {
   const hours = Math.floor(ms / (1000 * 60 * 60));
   const minutes = Math.round(ms / (1000 * 60)) % 60;
   return {hours, minutes};

@@ -8,7 +8,7 @@ export const createContentTemplate = (moviesList) => {
     .slice(0, 2);
 
   const mostCommentedMoviesList = moviesList
-    .sort((a, b) => b.commentsAmount - a.commentsAmount)
+    .sort((a, b) => b.comments.length - a.comments.length)
     .slice(0, 2);
 
   return `

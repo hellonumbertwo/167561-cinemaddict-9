@@ -1,4 +1,4 @@
-import {createCommentsList} from "./comments";
+import {createCommentsList} from "./comments-list";
 import {
   getRandomDate as getReleaseDate,
   getFishText as getDescription
@@ -7,7 +7,7 @@ import {
 const NUMBER_OF_MOVIES = 34;
 const SHOW_MOVIES_STEP = 5;
 
-const getRuntime = () => {
+const getDuration = () => {
   //минимум час
   return Math.random() * 1000 * 60 * 60 + 60000 * 60;
 };
@@ -76,7 +76,7 @@ const createMovie = () => {
   return {
     ...getFilmVisualAndCast(),
     releaseDate: getReleaseDate(`01/01/1930`),
-    runtime: getRuntime(),
+    duration: getDuration(),
     country: [
       `USA`,
       `Russia`,
@@ -99,14 +99,14 @@ const createMovie = () => {
   };
 };
 
-const createMoviesList = () => {
+const createMoviesList = (numberOfMovies) => {
   let moviesList = [];
-  for (let i = 0; i < NUMBER_OF_MOVIES; i++) {
+  for (let i = 0; i < numberOfMovies; i++) {
     moviesList.push(createMovie());
   }
   return moviesList;
 };
 
-const moviesList = createMoviesList();
+const moviesList = createMoviesList(NUMBER_OF_MOVIES);
 
 export {SHOW_MOVIES_STEP, moviesList};

@@ -1,8 +1,9 @@
-import {formatRuntime} from "./../../utils/index";
+import {formatDuration} from "./../../utils/index";
 
 const getDescription = (string) => {
-  if (string.length > 140) {
-    return string.slice(0, 140) + `...`;
+  const maxStringLength = 140;
+  if (string.length > maxStringLength) {
+    return string.slice(0, maxStringLength) + `...`;
   }
   return string;
 };
@@ -11,7 +12,7 @@ export const createMovieTemplate = ({
   title,
   poster,
   rate,
-  runtime,
+  duration,
   description,
   genresList,
   isInWatchList,
@@ -26,8 +27,8 @@ export const createMovieTemplate = ({
         <p class="film-card__info">
             <span class="film-card__year">${releaseDate.getFullYear()}</span>
             <span class="film-card__duration">${
-  formatRuntime(runtime).hours
-}h ${formatRuntime(runtime).minutes}m</span>
+  formatDuration(duration).hours
+}h ${formatDuration(duration).minutes}m</span>
             <span class="film-card__genre">${genresList.join(`, `)}</span>
         </p>
         <img src="./images/posters/${poster}" alt="" class="film-card__poster">
