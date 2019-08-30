@@ -1,6 +1,30 @@
-export const render = (nodeId, component) => {
+export const render = (nodeId, element, place) => {
   const container = document.getElementById(nodeId);
-  container.insertAdjacentHTML(`beforeend`, component);
+  if (container) {
+    switch (place) {
+      case `afterbegin`:
+        container.prepend(element);
+        break;
+      case `beforeend`:
+        container.append(element);
+        break;
+      case `afterend`:
+        container.after(element);
+        break;
+    }
+  }
+};
+
+export const unrender = (element) => {
+  if (element) {
+    element.remove();
+  }
+};
+
+export const createElement = (template) => {
+  const newTemplate = document.createElement(`template`);
+  newTemplate.innerHTML = template;
+  return newTemplate.content.firstElementChild;
 };
 
 export const getFishText = () =>
