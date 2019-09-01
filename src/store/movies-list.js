@@ -8,11 +8,11 @@ const NUMBER_OF_MOVIES = 34;
 const SHOW_MOVIES_STEP = 5;
 
 const getDuration = () => {
-  //минимум час
+  // минимум час
   return Math.random() * 1000 * 60 * 60 + 60000 * 60;
 };
 
-//1-3 жанра на фильм
+// 1-3 жанра на фильм
 const getGenresList = () =>
   [`Action`, `Horror`, `Noir`, `Comedy`, `History`, `Thriller`, `Drama`]
     .sort(() => Math.random() - Math.random())
@@ -73,8 +73,13 @@ const getFilmVisualAndCast = () => {
 };
 
 const createMovie = () => {
+  const {title, poster, director, writers, starring} = getFilmVisualAndCast();
   return {
-    ...getFilmVisualAndCast(),
+    title,
+    poster,
+    director,
+    writers,
+    starring,
     releaseDate: getReleaseDate(`01/01/1930`),
     duration: getDuration(),
     country: [
