@@ -1,4 +1,4 @@
-import {createElement, unrender} from "../../utils/index";
+import {createElement, unrender} from "./../utils/index";
 
 export default class Profile {
   constructor({status}) {

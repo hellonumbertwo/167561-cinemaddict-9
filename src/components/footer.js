@@ -1,4 +1,4 @@
-import {createElement, unrender} from "../../utils/index";
+import {createElement, unrender} from "../utils/index";
 
 export default class Footer {
   constructor(moviesList) {
@@ -17,10 +17,12 @@ export default class Footer {
   }
   getTemplate() {
     return `
-      <section class="footer__logo logo logo--smaller">Cinemaddict</section>
-      <section class="footer__statistics">
-        <p>${this._moviesList.length} movies inside</p>
-      </section>
+      <footer class="footer">
+        <section class="footer__logo logo logo--smaller">Cinemaddict</section>
+        <section class="footer__statistics">
+          <p>${this._moviesList.length} movies inside</p>
+        </section>
+      </footer>
     `;
   }
 }

@@ -1,7 +1,7 @@
 import {moviesList, SHOW_MOVIES_STEP} from "./../../store/movies-list";
 import {render} from "../../utils";
 import Content from "./content";
-import ShowMoreButton from "./show-more-button";
+import ShowMoreButton from "./../show-more-button";
 import {renderMovie} from "../movie/render-movie";
 
 const renderMoviesListByChunks = (showMoviesStep, movies, containerId) => {

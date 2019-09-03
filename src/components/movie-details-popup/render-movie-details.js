@@ -2,14 +2,16 @@ import {render} from "../../utils";
 import MovieDetailsPopup from "./movie-details-popup";
 import MovieInfo from "./movie-info";
 import ControlsPanel from "./controls-panel";
-import {renderComment} from "./../comment/render-comment";
 import CommentForm from "./comment-form";
+import Comment from "../comment";
+import RatePanel from "./rate-panel";
 
 export const renderMovieDetailsPopup = (containerId, movie) => {
   const movieDetailsPopup = new MovieDetailsPopup(movie);
   const movieInfo = new MovieInfo(movie);
   const controlsPanel = new ControlsPanel(movie);
   const commentForm = new CommentForm();
+  const ratePanel = new RatePanel(movie);
 
   const onEscKeyDown = (e) => {
     if (e.key === `esc` || e.key === `Escape`) {
@@ -32,13 +34,25 @@ export const renderMovieDetailsPopup = (containerId, movie) => {
   document.addEventListener(`keydown`, onEscKeyDown);
 
   render(containerId, movieDetailsPopup.getElement(), `beforeend`);
-  render(`movie-info-top-container`, movieInfo.getElement(), `beforeend`);
+
+  [movieInfo, controlsPanel].forEach((component) => {
+    render(`film-details-top-container`, component.getElement(), `beforeend`);
+  });
   if (movie.isWatched) {
-    render(`movie-info-top-container`, controlsPanel.getElement(), `beforeend`);
+    render(
+        `film-details-middle-container`,
+        ratePanel.getElement(),
+        `beforeend`
+    );
   }
 
   movie.comments.forEach((comment) => {
-    renderComment(`movie-details-comments`, comment);
+    const commentBlock = new Comment(comment);
+    render(`film-details-comments`, commentBlock.getElement(), `beforeend`);
   });
-  render(`movie-info-bottom-container`, commentForm.getElement(), `beforeend`);
+  render(
+      `film-details-bottom-container`,
+      commentForm.getElement(),
+      `beforeend`
+  );
 };

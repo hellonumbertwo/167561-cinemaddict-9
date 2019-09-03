@@ -1,13 +1,5 @@
 import {formatDuration, createElement, unrender} from "./../../utils/index";
 
-const getDescription = (string) => {
-  const maxStringLength = 140;
-  if (string.length > maxStringLength) {
-    return string.slice(0, maxStringLength) + `...`;
-  }
-  return string;
-};
-
 export default class Movie {
   constructor({
     title,
@@ -60,7 +52,7 @@ export default class Movie {
         <img src="./images/posters/${
   this._poster
 }" alt="" class="film-card__poster" id="movie-poster">
-        <p class="film-card__description">${getDescription(
+        <p class="film-card__description">${this._getDescription(
       this._description
   )}</p>
         <a class="film-card__comments" id="movie-comments-title">${
@@ -79,5 +71,13 @@ export default class Movie {
         </form>
     </article>
     `;
+  }
+
+  _getDescription(string) {
+    const maxStringLength = 140;
+    if (string.length > maxStringLength) {
+      return string.slice(0, maxStringLength) + `...`;
+    }
+    return string;
   }
 }

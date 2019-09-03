@@ -1,4 +1,4 @@
-import {createElement, unrender, formatDuration} from "../../utils/index";
+import {createElement, unrender, formatDuration} from "./../utils/index";
 
 export default class Statistics {
   constructor({status, totalDuration, watchedMoviesNumber, favoriteGenre}) {

@@ -9,6 +9,7 @@ export const renderMovie = (containerId, movie) => {
       `click`,
       (e) => {
         if (
+        // показать попап с доп информацией при клике на название, постер или кол-во комментаиев
           e.target.id === `movie-poster` ||
         e.target.id === `movie-title` ||
         e.target.id === `movie-comments-title`
