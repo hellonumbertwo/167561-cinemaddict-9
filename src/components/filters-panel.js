@@ -1,19 +1,9 @@
-import {createElement, unrender} from "../utils/index";
+import AbstractComponent from "./abstract-component";
 
-export default class FiltersPanel {
+export default class FiltersPanel extends AbstractComponent {
   constructor(filtersList) {
+    super();
     this._filtersList = filtersList;
-    this._element = null;
-  }
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-  removeElement() {
-    unrender(this.getElement());
-    this._element = null;
   }
   getTemplate() {
     return `

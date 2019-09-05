@@ -1,23 +1,15 @@
-import {createElement, unrender, formatDuration} from "./../utils/index";
+import {formatDuration} from "./../utils/index";
+import AbstractComponent from "./abstract-component";
 
-export default class Statistics {
+export default class Statistics extends AbstractComponent {
   constructor({status, totalDuration, watchedMoviesNumber, favoriteGenre}) {
+    super();
     this._status = status;
     this._totalDuration = totalDuration;
     this._watchedMoviesNumber = watchedMoviesNumber;
     this._favoriteGenre = favoriteGenre;
-    this._element = null;
   }
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-  removeElement() {
-    unrender(this.getElement());
-    this._element = null;
-  }
+
   getTemplate() {
     return `
       <section class="statistic">

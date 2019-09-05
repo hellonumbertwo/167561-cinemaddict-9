@@ -36,9 +36,9 @@ const createComment = () => {
 export const createCommentsList = () => {
   const commentsList = [];
   /**
-   * @constant {number} - рандомное кол-во комментарией до сотни
+   * @constant {number} - рандомное кол-во комментарией до 30
    */
-  const commentsListMaxLength = Math.round(Math.random() * 100);
+  const commentsListMaxLength = Math.round(Math.random() * 30);
 
   for (let i = 0; i < commentsListMaxLength; i++) {
     commentsList.push(createComment());
