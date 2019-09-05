@@ -74,9 +74,14 @@ export default class Movie {
   }
 
   _getDescription(string) {
-    const maxStringLength = 140;
-    if (string.length > maxStringLength) {
-      return string.slice(0, maxStringLength) + `...`;
+    /** Если описание длиннее 140 символов, но оно обрезается с ...
+     * @constant
+     * @type {number}
+     * @default
+     */
+    const MAX_DESCRIPTION_LENGTH = 140;
+    if (string.length > MAX_DESCRIPTION_LENGTH) {
+      return string.slice(0, MAX_DESCRIPTION_LENGTH) + `...`;
     }
     return string;
   }

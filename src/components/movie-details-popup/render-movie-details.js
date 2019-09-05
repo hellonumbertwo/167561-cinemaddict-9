@@ -22,7 +22,7 @@ export const renderMovieDetailsPopup = (containerId, movie) => {
 
   movieDetailsPopup
     .getElement()
-    .querySelector(`#close-details-button`)
+    .querySelector(`.film-details__close-btn`)
     .addEventListener(
         `click`,
         () => {

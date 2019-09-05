@@ -27,8 +27,10 @@ export const createElement = (template) => {
   return newTemplate.content.firstElementChild;
 };
 
+/** Возвращает рыбный текст – 1-3 рандомных предложения, но обязательно хотя бы одно
+ * @return {string} – рандомный тект
+ */
 export const getFishText = () =>
-  // 1-3 рандомных предложения, но обязательно хотя бы одно
   [
     `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
     `Cras aliquet varius magna, non porta ligula feugiat eget.`,
@@ -56,4 +58,8 @@ export const formatDuration = (ms) => {
   const hours = Math.floor(ms / (1000 * 60 * 60));
   const minutes = Math.round(ms / (1000 * 60)) % 60;
   return {hours, minutes};
+};
+
+export const getRandomArrayItem = (array) => {
+  return array[Math.floor(Math.random() * array.length)];
 };

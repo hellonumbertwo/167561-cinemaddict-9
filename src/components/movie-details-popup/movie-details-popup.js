@@ -21,7 +21,7 @@ export default class MovieDetailsPopup {
         <form class="film-details__inner" action="" method="get">
           <div class="form-details__top-container" id="film-details-top-container">
             <div class="film-details__close">
-              <button class="film-details__close-btn" type="button" id="close-details-button">close</button>
+              <button class="film-details__close-btn" type="button">close</button>
             </div>
           </div>
           <div id="film-details-middle-container" class="form-details__middle-container"></div>

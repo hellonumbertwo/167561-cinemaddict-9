@@ -1,25 +1,53 @@
 import {createCommentsList} from "./comments-list";
 import {
   getRandomDate as getReleaseDate,
-  getFishText as getDescription
+  getFishText as getDescription,
+  getRandomArrayItem
 } from "../utils/index";
 
 const NUMBER_OF_MOVIES = 34;
 const SHOW_MOVIES_STEP = 5;
 
-const getDuration = () => {
-  // минимум час
-  return Math.random() * 1000 * 60 * 60 + 60000 * 60;
-};
+const createMovie = () => {
+  /**
+   * @constant {number} - продолжительность фильма в милесекундах - минимум час
+   */
+  const duration = Math.round(Math.random() * 1000 * 60 * 60 + 60000 * 60);
 
-// 1-3 жанра на фильм
-const getGenresList = () =>
-  [`Action`, `Horror`, `Noir`, `Comedy`, `History`, `Thriller`, `Drama`]
+  /**
+   * @constant {array} – массив жанров – 1-3 жанра на фильм
+   */
+  const genresList = [
+    `Action`,
+    `Horror`,
+    `Noir`,
+    `Comedy`,
+    `History`,
+    `Thriller`,
+    `Drama`
+  ]
     .sort(() => Math.random() - Math.random())
     .slice(0, Math.ceil(Math.random() * 3));
 
-const getFilmVisualAndCast = () => {
-  return [
+  /**
+   * @constant {string} – страна производства фильма
+   */
+  const country = getRandomArrayItem([
+    `USA`,
+    `Russia`,
+    `Canada`,
+    `Germany`,
+    `Ukraine`,
+    `Italy`,
+    `Brazil`
+  ]);
+
+  /**
+   * @constant {string} – возрастное ограничение для просмотра
+   */
+  const ageRestriction = getRandomArrayItem([`0+`, `6+`, `12+`, `16+`, `18+`]);
+
+  const visualAndCastMocs = [
     {
       title: `Popeye meets Sinbad`,
       poster: `popeye-meets-sinbad.png`,
@@ -69,11 +97,12 @@ const getFilmVisualAndCast = () => {
       writers: `Walter Newman, Lewis Meltzer, Ben Hecht`,
       starring: `Frank Sinatra, Eleanor Parker, Kim Novak`
     }
-  ][Math.floor(Math.random() * 7)];
-};
+  ];
 
-const createMovie = () => {
-  const {title, poster, director, writers, starring} = getFilmVisualAndCast();
+  const {title, poster, director, writers, starring} = getRandomArrayItem(
+      visualAndCastMocs
+  );
+
   return {
     title,
     poster,
@@ -81,25 +110,15 @@ const createMovie = () => {
     writers,
     starring,
     releaseDate: getReleaseDate(`01/01/1930`),
-    duration: getDuration(),
-    country: [
-      `USA`,
-      `Russia`,
-      `Canada`,
-      `Germany`,
-      `Ukraine`,
-      `Italy`,
-      `Brazil`
-    ][Math.floor(Math.random() * 7)],
-    genresList: getGenresList(),
+    duration,
+    country,
+    genresList,
     rate: Math.round(Math.random() * 9 * 10) / 10,
     description: getDescription(),
     isWatched: !!Math.round(Math.random()),
     isFavorite: !!Math.round(Math.random()),
     isInWatchList: !!Math.round(Math.random()),
-    ageRestriction: [`0+`, `6+`, `12+`, `16+`, `18+`][
-      Math.floor(Math.random() * 5)
-    ],
+    ageRestriction,
     comments: createCommentsList()
   };
 };
