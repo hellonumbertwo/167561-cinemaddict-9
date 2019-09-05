@@ -1,45 +1,29 @@
-import {moviesList} from "./store/movies-list";
+import {renderContent} from "./components/content/render-content";
+import Footer from "./components/footer";
+
+import FiltersPanel from "./components/filters-panel";
+import Statistics from "./components/statistics";
+
 import {statistics} from "./store/statistics";
 import {filtersList} from "./store/filters-list";
-import {render} from "./utils/index";
+import {moviesList} from "./store/movies-list";
+import Search from "./components/search";
+import Profile from "./components/profile";
+import Sorting from "./components/sorting";
+import {render} from "./utils";
 
-import {createSearchTemplate} from "./components/search";
-import {createProfileTemplate} from "./components/profile";
-import {createFiltersTemplate} from "./components/filters";
-import {createSortingTemplate} from "./components/sorting";
-import {createContentTemplate} from "./components/content";
-import {createstatisticsTemplate} from "./components/statistics";
-import {createPopupTemplate} from "./components/movie/movie-details/movie-details";
-import {createFooterTemplate} from "./components/footer";
-import {showMoreMovies} from "./components/movies-list/handle-movies-list";
+const search = new Search();
+const profile = new Profile(statistics);
+const statisticsPanel = new Statistics(statistics);
+const filtersPanel = new FiltersPanel(filtersList);
+const sorting = new Sorting();
+const footer = new Footer(moviesList);
 
-render(
-    `header`,
-    `
-    ${createSearchTemplate()}
-    ${createProfileTemplate(statistics)}
-  `
+[search, profile].forEach((component) =>
+  render(`header`, component.getElement(), `beforeend`)
 );
-render(
-    `main`,
-    `
-    ${createFiltersTemplate(filtersList)}
-    ${createstatisticsTemplate(statistics)}
-    ${createSortingTemplate()}
-    ${createContentTemplate(moviesList)}
-    ${createPopupTemplate(moviesList[0])}
-  `
+[statisticsPanel, filtersPanel, sorting].forEach((component) =>
+  render(`main`, component.getElement(), `beforeend`)
 );
-
-render(`footer`, `${createFooterTemplate(moviesList)}`);
-
-const showMoreButton = document.getElementById(`show-more`);
-if (showMoreButton) {
-  showMoreButton.addEventListener(
-      `click`,
-      function () {
-        showMoreMovies();
-      },
-      false
-  );
-}
+renderContent(`main`);
+render(`main`, footer.getElement(), `afterend`);

@@ -1,10 +1,36 @@
-export const render = (nodeId, component) => {
+export const render = (nodeId, element, place) => {
   const container = document.getElementById(nodeId);
-  container.insertAdjacentHTML(`beforeend`, component);
+  if (container) {
+    switch (place) {
+      case `afterbegin`:
+        container.prepend(element);
+        break;
+      case `beforeend`:
+        container.append(element);
+        break;
+      case `afterend`:
+        container.after(element);
+        break;
+    }
+  }
 };
 
+export const unrender = (element) => {
+  if (element) {
+    element.remove();
+  }
+};
+
+export const createElement = (template) => {
+  const newTemplate = document.createElement(`template`);
+  newTemplate.innerHTML = template;
+  return newTemplate.content.firstElementChild;
+};
+
+/** Возвращает рыбный текст – 1-3 рандомных предложения, но обязательно хотя бы одно
+ * @return {string} – рандомный тект
+ */
 export const getFishText = () =>
-  // 1-3 рандомных предложения, но обязательно хотя бы одно
   [
     `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
     `Cras aliquet varius magna, non porta ligula feugiat eget.`,
@@ -32,4 +58,8 @@ export const formatDuration = (ms) => {
   const hours = Math.floor(ms / (1000 * 60 * 60));
   const minutes = Math.round(ms / (1000 * 60)) % 60;
   return {hours, minutes};
+};
+
+export const getRandomArrayItem = (array) => {
+  return array[Math.floor(Math.random() * array.length)];
 };

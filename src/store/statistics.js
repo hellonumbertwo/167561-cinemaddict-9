@@ -3,6 +3,9 @@ import {moviesList} from "./movies-list";
 const watchedMoviesNumber = (movies) =>
   movies.filter((movie) => movie.isWatched).length;
 
+/** возращает самые популярные жанры пользователя (один или несколько жанров, если у них одинаковый счет).
+ * @param {array} movies – список фильмов в сервисе
+ * @return {string} – строка с перечнем жанров*/
 const getFavoriteGenre = (movies) => {
   const genresStats = movies
     .filter((movie) => !!movie.isFavorite)
@@ -17,7 +20,6 @@ const getFavoriteGenre = (movies) => {
     max > num ? max : num
   );
 
-  // возвращает несколько жанров, если у них одинаковый счет
   return Object.keys(genresStats)
     .reduce((list, genre) => {
       if (genresStats[genre] === bestScore) {

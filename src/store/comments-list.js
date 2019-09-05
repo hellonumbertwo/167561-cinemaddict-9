@@ -1,21 +1,33 @@
-import {getFishText, getRandomDate} from "../utils/index";
-
-const getTheRandomAuthor = () => {
-  const name = [`John`, `Chris`, `Elliot`, `Bob`, `Perry`, `Carla`][
-    Math.floor(Math.random() * 6)
-  ];
-  const surname = [`Dorian`, `Turk`, `Reid`, `Kelso`, `Cox`, `Espinosa`][
-    Math.floor(Math.random() * 6)
-  ];
-  return `${name} ${surname}`;
-};
+import {getFishText, getRandomDate, getRandomArrayItem} from "../utils/index";
 
 const createComment = () => {
+  const emoji = getRandomArrayItem([
+    `angry.png`,
+    `puke.png`,
+    `sleeping.png`,
+    `smile.png`,
+    `trophy.png`
+  ]);
+
+  const author = `${getRandomArrayItem([
+    `John`,
+    `Chris`,
+    `Elliot`,
+    `Bob`,
+    `Perry`,
+    `Carla`
+  ])} ${getRandomArrayItem([
+    `Dorian`,
+    `Turk`,
+    `Reid`,
+    `Kelso`,
+    `Cox`,
+    `Espinosa`
+  ])}`;
+
   return {
-    emoji: [`angry.png`, `puke.png`, `sleeping.png`, `smile.png`, `trophy.png`][
-      Math.floor(Math.random() * 5)
-    ],
-    author: getTheRandomAuthor(),
+    emoji,
+    author,
     text: getFishText(),
     date: getRandomDate(new Date().setFullYear(new Date().getFullYear() - 5))
   };
@@ -23,7 +35,12 @@ const createComment = () => {
 
 export const createCommentsList = () => {
   const commentsList = [];
-  for (let i = 0; i < Math.round(Math.random() * 100); i++) {
+  /**
+   * @constant {number} - рандомное кол-во комментарией до сотни
+   */
+  const commentsListMaxLength = Math.round(Math.random() * 100);
+
+  for (let i = 0; i < commentsListMaxLength; i++) {
     commentsList.push(createComment());
   }
   return commentsList;
