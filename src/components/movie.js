@@ -43,7 +43,7 @@ export default class Movie extends AbstractComponent {
         <img src="./images/posters/${
   this._poster
 }" alt="" class="film-card__poster" id="movie-poster">
-        <p class="film-card__description">${this._getDescription(
+        <p class="film-card__description">${this._trimDescriptionString(
       this._description
   )}</p>
         <a class="film-card__comments" id="movie-comments-title">${
@@ -64,7 +64,7 @@ export default class Movie extends AbstractComponent {
     `;
   }
 
-  _getDescription(string) {
+  _trimDescriptionString(string) {
     /** Если описание длиннее 140 символов, но оно обрезается с ...
      * @constant
      * @type {number}

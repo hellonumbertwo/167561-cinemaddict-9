@@ -27,9 +27,7 @@ export default class PageController {
         `click`,
         () => {
           this._renderMoviesListByChunks();
-          if (!this._getIsMoreMoviesLeft(this._movies)) {
-            this._showMoreButton.getElement().style.display = `none`;
-          }
+          this._handleShowMoreButtonVisibility();
         },
         false
     );
@@ -65,26 +63,6 @@ export default class PageController {
         );
         movieController.init();
       });
-
-    const isButtonNeedToBeShown =
-      this._getIsMoreMoviesLeft(this._movies) &&
-      this._showMoreButton.getElement().classList.contains(`visually-hidden`);
-
-    const isButtonNeedToBeHidden =
-      !this._getIsMoreMoviesLeft(this._movies) &&
-      !this._showMoreButton.getElement().classList.contains(`visually-hidden`);
-
-    if (isButtonNeedToBeShown) {
-      this._showMoreButton.getElement().classList.remove(`visually-hidden`);
-    }
-
-    if (isButtonNeedToBeHidden) {
-      this._showMoreButton.getElement().classList.add(`visually-hidden`);
-    }
-  }
-
-  _getIsMoreMoviesLeft(fullList) {
-    return this._numberOfShownMovies < fullList.length;
   }
 
   _renderExtraMovies() {
@@ -126,5 +104,27 @@ export default class PageController {
       );
       movieController.init();
     });
+  }
+
+  _handleShowMoreButtonVisibility() {
+    const isButtonNeedToBeShown =
+      this._getIsMoreMoviesLeft(this._movies) &&
+      this._showMoreButton.getElement().classList.contains(`visually-hidden`);
+
+    const isButtonNeedToBeHidden =
+      !this._getIsMoreMoviesLeft(this._movies) &&
+      !this._showMoreButton.getElement().classList.contains(`visually-hidden`);
+
+    if (isButtonNeedToBeShown) {
+      this._showMoreButton.getElement().classList.remove(`visually-hidden`);
+    }
+
+    if (isButtonNeedToBeHidden) {
+      this._showMoreButton.getElement().classList.add(`visually-hidden`);
+    }
+  }
+
+  _getIsMoreMoviesLeft(fullList) {
+    return this._numberOfShownMovies < fullList.length;
   }
 }

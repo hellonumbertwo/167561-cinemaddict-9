@@ -25,11 +25,19 @@ const createComment = () => {
     `Espinosa`
   ])}`;
 
+  /**
+   * @constant
+   * дата самого старого комментария не раньше 5 лет назал
+   */
+  const theOldestCommentDate = new Date().setFullYear(
+      new Date().getFullYear() - 5
+  );
+
   return {
     emoji,
     author,
     text: getFishText(),
-    date: getRandomDate(new Date().setFullYear(new Date().getFullYear() - 5))
+    date: getRandomDate(theOldestCommentDate)
   };
 };
 
