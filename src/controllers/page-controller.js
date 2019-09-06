@@ -11,6 +11,7 @@ export default class PageController {
   constructor(container, movies, showMoviesStep, filters, statistics) {
     this._container = container;
     this._movies = movies;
+    this._moviesForRender = movies;
     this._showMoviesStep = showMoviesStep;
     this._numberOfShownMovies = 0;
     this._statistics = statistics;
@@ -27,10 +28,13 @@ export default class PageController {
         `click`,
         () => {
           this._renderMoviesListByChunks();
-          this._handleShowMoreButtonVisibility();
         },
         false
     );
+
+    this._sorting.getElement().addEventListener(`click`, (e) => {
+      this._sortMoviesByLinkClick(e);
+    });
 
     [
       this._statistics,
@@ -54,7 +58,7 @@ export default class PageController {
     const numberMoviesToShow = prevNumberOfMovies + this._showMoviesStep;
     this._numberOfShownMovies = numberMoviesToShow;
 
-    this._movies
+    this._moviesForRender
       .slice(prevNumberOfMovies, numberMoviesToShow)
       .forEach((movie) => {
         const movieController = new MovieController(
@@ -63,6 +67,8 @@ export default class PageController {
         );
         movieController.init();
       });
+
+    this._handleShowMoreButtonVisibility();
   }
 
   _renderExtraMovies() {
@@ -104,6 +110,40 @@ export default class PageController {
       );
       movieController.init();
     });
+  }
+
+  /**
+   * отсортировать preview-карточки фильмов по клику на ссылку в панели sort controls
+   * @private
+   * @param {event} e – событие `click`
+   */
+  _sortMoviesByLinkClick(e) {
+    e.preventDefault();
+
+    if (e.target.tagName !== `A`) {
+      return;
+    }
+
+    this._numberOfShownMovies = 0;
+    this._container.querySelector(`.films-list__container`).innerHTML = ``;
+
+    switch (e.target.dataset.sortType) {
+      case `by-date`:
+        this._moviesForRender = this._movies
+          .slice()
+          .sort((a, b) => a.releaseDate - b.releaseDate);
+        break;
+      case `by-rate`:
+        this._moviesForRender = this._movies
+          .slice()
+          .sort((a, b) => a.rate - b.rate);
+        break;
+      default:
+        this._moviesForRender = this._movies;
+        break;
+    }
+
+    this._renderMoviesListByChunks();
   }
 
   _handleShowMoreButtonVisibility() {
