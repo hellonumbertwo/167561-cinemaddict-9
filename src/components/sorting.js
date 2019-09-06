@@ -1,18 +1,8 @@
-import {createElement, unrender} from "./../utils/index";
+import AbstractComponent from "./abstract-component";
 
-export default class Sorting {
+export default class Sorting extends AbstractComponent {
   constructor() {
-    this._element = null;
-  }
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-  removeElement() {
-    unrender(this.getElement());
-    this._element = null;
+    super();
   }
   getTemplate() {
     return `

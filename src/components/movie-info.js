@@ -1,6 +1,7 @@
-import {formatDuration, createElement, unrender} from "../../utils/index";
+import {formatDuration} from "./../utils/index";
+import AbstractComponent from "./abstract-component";
 
-export default class MovieInfo {
+export default class MovieInfo extends AbstractComponent {
   constructor({
     ageRestriction,
     title,
@@ -15,6 +16,7 @@ export default class MovieInfo {
     description,
     genresList
   }) {
+    super();
     this._ageRestriction = ageRestriction;
     this._title = title;
     this._poster = poster;
@@ -27,17 +29,6 @@ export default class MovieInfo {
     this._country = country;
     this._description = description;
     this._genresList = genresList;
-    this._element = null;
-  }
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-  removeElement() {
-    unrender(this.getElement());
-    this._element = null;
   }
   getTemplate() {
     return `

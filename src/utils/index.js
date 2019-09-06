@@ -1,5 +1,4 @@
-export const render = (nodeId, element, place) => {
-  const container = document.getElementById(nodeId);
+export const render = (container, element, place) => {
   if (container) {
     switch (place) {
       case `afterbegin`:

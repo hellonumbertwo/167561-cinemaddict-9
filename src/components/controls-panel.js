@@ -1,21 +1,11 @@
-import {createElement, unrender} from "../../utils/index";
+import AbstractComponent from "./abstract-component";
 
-export default class ControlsPanel {
+export default class ControlsPanel extends AbstractComponent {
   constructor({isInWatchList, isWatched, isFavorite}) {
+    super();
     this._isInWatchList = isInWatchList;
     this._isWatched = isWatched;
     this._isFavorite = isFavorite;
-    this._elment = null;
-  }
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-  removeElement() {
-    unrender(this.getElement());
-    this._element = null;
   }
   getTemplate() {
     return `
