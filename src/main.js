@@ -1,29 +1,27 @@
-import {renderContent} from "./components/content/render-content";
-import Footer from "./components/footer";
-
-import FiltersPanel from "./components/filters-panel";
-import Statistics from "./components/statistics";
-
-import {statistics} from "./store/statistics";
 import {filtersList} from "./store/filters-list";
-import {moviesList} from "./store/movies-list";
+import {calculateStatistics} from "./store/statistics";
+import {moviesList, SHOW_MOVIES_STEP} from "./store/movies-list";
+import {render} from "./utils";
+import Footer from "./components/footer";
 import Search from "./components/search";
 import Profile from "./components/profile";
-import Sorting from "./components/sorting";
-import {render} from "./utils";
+import PageController from "./controllers/page-controller";
+
+const statisticsData = calculateStatistics(moviesList);
 
 const search = new Search();
-const profile = new Profile(statistics);
-const statisticsPanel = new Statistics(statistics);
-const filtersPanel = new FiltersPanel(filtersList);
-const sorting = new Sorting();
+const profile = new Profile(statisticsData);
 const footer = new Footer(moviesList);
+const pageController = new PageController(
+    document.getElementById(`main`),
+    moviesList,
+    SHOW_MOVIES_STEP,
+    filtersList,
+    statisticsData
+);
 
 [search, profile].forEach((component) =>
-  render(`header`, component.getElement(), `beforeend`)
+  render(document.getElementById(`header`), component.getElement(), `beforeend`)
 );
-[statisticsPanel, filtersPanel, sorting].forEach((component) =>
-  render(`main`, component.getElement(), `beforeend`)
-);
-renderContent(`main`);
-render(`main`, footer.getElement(), `afterend`);
+render(document.getElementById(`main`), footer.getElement(), `afterend`);
+pageController.init();
