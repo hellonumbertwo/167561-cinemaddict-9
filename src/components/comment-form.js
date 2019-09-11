@@ -3,6 +3,7 @@ import AbstractComponent from "./abstract-component";
 export default class CommentForm extends AbstractComponent {
   constructor() {
     super();
+    this._addEmoji();
   }
   getTemplate() {
     return `
@@ -14,27 +15,40 @@ export default class CommentForm extends AbstractComponent {
         </label>
 
         <div class="film-details__emoji-list">
-          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="sleeping">
+          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile">
           <label class="film-details__emoji-label" for="emoji-smile">
             <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
           </label>
 
-          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="neutral-face">
+          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
           <label class="film-details__emoji-label" for="emoji-sleeping">
             <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
           </label>
 
-          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-gpuke" value="grinning">
-          <label class="film-details__emoji-label" for="emoji-gpuke">
+          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke">
+          <label class="film-details__emoji-label" for="emoji-puke">
             <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
           </label>
 
-          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="grinning">
+          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
           <label class="film-details__emoji-label" for="emoji-angry">
             <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
           </label>
         </div>
       </div>
     `;
+  }
+  _addEmoji() {
+    this.getElement().addEventListener(
+        `change`,
+        (e) => {
+          if (e.target.tagName === `INPUT`) {
+            this.getElement().querySelector(
+                `.film-details__add-emoji-label`
+            ).innerHTML = `<img src="./images/emoji/${e.target.value}.png" width="30" height="30" alt="emoji">`;
+          }
+        },
+        false
+    );
   }
 }

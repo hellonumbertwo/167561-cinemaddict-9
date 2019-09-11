@@ -1,6 +1,6 @@
 import AbstractComponent from "./abstract-component";
 
-export default class ControlsPanel extends AbstractComponent {
+export default class MovieStatusPanel extends AbstractComponent {
   constructor({isInWatchList, isWatched, isFavorite}) {
     super();
     this._isInWatchList = isInWatchList;
