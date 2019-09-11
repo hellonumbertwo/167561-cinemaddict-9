@@ -63,7 +63,8 @@ export default class PageController {
       .forEach((movie) => {
         const movieController = new MovieController(
             this._container.querySelector(`.films-list__container`),
-            movie
+            movie,
+            this._onDataChange.bind(this)
         );
         movieController.init();
       });
@@ -166,5 +167,10 @@ export default class PageController {
 
   _getIsMoreMoviesLeft(fullList) {
     return this._numberOfShownMovies < fullList.length;
+  }
+
+  _onDataChange(newMovieData, movieId, updateMovie) {
+    this._movies[movieId] = {...newMovieData};
+    updateMovie(this._movies[movieId]);
   }
 }

@@ -8,7 +8,7 @@ import Comment from "./../components/comment";
 import CommentForm from "../components/comment-form";
 
 export default class MovieController {
-  constructor(container, movie) {
+  constructor(container, movie, onDataChange, onChangeView) {
     this._container = container;
     this._movie = movie;
     this._moviePreview = new Movie(movie);
@@ -17,6 +17,9 @@ export default class MovieController {
     this._controlsPanel = new ControlsPanel(movie);
     this._ratePanel = new RatePanel(movie);
     this._commentForm = new CommentForm();
+    this._onDataChange = onDataChange;
+    this._onChangeView = onChangeView;
+    this._elementToBeUpdated = null;
   }
   init() {
     /** Показать попап с доп информацией при клике на название, постер или кол-во комментариев
@@ -36,7 +39,16 @@ export default class MovieController {
       .getElement()
       .addEventListener(`click`, showMovieDetails, false);
 
-    render(this._container, this._moviePreview.getElement(), `beforeend`);
+    // TODO: оставить комментарий
+    if (this._elementToBeUpdated) {
+      this._container.replaceChild(
+          this._moviePreview.getElement(),
+          this._elementToBeUpdated
+      );
+    } else {
+      render(this._container, this._moviePreview.getElement(), `beforeend`);
+    }
+    this._changeMovieDataFromPreview();
   }
   _renderMovieDetails() {
     const closeMovieDetails = function () {
@@ -99,6 +111,29 @@ export default class MovieController {
         .querySelector(`.form-details__bottom-container`),
         this._commentForm.getElement(),
         `beforeend`
+    );
+  }
+  _updateMovie(updatedMovieData) {
+    this._elementToBeUpdated = this._moviePreview.getElement();
+    this._moviePreview = new Movie(updatedMovieData);
+    this._movieDetails = new MovieDetailsPopup(updatedMovieData);
+    this.init();
+  }
+  _changeMovieDataFromPreview() {
+    let entry = this._movie;
+    const formElement = this._moviePreview
+      .getElement()
+      .querySelector(`.film-card__controls`);
+
+    //  TODO: обновлять не всю карточку, а только саму вот эту форму с кнопками
+    formElement.addEventListener(
+        `click`,
+        (e) => {
+          e.preventDefault();
+          entry[e.target.dataset.status] = !this._movie[e.target.dataset.status];
+          this._onDataChange(entry, this._movie, this._updateMovie.bind(this));
+        },
+        false
     );
   }
 }

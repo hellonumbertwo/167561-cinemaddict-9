@@ -52,13 +52,13 @@ export default class Movie extends AbstractComponent {
         <form class="film-card__controls">
             <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist ${
   this._isInWatchList ? `film-card__controls-item--active` : ``
-}">Add to watchlist</button>
+}" data-status="isInWatchList">Add to watchlist</button>
             <button class="film-card__controls-item button film-card__controls-item--mark-as-watched ${
   this._isWatched ? `film-card__controls-item--active` : ``
-}">Mark as watched</button>
+}" data-status="isWatched">Mark as watched</button>
             <button class="film-card__controls-item button film-card__controls-item--favorite ${
   this._isFavorite ? `film-card__controls-item--active` : ``
-}">Mark as favorite</button>
+}" data-status="isFavorite">Mark as favorite</button>
         </form>
     </article>
     `;
