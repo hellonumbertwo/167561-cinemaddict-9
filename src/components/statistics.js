@@ -1,4 +1,4 @@
-import {formatDuration} from "./../utils/index";
+import moment from "moment";
 import AbstractComponent from "./abstract-component";
 
 export default class Statistics extends AbstractComponent {
@@ -8,6 +8,13 @@ export default class Statistics extends AbstractComponent {
     this._totalDuration = totalDuration;
     this._watchedMoviesNumber = watchedMoviesNumber;
     this._favoriteGenre = favoriteGenre;
+  }
+
+  get _formattedDuration() {
+    return {
+      hours: `${moment.duration(this._totalDuration).hours()}`,
+      minutes: `${moment.duration(this._totalDuration).minutes()}`
+    };
   }
 
   getTemplate() {
@@ -41,17 +48,14 @@ export default class Statistics extends AbstractComponent {
       <ul class="statistic__text-list">
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">You watched</h4>
-          <p class="statistic__item-text">${
-  this._watchedMoviesNumber
-} <span class="statistic__item-description">movies</span></p>
+          <p class="statistic__item-text">${this._watchedMoviesNumber} <span class="statistic__item-description">movies</span></p>
         </li>
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">Total duration</h4>
-          <p class="statistic__item-text">${
-  formatDuration(this._totalDuration).hours
-} <span class="statistic__item-description">h</span>${
-  formatDuration(this._totalDuration).minutes
-}<span class="statistic__item-description">m</span></p>
+          <p class="statistic__item-text">
+          ${this._formattedDuration.hours} <span class="statistic__item-description">h</span>
+          ${this._formattedDuration.minutes}
+          <span class="statistic__item-description">m</span></p>
         </li>
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">Top genre</h4>

@@ -1,5 +1,6 @@
 import {formatDuration} from "./../utils/index";
 import AbstractComponent from "./abstract-component";
+import moment from "moment";
 
 export default class MovieInfo extends AbstractComponent {
   constructor({
@@ -30,6 +31,15 @@ export default class MovieInfo extends AbstractComponent {
     this._description = description;
     this._genresList = genresList;
   }
+
+  get _formettedDuration() {
+    return formatDuration(this._duration);
+  }
+
+  get _formattedReleaseDate() {
+    return moment(this._releaseDate).format(`DD MMMM YYYY`);
+  }
+
   getTemplate() {
     return `
       <div class="film-details__info-wrap">
@@ -70,13 +80,11 @@ export default class MovieInfo extends AbstractComponent {
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Release Date</td>
-              <td class="film-details__cell">${this._releaseDate.toLocaleDateString()}</td>
+              <td class="film-details__cell">${this._formattedReleaseDate}</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Runtime</td>
-              <td class="film-details__cell">
-              ${formatDuration(this._duration).hours}h
-              ${formatDuration(this._duration).minutes}m</td>
+              <td class="film-details__cell">${this._formettedDuration}</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Country</td>

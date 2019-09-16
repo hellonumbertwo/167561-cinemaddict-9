@@ -1,3 +1,5 @@
+import moment from "moment";
+
 export const render = (container, element, place) => {
   if (container) {
     switch (place) {
@@ -54,9 +56,7 @@ export const getRandomDate = (startDate) => {
 };
 
 export const formatDuration = (ms) => {
-  const hours = Math.floor(ms / (1000 * 60 * 60));
-  const minutes = Math.round(ms / (1000 * 60)) % 60;
-  return {hours, minutes};
+  return `${moment.duration(ms).hours()}h ${moment.duration(ms).minutes()}m`;
 };
 
 export const getRandomArrayItem = (array) => {
