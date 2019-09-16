@@ -1,7 +1,7 @@
-import {formatDuration} from "./../utils/index";
+import {formatDuration} from "../utils/index";
 import AbstractComponent from "./abstract-component";
 
-export default class Movie extends AbstractComponent {
+export default class MoviePreview extends AbstractComponent {
   constructor({
     title,
     poster,

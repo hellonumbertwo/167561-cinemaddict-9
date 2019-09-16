@@ -10,7 +10,8 @@ import Statistics from "./../components/statistics";
 export default class PageController {
   constructor(container, movies, showMoviesStep, filters, statistics) {
     this._container = container;
-    this._movies = movies;
+    this._movies = [...movies];
+    this._defaultOrderedMovies = [...movies];
     this._showMoviesStep = showMoviesStep;
     this._numberOfShownMovies = 0;
     this._statistics = statistics;
@@ -22,16 +23,18 @@ export default class PageController {
     this._mostCommentedMoviesList = new ExtraMoviesList(`Most commented`);
     this._statistics = new Statistics(statistics);
   }
-  init() {
-    this._showMoreButton.getElement().addEventListener(
-        `click`,
-        () => {
-          this._renderMoviesListByChunks();
-          this._handleShowMoreButtonVisibility();
-        },
-        false
-    );
 
+  get _mostCommentedMovies() {
+    return [...this._movies]
+      .sort((a, b) => b.comments.length - a.comments.length)
+      .slice(0, 2);
+  }
+
+  get _topRatedMovies() {
+    return [...this._movies].sort((a, b) => b.rate - a.rate).slice(0, 2);
+  }
+
+  init() {
     [
       this._statistics,
       this._filtersPanel,
@@ -40,6 +43,7 @@ export default class PageController {
     ].forEach((component) =>
       render(this._container, component.getElement(), `beforeend`)
     );
+
     render(
         this._content.getElement().querySelector(`.films-list__container`),
         this._showMoreButton.getElement(),
@@ -47,65 +51,110 @@ export default class PageController {
     );
 
     this._renderMoviesListByChunks();
+
     this._renderExtraMovies();
+
+    this._setEventListeners();
   }
+
+  _setEventListeners() {
+    this._showMoreButton.getElement().addEventListener(
+        `click`,
+        () => {
+          this._renderMoviesListByChunks();
+        },
+        false
+    );
+
+    this._sorting.getElement().addEventListener(`click`, (e) => {
+      this._sortMoviesByLinkClick(e);
+    });
+  }
+
+  // TODO: комментарий
   _renderMoviesListByChunks() {
     const prevNumberOfMovies = this._numberOfShownMovies;
     const numberMoviesToShow = prevNumberOfMovies + this._showMoviesStep;
     this._numberOfShownMovies = numberMoviesToShow;
 
-    this._movies
-      .slice(prevNumberOfMovies, numberMoviesToShow)
-      .forEach((movie) => {
-        const movieController = new MovieController(
-            this._container.querySelector(`.films-list__container`),
-            movie
-        );
-        movieController.init();
-      });
+    for (let i = prevNumberOfMovies; i < numberMoviesToShow; i++) {
+      this._initMovieController(
+          this._container.querySelector(`.films-list__container`),
+          this._movies[i]
+      );
+    }
+
+    this._handleShowMoreButtonVisibility();
   }
 
+  // TODO: комментарий
+  _initMovieController(container, movie) {
+    const movieController = new MovieController(
+        container,
+        movie,
+        this._onDataChange.bind(this)
+    );
+    movieController.init();
+  }
+
+  // TODO: комментарий
   _renderExtraMovies() {
-    const topRatedMoviesList = this._movies
-      .sort((a, b) => b.rate - a.rate)
-      .slice(0, 2);
-
-    const mostCommentedMoviesList = this._movies
-      .sort((a, b) => b.comments.length - a.comments.length)
-      .slice(0, 2);
-
-    render(
-        this._content.getElement(),
-        this._topRatedMoviesList.getElement(),
-        `beforeend`
-    );
-    render(
-        this._content.getElement(),
-        this._mostCommentedMoviesList.getElement(),
-        `beforeend`
+    [this._topRatedMoviesList, this._mostCommentedMoviesList].forEach(
+        (component) => {
+          render(this._content.getElement(), component.getElement(), `beforeend`);
+        }
     );
 
-    topRatedMoviesList.forEach((movie) => {
-      const movieController = new MovieController(
+    this._topRatedMovies.forEach((movie) => {
+      this._initMovieController(
           this._topRatedMoviesList
           .getElement()
           .querySelector(`.films-list__container`),
           movie
       );
-      movieController.init();
     });
 
-    mostCommentedMoviesList.forEach((movie) => {
-      const movieController = new MovieController(
+    this._mostCommentedMovies.forEach((movie) => {
+      this._initMovieController(
           this._mostCommentedMoviesList
           .getElement()
           .querySelector(`.films-list__container`),
           movie
       );
-      movieController.init();
     });
   }
 
+  /**
+   * отсортировать preview-карточки фильмов по клику на ссылку в панели sort controls
+   * @private
+   * @param {event} e – событие `click`
+   */
+  _sortMoviesByLinkClick(e) {
+    e.preventDefault();
+
+    if (e.target.tagName !== `A`) {
+      return;
+    }
+
+    this._numberOfShownMovies = 0;
+    this._container.querySelector(`.films-list__container`).innerHTML = ``;
+
+    switch (e.target.dataset.sortType) {
+      case `by-date`:
+        this._movies.slice().sort((a, b) => a.releaseDate - b.releaseDate);
+        break;
+      case `by-rate`:
+        this._movies.sort((a, b) => a.rate - b.rate);
+        break;
+      default:
+        this._movies = [...this._defaultOrdered];
+        break;
+    }
+
+    this._renderMoviesListByChunks();
+  }
+
+  // TODO: комментарий
   _handleShowMoreButtonVisibility() {
     const isButtonNeedToBeShown =
       this._getIsMoreMoviesLeft(this._movies) &&
@@ -124,7 +173,24 @@ export default class PageController {
     }
   }
 
+  // TODO: комментарий
   _getIsMoreMoviesLeft(fullList) {
     return this._numberOfShownMovies < fullList.length;
+  }
+
+  _onDataChange(newMovieData, movieId, updateMovie) {
+    this._mutateMovieDataInInitialList(this._movies[movieId], newMovieData);
+    updateMovie();
+  }
+
+  // TODO: оставить комментарий
+  _mutateMovieDataInInitialList(oldObjData, newObjData) {
+    Object.keys(newObjData).forEach(function (key) {
+      delete oldObjData[key];
+    });
+
+    Object.keys(newObjData).forEach(function (key) {
+      oldObjData[key] = newObjData[key];
+    });
   }
 }

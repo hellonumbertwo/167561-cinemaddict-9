@@ -99,16 +99,10 @@ const createMovie = () => {
     }
   ];
 
-  const {title, poster, director, writers, starring} = getRandomArrayItem(
-      visualAndCastMocs
-  );
+  const visualAndCast = getRandomArrayItem(visualAndCastMocs);
 
   return {
-    title,
-    poster,
-    director,
-    writers,
-    starring,
+    ...visualAndCast,
     releaseDate: getReleaseDate(`01/01/1930`),
     duration,
     country,
@@ -126,7 +120,8 @@ const createMovie = () => {
 const createMoviesList = (numberOfMovies) => {
   let moviesList = [];
   for (let i = 0; i < numberOfMovies; i++) {
-    moviesList.push(createMovie());
+    const movie = createMovie();
+    moviesList.push({...movie, id: `${i}`});
   }
   return moviesList;
 };
