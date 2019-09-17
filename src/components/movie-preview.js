@@ -30,6 +30,11 @@ export default class MoviePreview extends AbstractComponent {
 
     this._setEventListeners();
   }
+
+  get _formattedDuration() {
+    return formatDuration(this._duration);
+  }
+
   getTemplate() {
     return `
       <article class="film-card">
@@ -37,9 +42,7 @@ export default class MoviePreview extends AbstractComponent {
         <p class="film-card__rating">${this._rate}</p>
         <p class="film-card__info">
             <span class="film-card__year">${this._releaseDate.getFullYear()}</span>
-            <span class="film-card__duration">${
-  formatDuration(this._duration).hours
-}h ${formatDuration(this._duration).minutes}m</span>
+            <span class="film-card__duration">${this._formattedDuration}</span>
             <span class="film-card__genre">${this._genresList.join(`, `)}</span>
         </p>
         <img src="./images/posters/${
