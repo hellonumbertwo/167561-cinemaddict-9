@@ -16,13 +16,13 @@ export const render = (container, element, place) => {
   }
 };
 
-export const unrender = (element) => {
+export const unrender = element => {
   if (element) {
     element.remove();
   }
 };
 
-export const createElement = (template) => {
+export const createElement = template => {
   const newTemplate = document.createElement(`template`);
   newTemplate.innerHTML = template;
   return newTemplate.content.firstElementChild;
@@ -49,16 +49,16 @@ export const getFishText = () =>
     .slice(0, Math.ceil(Math.random() * 3))
     .join(` `);
 
-export const getRandomDate = (startDate) => {
+export const getRandomDate = startDate => {
   const from = new Date(startDate).getTime();
   const to = Date.now();
   return new Date(from + Math.random() * (to - from));
 };
 
-export const formatDuration = (ms) => {
+export const formatDuration = ms => {
   return `${moment.duration(ms).hours()}h ${moment.duration(ms).minutes()}m`;
 };
 
-export const getRandomArrayItem = (array) => {
+export const getRandomArrayItem = array => {
   return array[Math.floor(Math.random() * array.length)];
 };

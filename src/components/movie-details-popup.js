@@ -1,7 +1,7 @@
 import AbstractComponent from "./abstract-component";
 
 export default class MovieDetailsPopup extends AbstractComponent {
-  constructor({comments}) {
+  constructor({ comments }) {
     super();
     this._comments = comments;
   }

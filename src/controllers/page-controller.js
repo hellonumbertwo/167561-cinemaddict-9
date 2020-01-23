@@ -1,4 +1,4 @@
-import {render} from "../utils";
+import { render } from "../utils";
 import Content from "../components/content";
 import ShowMoreButton from "../components/show-more-button";
 import MovieController from "./movie-controller";
@@ -40,14 +40,14 @@ export default class PageController {
       this._filtersPanel,
       this._sorting,
       this._content
-    ].forEach((component) =>
+    ].forEach(component =>
       render(this._container, component.getElement(), `beforeend`)
     );
 
     render(
-        this._content.getElement().querySelector(`.films-list__container`),
-        this._showMoreButton.getElement(),
-        `afterend`
+      this._content.getElement().querySelector(`.films-list__container`),
+      this._showMoreButton.getElement(),
+      `afterend`
     );
 
     this._renderMoviesListByChunks();
@@ -59,14 +59,14 @@ export default class PageController {
 
   _setEventListeners() {
     this._showMoreButton.getElement().addEventListener(
-        `click`,
-        () => {
-          this._renderMoviesListByChunks();
-        },
-        false
+      `click`,
+      () => {
+        this._renderMoviesListByChunks();
+      },
+      false
     );
 
-    this._sorting.getElement().addEventListener(`click`, (e) => {
+    this._sorting.getElement().addEventListener(`click`, e => {
       this._sortMoviesByLinkClick(e);
     });
   }
@@ -79,8 +79,8 @@ export default class PageController {
 
     for (let i = prevNumberOfMovies; i < numberMoviesToShow; i++) {
       this._initMovieController(
-          this._container.querySelector(`.films-list__container`),
-          this._movies[i]
+        this._container.querySelector(`.films-list__container`),
+        this._movies[i]
       );
     }
 
@@ -90,9 +90,9 @@ export default class PageController {
   // TODO: комментарий
   _initMovieController(container, movie) {
     const movieController = new MovieController(
-        container,
-        movie,
-        this._onDataChange.bind(this)
+      container,
+      movie,
+      this._onDataChange.bind(this)
     );
     movieController.init();
   }
@@ -100,26 +100,26 @@ export default class PageController {
   // TODO: комментарий
   _renderExtraMovies() {
     [this._topRatedMoviesList, this._mostCommentedMoviesList].forEach(
-        (component) => {
-          render(this._content.getElement(), component.getElement(), `beforeend`);
-        }
+      component => {
+        render(this._content.getElement(), component.getElement(), `beforeend`);
+      }
     );
 
-    this._topRatedMovies.forEach((movie) => {
+    this._topRatedMovies.forEach(movie => {
       this._initMovieController(
-          this._topRatedMoviesList
+        this._topRatedMoviesList
           .getElement()
           .querySelector(`.films-list__container`),
-          movie
+        movie
       );
     });
 
-    this._mostCommentedMovies.forEach((movie) => {
+    this._mostCommentedMovies.forEach(movie => {
       this._initMovieController(
-          this._mostCommentedMoviesList
+        this._mostCommentedMoviesList
           .getElement()
           .querySelector(`.films-list__container`),
-          movie
+        movie
       );
     });
   }
@@ -185,11 +185,11 @@ export default class PageController {
 
   // TODO: оставить комментарий
   _mutateMovieDataInInitialList(oldObjData, newObjData) {
-    Object.keys(newObjData).forEach(function (key) {
+    Object.keys(newObjData).forEach(function(key) {
       delete oldObjData[key];
     });
 
-    Object.keys(newObjData).forEach(function (key) {
+    Object.keys(newObjData).forEach(function(key) {
       oldObjData[key] = newObjData[key];
     });
   }

@@ -2,7 +2,7 @@ import AbstractComponent from "./abstract-component";
 import moment from "moment";
 
 export default class Comment extends AbstractComponent {
-  constructor({author, text, date, emoji}) {
+  constructor({ author, text, date, emoji }) {
     super();
     this._author = author;
     this._text = text;

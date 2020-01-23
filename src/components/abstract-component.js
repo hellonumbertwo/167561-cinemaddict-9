@@ -1,4 +1,4 @@
-import {createElement, unrender} from "./../utils/index";
+import { createElement, unrender } from "./../utils/index";
 
 /**
  * абстрактный класс – содержит общую логику и данные компонентов
@@ -8,7 +8,7 @@ export default class AbstractComponent {
   constructor() {
     if (new.target === AbstractComponent) {
       throw new Error(
-          `Can't instantiate AbstractComponent, only concrete one.`
+        `Can't instantiate AbstractComponent, only concrete one.`
       );
     }
     this._element = null;

@@ -1,4 +1,4 @@
-import {getFishText, getRandomDate, getRandomArrayItem} from "../utils/index";
+import { getFishText, getRandomDate, getRandomArrayItem } from "../utils/index";
 
 const createComment = () => {
   const emoji = getRandomArrayItem([
@@ -30,7 +30,7 @@ const createComment = () => {
    * дата самого старого комментария не раньше 5 лет назал
    */
   const theOldestCommentDate = new Date().setFullYear(
-      new Date().getFullYear() - 5
+    new Date().getFullYear() - 5
   );
 
   return {

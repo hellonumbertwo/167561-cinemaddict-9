@@ -2,7 +2,7 @@ import moment from "moment";
 import AbstractComponent from "./abstract-component";
 
 export default class Statistics extends AbstractComponent {
-  constructor({status, totalDuration, watchedMoviesNumber, favoriteGenre}) {
+  constructor({ status, totalDuration, watchedMoviesNumber, favoriteGenre }) {
     super();
     this._status = status;
     this._totalDuration = totalDuration;

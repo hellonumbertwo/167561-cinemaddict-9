@@ -1,4 +1,4 @@
-import {render} from "../utils";
+import { render } from "../utils";
 import MoviePreview from "../components/movie-preview";
 import MovieDetailsController from "./movie-details-controller";
 
@@ -16,7 +16,7 @@ export default class MovieController {
     /** Показать попап с доп информацией при клике на название, постер или кол-во комментариев
      * @param {event} e
      */
-    const showMovieDetails = (e) => {
+    const showMovieDetails = e => {
       if (
         e.target.id === `movie-poster` ||
         e.target.id === `movie-title` ||
@@ -24,13 +24,13 @@ export default class MovieController {
       ) {
         this._onChangeView();
         const movieDetailsController = new MovieDetailsController(
-            this._container,
-            this._movie,
-            this._onDataChangeFromDetails.bind(this)
+          this._container,
+          this._movie,
+          this._onDataChangeFromDetails.bind(this)
         );
         movieDetailsController.init();
         this._subscriptions.push(
-            movieDetailsController.setDefaultView.bind(movieDetailsController)
+          movieDetailsController.setDefaultView.bind(movieDetailsController)
         );
       }
     };
@@ -58,8 +58,8 @@ export default class MovieController {
   _updateMovieNode() {
     this._moviePreview.getElement().className = this._elementToBeUpdated.classList.toString();
     this._container.replaceChild(
-        this._moviePreview.getElement(),
-        this._elementToBeUpdated
+      this._moviePreview.getElement(),
+      this._elementToBeUpdated
     );
   }
 
@@ -69,17 +69,17 @@ export default class MovieController {
       .querySelector(`.film-card__controls`);
 
     formElement.addEventListener(
-        `click`,
-        (e) => {
-          e.preventDefault();
-          const status = [e.target.dataset.status];
-          this._onDataChange(
-              {[status]: !this._movie[e.target.dataset.status]},
-              this._movie.id,
-              this._updateMovieData.bind(this)
-          );
-        },
-        false
+      `click`,
+      e => {
+        e.preventDefault();
+        const status = [e.target.dataset.status];
+        this._onDataChange(
+          { [status]: !this._movie[e.target.dataset.status] },
+          this._movie.id,
+          this._updateMovieData.bind(this)
+        );
+      },
+      false
     );
   }
 
@@ -88,6 +88,6 @@ export default class MovieController {
   }
 
   _onChangeView() {
-    this._subscriptions.forEach((subscription) => subscription());
+    this._subscriptions.forEach(subscription => subscription());
   }
 }

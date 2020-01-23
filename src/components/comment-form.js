@@ -40,15 +40,15 @@ export default class CommentForm extends AbstractComponent {
   }
   _addEmoji() {
     this.getElement().addEventListener(
-        `change`,
-        (e) => {
-          if (e.target.tagName === `INPUT`) {
-            this.getElement().querySelector(
-                `.film-details__add-emoji-label`
-            ).innerHTML = `<img src="./images/emoji/${e.target.value}.png" width="30" height="30" alt="emoji">`;
-          }
-        },
-        false
+      `change`,
+      e => {
+        if (e.target.tagName === `INPUT`) {
+          this.getElement().querySelector(
+            `.film-details__add-emoji-label`
+          ).innerHTML = `<img src="./images/emoji/${e.target.value}.png" width="30" height="30" alt="emoji">`;
+        }
+      },
+      false
     );
   }
 }
