@@ -1,10 +1,10 @@
 /** возращает самые популярные жанры пользователя (один или несколько жанров, если у них одинаковый счет).
  * @param {array} movies – список фильмов в сервисе
  * @return {string} – строка с перечнем жанров*/
-const getFavoriteGenre = (movies) => {
+const getFavoriteGenre = movies => {
   const genresStats = movies
-    .filter((movie) => !!movie.isFavorite)
-    .map(({genresList}) => genresList)
+    .filter(movie => !!movie.isFavorite)
+    .map(({ genresList }) => genresList)
     .flat()
     .reduce((obj, genre) => {
       obj[genre] = obj[genre] ? obj[genre] + 1 : 1;
@@ -25,7 +25,7 @@ const getFavoriteGenre = (movies) => {
     .join(`, `);
 };
 
-const getStatus = (watchedMoviesNumber) => {
+const getStatus = watchedMoviesNumber => {
   switch (true) {
     case watchedMoviesNumber === 0:
       return null;
@@ -38,10 +38,10 @@ const getStatus = (watchedMoviesNumber) => {
   }
 };
 
-export const calculateStatistics = (movies) => {
-  const watchedMoviesNumber = movies.filter((movie) => movie.isWatched).length;
+export const calculateStatistics = movies => {
+  const watchedMoviesNumber = movies.filter(movie => movie.isWatched).length;
   const status = getStatus(watchedMoviesNumber);
-  const totalDuration = movies.reduce((sum, {isWatched, duration}) => {
+  const totalDuration = movies.reduce((sum, { isWatched, duration }) => {
     if (isWatched) {
       sum += duration;
     }

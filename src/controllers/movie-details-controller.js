@@ -1,4 +1,4 @@
-import {render, unrender} from "./../utils/index";
+import { render, unrender } from "./../utils/index";
 import MovieDetails from "../components/movie-details";
 import MovieInfo from "../components/movie-info";
 import MovieStatusPanel from "../components/movie-status-panel";
@@ -37,38 +37,38 @@ export default class movieDetailsController {
 
   _renderMovieDetails() {
     render(
-        document.getElementById(`main`),
-        this._movieDetails.getElement(),
-        `beforeend`
+      document.getElementById(`main`),
+      this._movieDetails.getElement(),
+      `beforeend`
     );
 
-    [this._movieInfo, this._movieStatusPanel].forEach((component) => {
+    [this._movieInfo, this._movieStatusPanel].forEach(component => {
       render(
-          this._movieDetails
+        this._movieDetails
           .getElement()
           .querySelector(`.form-details__top-container`),
-          component.getElement(),
-          `beforeend`
+        component.getElement(),
+        `beforeend`
       );
     });
 
-    this._movie.comments.forEach((comment) => {
+    this._movie.comments.forEach(comment => {
       const commentBlock = new Comment(comment);
       render(
-          this._movieDetails
+        this._movieDetails
           .getElement()
           .querySelector(`.film-details__comments-list`),
-          commentBlock.getElement(),
-          `beforeend`
+        commentBlock.getElement(),
+        `beforeend`
       );
     });
 
     render(
-        this._movieDetails
+      this._movieDetails
         .getElement()
         .querySelector(`.form-details__bottom-container`),
-        this._commentForm.getElement(),
-        `beforeend`
+      this._commentForm.getElement(),
+      `beforeend`
     );
   }
 
@@ -77,7 +77,7 @@ export default class movieDetailsController {
       this._movieDetails.removeElement();
     };
 
-    const onEscKeyDown = (e) => {
+    const onEscKeyDown = e => {
       if (e.key === `esc` || e.key === `Escape`) {
         closeMovieDetails();
         document.removeEventListener(`keydown`, onEscKeyDown);
@@ -105,11 +105,11 @@ export default class movieDetailsController {
 
     const renderRatingPanel = () => {
       render(
-          this._movieDetails
+        this._movieDetails
           .getElement()
           .querySelector(`.form-details__middle-container`),
-          this._movieRatingPanel.getElement(),
-          `beforeend`
+        this._movieRatingPanel.getElement(),
+        `beforeend`
       );
     };
 
@@ -121,22 +121,22 @@ export default class movieDetailsController {
       .getElement()
       .querySelector(`#watched`)
       .addEventListener(
-          `change`,
-          (e) => {
-            if (
-              this._movieDetails
+        `change`,
+        e => {
+          if (
+            this._movieDetails
               .getElement()
               .contains(this._movieRatingPanel.getElement())
-            ) {
-              toggleHidingClass(
-                  e.target.checked,
-                  this._movieRatingPanel.getElement()
-              );
-              return;
-            }
-            renderRatingPanel();
-          },
-          false
+          ) {
+            toggleHidingClass(
+              e.target.checked,
+              this._movieRatingPanel.getElement()
+            );
+            return;
+          }
+          renderRatingPanel();
+        },
+        false
       );
   }
 
@@ -145,7 +145,7 @@ export default class movieDetailsController {
       .getElement()
       .querySelector(`textarea`);
 
-    commentTextarea.addEventListener(`keydown`, (e) => {
+    commentTextarea.addEventListener(`keydown`, e => {
       if ((e.ctrlKey || e.metaKey) && e.keyCode === 13) {
         const formData = this._getFormData();
         const entry = {

@@ -5,5 +5,5 @@ env:
 parserOptions:
   ecmaVersion: 9
   sourceType: "module"
-
-extends: "htmlacademy/es6"
+plugins: ["prettier"]
+extends: ["htmlacademy/es6", "plugin:prettier/recommended"]

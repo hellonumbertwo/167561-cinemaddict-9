@@ -1,4 +1,4 @@
-import {formatDuration} from "./../utils/index";
+import { formatDuration } from "./../utils/index";
 import AbstractComponent from "./abstract-component";
 
 export default class Movie extends AbstractComponent {
@@ -38,29 +38,29 @@ export default class Movie extends AbstractComponent {
         <p class="film-card__info">
             <span class="film-card__year">${this._releaseDate.getFullYear()}</span>
             <span class="film-card__duration">${
-  formatDuration(this._duration).hours
-}h ${formatDuration(this._duration).minutes}m</span>
+              formatDuration(this._duration).hours
+            }h ${formatDuration(this._duration).minutes}m</span>
             <span class="film-card__genre">${this._genresList.join(`, `)}</span>
         </p>
         <img src="./images/posters/${
-  this._poster
-}" alt="" class="film-card__poster" id="movie-poster">
+          this._poster
+        }" alt="" class="film-card__poster" id="movie-poster">
         <p class="film-card__description">${this._trimDescriptionString(
-      this._description
-  )}</p>
+          this._description
+        )}</p>
         <a class="film-card__comments" id="movie-comments-title">${
-  this._comments.length
-} comments</a>
+          this._comments.length
+        } comments</a>
         <form class="film-card__controls">
             <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist ${
-  this._isInWatchList ? `film-card__controls-item--active` : ``
-}" data-status="isInWatchList">Add to watchlist</button>
+              this._isInWatchList ? `film-card__controls-item--active` : ``
+            }" data-status="isInWatchList">Add to watchlist</button>
             <button class="film-card__controls-item button film-card__controls-item--mark-as-watched ${
-  this._isWatched ? `film-card__controls-item--active` : ``
-}" data-status="isWatched">Mark as watched</button>
+              this._isWatched ? `film-card__controls-item--active` : ``
+            }" data-status="isWatched">Mark as watched</button>
             <button class="film-card__controls-item button film-card__controls-item--favorite ${
-  this._isFavorite ? `film-card__controls-item--active` : ``
-}" data-status="isFavorite">Mark as favorite</button>
+              this._isFavorite ? `film-card__controls-item--active` : ``
+            }" data-status="isFavorite">Mark as favorite</button>
         </form>
     </article>
     `;
@@ -81,22 +81,22 @@ export default class Movie extends AbstractComponent {
 
   _setEventListeners() {
     this.getElement().addEventListener(
-        `mouseover`,
-        () => {
-          if (!this.getElement().classList.contains(`hover`)) {
-            this.getElement().classList.add(`hover`);
-          }
-        },
-        false
+      `mouseover`,
+      () => {
+        if (!this.getElement().classList.contains(`hover`)) {
+          this.getElement().classList.add(`hover`);
+        }
+      },
+      false
     );
     this.getElement().addEventListener(
-        `mouseout`,
-        () => {
-          if (this.getElement().classList.contains(`hover`)) {
-            this.getElement().classList.remove(`hover`);
-          }
-        },
-        false
+      `mouseout`,
+      () => {
+        if (this.getElement().classList.contains(`hover`)) {
+          this.getElement().classList.remove(`hover`);
+        }
+      },
+      false
     );
   }
 }

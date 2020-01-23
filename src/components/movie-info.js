@@ -1,4 +1,4 @@
-import {formatDuration} from "./../utils/index";
+import { formatDuration } from "./../utils/index";
 import AbstractComponent from "./abstract-component";
 import moment from "moment";
 
@@ -45,8 +45,8 @@ export default class MovieInfo extends AbstractComponent {
       <div class="film-details__info-wrap">
         <div class="film-details__poster">
           <img class="film-details__poster-img" src="./images/posters/${
-  this._poster
-}" alt="">
+            this._poster
+          }" alt="">
 
           <p class="film-details__age">${this._ageRestriction}</p>
         </div>
@@ -56,8 +56,8 @@ export default class MovieInfo extends AbstractComponent {
             <div class="film-details__title-wrap">
               <h3 class="film-details__title">${this._title}</h3>
               <p class="film-details__title-original">Original: ${
-  this._title
-}</p>
+                this._title
+              }</p>
             </div>
 
             <div class="film-details__rating">
@@ -95,8 +95,8 @@ export default class MovieInfo extends AbstractComponent {
               ${this._genresList.length > 1 ? `Genres` : `Genre`}</td>
               <td class="film-details__cell">
                 <span class="film-details__genre">${this._genresList.join(
-      `, `
-  )}</span>
+                  `, `
+                )}</span>
               </td>
             </tr>
           </table>

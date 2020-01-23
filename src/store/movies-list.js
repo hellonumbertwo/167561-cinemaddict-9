@@ -1,4 +1,4 @@
-import {createCommentsList} from "./comments-list";
+import { createCommentsList } from "./comments-list";
 
 import {
   getRandomDate as getReleaseDate,
@@ -118,15 +118,15 @@ const createMovie = () => {
   };
 };
 
-const createMoviesList = (numberOfMovies) => {
+const createMoviesList = numberOfMovies => {
   let moviesList = [];
   for (let i = 0; i < numberOfMovies; i++) {
     const movie = createMovie();
-    moviesList.push({...movie, id: `${i}`});
+    moviesList.push({ ...movie, id: `${i}` });
   }
   return moviesList;
 };
 
 const moviesList = createMoviesList(NUMBER_OF_MOVIES);
 
-export {SHOW_MOVIES_STEP, moviesList};
+export { SHOW_MOVIES_STEP, moviesList };

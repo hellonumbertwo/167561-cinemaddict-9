@@ -1,7 +1,7 @@
 import AbstractComponent from "./abstract-component";
 
 export default class Profile extends AbstractComponent {
-  constructor({status}) {
+  constructor({ status }) {
     super();
     this._status = status;
   }

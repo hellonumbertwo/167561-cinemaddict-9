@@ -1,7 +1,7 @@
 import AbstractComponent from "./abstract-component";
 
 export default class MovieStatusPanel extends AbstractComponent {
-  constructor({isInWatchList, isWatched, isFavorite}) {
+  constructor({ isInWatchList, isWatched, isFavorite }) {
     super();
     this._isInWatchList = isInWatchList;
     this._isWatched = isWatched;
