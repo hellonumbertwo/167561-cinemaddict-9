@@ -15,7 +15,6 @@ const footer = new Footer(moviesList);
 const pageController = new PageController(
   document.getElementById(`main`),
   moviesList,
-  SHOW_MOVIES_STEP,
   filtersList,
   statisticsData
 );
