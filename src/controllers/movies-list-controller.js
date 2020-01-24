@@ -20,13 +20,19 @@ const Sortings = {
 };
 
 export default class MoviesListController {
-  constructor(container, movies) {
+  constructor(container, movies, onDataChange) {
     this._container = container;
     this._initialMoviesList = movies;
     this._sortedMoviesList = movies;
 
     this._numberOfShownMovies = 0;
     this._showMoreButton = new ShowMoreButton();
+
+    this._onShowDetailsSubscriptions = [];
+    this._onShowDetails = this._onShowDetails.bind(this);
+
+    this._onDataChange = onDataChange;
+    this._onDataChangeSubscriptions = [];
   }
 
   init() {
@@ -85,9 +91,16 @@ export default class MoviesListController {
     const movieController = new MovieController(
       this._container,
       movie,
-      () => {}
+      this._onShowDetails,
+      this._onDataChange
     );
     movieController.init();
+    this._onShowDetailsSubscriptions.push(
+      movieController._hideMovieDetails.bind(movieController)
+    );
+    this._onDataChangeSubscriptions.push(
+      movieController._updateMovie.bind(movieController)
+    );
   }
 
   _setShowMoreEventListener() {
@@ -120,5 +133,24 @@ export default class MoviesListController {
     }
 
     this._renderMoviesListByChuncks();
+  }
+
+  _onShowDetails() {
+    this._onShowDetailsSubscriptions.forEach(subscription => {
+      if (!(subscription instanceof Function)) {
+        return;
+      }
+      subscription();
+    });
+  }
+
+  _onMoviesListDataChange(movies) {
+    this._initialMoviesList = movies;
+    this._onDataChangeSubscriptions.forEach(subscription => {
+      if (!(subscription instanceof Function)) {
+        return;
+      }
+      subscription(movies);
+    });
   }
 }

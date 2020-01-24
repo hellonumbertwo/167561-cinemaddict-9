@@ -11,6 +11,7 @@ export default class PageController {
     this._container = container;
     this._movies = movies;
     this._statistics = statistics;
+    this._onDataChange = this._onDataChange.bind(this);
 
     this._content = new Content();
     this._filtersPanel = new FiltersPanel(filters);
@@ -21,21 +22,25 @@ export default class PageController {
 
     this._moviesListController = new MoviesListController(
       this._content.getElement().querySelector(`.films-list__container`),
-      this._movies
+      this._movies,
+      this._onDataChange
     );
     this._topRatedMoviesListController = new MoviesListController(
       this._topRatedContainer
         .getElement()
         .querySelector(`.films-list__container`),
-      this._topRatedMovies
+      this._topRatedMovies,
+      this._onDataChange
     );
     this._mostCommentedMoviesListController = new MoviesListController(
       this._mostCommentedContainer
         .getElement()
         .querySelector(`.films-list__container`),
-      this._mostCommentedMovies
+      this._mostCommentedMovies,
+      this._onDataChange
     );
     this._onSortingChangeSubscriptions = [];
+    this._onDataChangeSubscriptions = [];
   }
 
   get _mostCommentedMovies() {
@@ -64,15 +69,29 @@ export default class PageController {
         this._moviesListController
       )
     );
+    this._onDataChangeSubscriptions.push(
+      this._moviesListController._onMoviesListDataChange.bind(
+        this._moviesListController
+      )
+    );
 
     [this._mostCommentedContainer, this._topRatedContainer].forEach(component =>
       render(this._content.getElement(), component.getElement(), `beforeend`)
     );
 
     this._topRatedMoviesListController.init();
-    this._mostCommentedMoviesListController.init();
+    this._onDataChangeSubscriptions.push(
+      this._topRatedMoviesListController._onMoviesListDataChange.bind(
+        this._topRatedMoviesListController
+      )
+    );
 
-    // this._renderExtraMovies();
+    this._mostCommentedMoviesListController.init();
+    this._onDataChangeSubscriptions.push(
+      this._mostCommentedMoviesListController._onMoviesListDataChange.bind(
+        this._mostCommentedMoviesListController
+      )
+    );
 
     this._setSortingEventListeners();
   }
@@ -143,6 +162,16 @@ export default class PageController {
           }
         });
       subscription(e.target.dataset.sortType);
+    });
+  }
+
+  _onDataChange(updatedMovie) {
+    this._movies[updatedMovie.id] = { ...updatedMovie };
+    this._onDataChangeSubscriptions.forEach(subscription => {
+      if (!(subscription instanceof Function)) {
+        return;
+      }
+      subscription(this._movies);
     });
   }
 

@@ -1,93 +1,142 @@
 import { render } from "../utils";
 import MoviePreview from "../components/movie-preview";
-import MovieDetailsController from "./movie-details-controller";
+import MovieDetails from "../components/movie-details";
+import MovieInfo from "../components/movie-info";
+import MovieStatusPanel from "../components/movie-status-panel";
+import MovieRatingPanel from "../components/movie-rating-panel";
+import CommentForm from "../components/comment-form";
+import Comment from "./../components/comment";
 
 export default class MovieController {
-  constructor(container, movie, onDataChange) {
+  constructor(container, movie, onShowDetails, onDataChange) {
     this._container = container;
     this._movie = movie;
+    this._onShowDetails = onShowDetails;
     this._onDataChange = onDataChange;
     this._elementToBeUpdated = null;
-    this._subscriptions = [];
+    this._commentForm = new CommentForm();
+
+    this._showMovieDetails = this._showMovieDetails.bind(this);
+    this._hideMovieDetails = this._hideMovieDetails.bind(this);
   }
   init() {
     this._moviePreview = new MoviePreview(this._movie);
+    this._movieDetails = new MovieDetails(this._movie);
+    this._movieInfo = new MovieInfo(this._movie);
+    this._movieStatusPanel = new MovieStatusPanel(this._movie);
+    this._movieRatingPanel = new MovieRatingPanel(this._movie);
 
-    /** Показать попап с доп информацией при клике на название, постер или кол-во комментариев
-     * @param {event} e
-     */
-    const showMovieDetails = e => {
-      if (
-        e.target.id === `movie-poster` ||
-        e.target.id === `movie-title` ||
-        e.target.id === `movie-comments-title`
-      ) {
-        this._onChangeView();
-        const movieDetailsController = new MovieDetailsController(
-          this._container,
-          this._movie,
-          this._onDataChangeFromDetails.bind(this)
-        );
-        movieDetailsController.init();
-        this._subscriptions.push(
-          movieDetailsController.setDefaultView.bind(movieDetailsController)
-        );
-      }
-    };
-
-    this._moviePreview
-      .getElement()
-      .addEventListener(`click`, showMovieDetails, false);
-
-    // либо обновляем карточку либо рендерим новую
     if (this._elementToBeUpdated) {
-      this._updateMovieNode();
+      this._container.replaceChild(
+        this._moviePreview.getElement(),
+        this._elementToBeUpdated
+      );
+      this._elementToBeUpdated = null;
     } else {
       render(this._container, this._moviePreview.getElement(), `beforeend`);
     }
-    this._changeMovieDataFromPreview();
+    this._setEventListenerForShowDetails();
+    this._changeCategoryFromPreview();
   }
 
-  _updateMovieData() {
-    this._elementToBeUpdated = this._moviePreview.getElement();
-    // TODO: может сделать отдельный метод для обновления node
-    this.init();
-  }
-
-  // обновляем карточку фильма в DOM
-  _updateMovieNode() {
-    this._moviePreview.getElement().className = this._elementToBeUpdated.classList.toString();
-    this._container.replaceChild(
-      this._moviePreview.getElement(),
-      this._elementToBeUpdated
-    );
-  }
-
-  _changeMovieDataFromPreview() {
-    const formElement = this._moviePreview
-      .getElement()
-      .querySelector(`.film-card__controls`);
-
-    formElement.addEventListener(
+  _setEventListenerForShowDetails() {
+    this._moviePreview.getElement().addEventListener(
       `click`,
       e => {
-        e.preventDefault();
-        const status = [e.target.dataset.status];
-        this._onDataChange(
-          { [status]: !this._movie[e.target.dataset.status] },
-          this._movie.id,
-          this._updateMovieData.bind(this)
-        );
+        if (
+          e.target.id === `movie-poster` ||
+          e.target.id === `movie-title` ||
+          e.target.id === `movie-comments-title`
+        ) {
+          this._showMovieDetails();
+        }
       },
       false
     );
   }
 
-  _onDataChangeFromDetails(entry) {
-    this._onDataChange(entry, this._movie.id, this._updateMovieData.bind(this));
+  _showMovieDetails() {
+    this._onShowDetails();
+
+    this._renderMoviedDtails();
+
+    this._movieDetails
+      .getElement()
+      .querySelector(`.film-details__close-btn`)
+      .addEventListener(`click`, this._hideMovieDetails, false);
   }
 
-  _onChangeView() {
-    this._subscriptions.forEach(subscription => subscription());
+  _hideMovieDetails() {
+    if (document.body.contains(this._movieDetails.getElement())) {
+      this._movieDetails.removeElement();
+    }
+    this._movieDetails
+      .getElement()
+      .querySelector(`.film-details__close-btn`)
+      .removeEventListener(`click`, this._hideMovieDetails, false);
+  }
+
+  _renderMoviedDtails() {
+    render(
+      document.getElementById(`main`),
+      this._movieDetails.getElement(),
+      `beforeend`
+    );
+
+    [this._movieInfo, this._movieStatusPanel].forEach(component => {
+      render(
+        this._movieDetails
+          .getElement()
+          .querySelector(`.form-details__top-container`),
+        component.getElement(),
+        `beforeend`
+      );
+    });
+
+    this._movie.comments.forEach(comment => {
+      const commentBlock = new Comment(comment);
+      render(
+        this._movieDetails
+          .getElement()
+          .querySelector(`.film-details__comments-list`),
+        commentBlock.getElement(),
+        `beforeend`
+      );
+    });
+
+    render(
+      this._movieDetails
+        .getElement()
+        .querySelector(`.form-details__bottom-container`),
+      this._commentForm.getElement(),
+      `beforeend`
+    );
+  }
+
+  _updateMovie(movies) {
+    if (this._movie === movies[this._movie.id]) {
+      return;
+    }
+    this._movie = movies[this._movie.id];
+    this._elementToBeUpdated = this._moviePreview.getElement();
+    this.init();
+  }
+
+  _changeCategoryFromPreview() {
+    this._moviePreview
+      .getElement()
+      .querySelector(`.film-card__controls`)
+      .addEventListener(
+        `click`,
+        e => {
+          e.preventDefault();
+          const status = [e.target.dataset.status];
+          this._onDataChange({
+            ...this._movie,
+            [status]: !this._movie[e.target.dataset.status]
+          });
+        },
+        false
+      );
   }
 }
