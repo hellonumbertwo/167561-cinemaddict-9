@@ -1,11 +1,6 @@
 import { render } from "../utils";
+import MovieDetailsController from "./movie-details-controller";
 import MoviePreview from "../components/movie-preview";
-import MovieDetails from "../components/movie-details";
-import MovieInfo from "../components/movie-info";
-import MovieStatusPanel from "../components/movie-status-panel";
-import MovieRatingPanel from "../components/movie-rating-panel";
-import CommentForm from "../components/comment-form";
-import Comment from "./../components/comment";
 
 export default class MovieController {
   constructor(container, movie, onShowDetails, onDataChange) {
@@ -14,19 +9,37 @@ export default class MovieController {
     this._onShowDetails = onShowDetails;
     this._onDataChange = onDataChange;
     this._elementToBeUpdated = null;
-    this._commentForm = new CommentForm();
+    this._movieDetailsToBeUpdated = null;
 
     this._showMovieDetails = this._showMovieDetails.bind(this);
     this._hideMovieDetails = this._hideMovieDetails.bind(this);
+    this._onDataChangeSubscriptions = [];
   }
+
   init() {
     this._moviePreview = new MoviePreview(this._movie);
-    this._movieDetails = new MovieDetails(this._movie);
-    this._movieInfo = new MovieInfo(this._movie);
-    this._movieStatusPanel = new MovieStatusPanel(this._movie);
-    this._movieRatingPanel = new MovieRatingPanel(this._movie);
+    this._movieDetailsController = new MovieDetailsController(
+      document.getElementById(`main`),
+      this._movie,
+      this._onDataChange
+    );
+    this._onDataChangeSubscriptions.push(
+      this._movieDetailsController._updateMovieData.bind(
+        this._movieDetailsController
+      )
+    );
+    this._movieDetailsController.init();
 
-    if (this._elementToBeUpdated) {
+    this._renderCardPreview();
+    this._setEventListenerForShowDetails();
+    this._changeCategoryFromPreview();
+  }
+
+  _renderCardPreview() {
+    if (
+      this._elementToBeUpdated &&
+      document.body.contains(this._elementToBeUpdated)
+    ) {
       this._container.replaceChild(
         this._moviePreview.getElement(),
         this._elementToBeUpdated
@@ -35,8 +48,6 @@ export default class MovieController {
     } else {
       render(this._container, this._moviePreview.getElement(), `beforeend`);
     }
-    this._setEventListenerForShowDetails();
-    this._changeCategoryFromPreview();
   }
 
   _setEventListenerForShowDetails() {
@@ -57,60 +68,11 @@ export default class MovieController {
 
   _showMovieDetails() {
     this._onShowDetails();
-
-    this._renderMoviedDtails();
-
-    this._movieDetails
-      .getElement()
-      .querySelector(`.film-details__close-btn`)
-      .addEventListener(`click`, this._hideMovieDetails, false);
+    this._movieDetailsController.show();
   }
 
   _hideMovieDetails() {
-    if (document.body.contains(this._movieDetails.getElement())) {
-      this._movieDetails.removeElement();
-    }
-    this._movieDetails
-      .getElement()
-      .querySelector(`.film-details__close-btn`)
-      .removeEventListener(`click`, this._hideMovieDetails, false);
-  }
-
-  _renderMoviedDtails() {
-    render(
-      document.getElementById(`main`),
-      this._movieDetails.getElement(),
-      `beforeend`
-    );
-
-    [this._movieInfo, this._movieStatusPanel].forEach(component => {
-      render(
-        this._movieDetails
-          .getElement()
-          .querySelector(`.form-details__top-container`),
-        component.getElement(),
-        `beforeend`
-      );
-    });
-
-    this._movie.comments.forEach(comment => {
-      const commentBlock = new Comment(comment);
-      render(
-        this._movieDetails
-          .getElement()
-          .querySelector(`.film-details__comments-list`),
-        commentBlock.getElement(),
-        `beforeend`
-      );
-    });
-
-    render(
-      this._movieDetails
-        .getElement()
-        .querySelector(`.form-details__bottom-container`),
-      this._commentForm.getElement(),
-      `beforeend`
-    );
+    this._movieDetailsController.hide();
   }
 
   _updateMovie(movies) {
@@ -120,6 +82,14 @@ export default class MovieController {
     this._movie = movies[this._movie.id];
     this._elementToBeUpdated = this._moviePreview.getElement();
     this.init();
+
+    // обновляем popup
+    this._onDataChangeSubscriptions.forEach(subscription => {
+      if (!(subscription instanceof Function)) {
+        return;
+      }
+      subscription(this._movie);
+    });
   }
 
   _changeCategoryFromPreview() {

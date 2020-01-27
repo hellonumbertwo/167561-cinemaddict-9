@@ -88,18 +88,18 @@ export default class MoviesListController {
   }
 
   _renderMovie(movie) {
-    const movieController = new MovieController(
+    this._movieController = new MovieController(
       this._container,
       movie,
       this._onShowDetails,
       this._onDataChange
     );
-    movieController.init();
+    this._movieController.init();
     this._onShowDetailsSubscriptions.push(
-      movieController._hideMovieDetails.bind(movieController)
+      this._movieController._hideMovieDetails.bind(this._movieController)
     );
     this._onDataChangeSubscriptions.push(
-      movieController._updateMovie.bind(movieController)
+      this._movieController._updateMovie.bind(this._movieController)
     );
   }
 
@@ -150,7 +150,7 @@ export default class MoviesListController {
       if (!(subscription instanceof Function)) {
         return;
       }
-      subscription(movies);
+      subscription(this._initialMoviesList);
     });
   }
 }
