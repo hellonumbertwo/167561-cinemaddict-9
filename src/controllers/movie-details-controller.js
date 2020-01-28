@@ -23,12 +23,12 @@ export default class MovieDetailsController {
     this._movieInfo = new MovieInfo(this._movie);
     this._movieStatusPanel = new MovieStatusPanel(this._movie);
     this._movieRatingPanel = new MovieRatingPanel(this._movie);
-
     this._commentForm = new CommentForm();
   }
 
   show() {
     this._renderMoviedDtails();
+    this._addEventListeners();
   }
 
   hide() {
@@ -48,15 +48,17 @@ export default class MovieDetailsController {
       `beforeend`
     );
 
-    [this._movieInfo, this._movieStatusPanel].forEach(component => {
-      render(
-        this._movieDetails
-          .getElement()
-          .querySelector(`.form-details__top-container`),
-        component.getElement(),
-        `beforeend`
-      );
-    });
+    [this._movieInfo, this._movieStatusPanel, this._movieRatingPanel].forEach(
+      component => {
+        render(
+          this._movieDetails
+            .getElement()
+            .querySelector(`.form-details__top-container`),
+          component.getElement(),
+          `beforeend`
+        );
+      }
+    );
 
     this._movie.comments.forEach(comment => {
       this._addComment(comment);
@@ -69,11 +71,9 @@ export default class MovieDetailsController {
       this._commentForm.getElement(),
       `beforeend`
     );
-
-    this._addEventListeners();
   }
 
-  _changeData() {
+  _changeData(payload = null) {
     const form = this._movieDetails
       .getElement()
       .querySelector(`.film-details__inner`);
@@ -83,8 +83,13 @@ export default class MovieDetailsController {
       isInWatchList: formData.get(`watchlist`),
       isWatched: formData.get(`watched`),
       isFavorite: formData.get(`favorite`),
+      personalRating: formData.get(`score`),
       comments: [...this._movie.comments]
     };
+
+    if (payload) {
+      entry = { ...entry, ...payload };
+    }
 
     if (formData.get(`comment`) && formData.get(`comment-emoji`)) {
       entry.comments.push({
@@ -119,6 +124,24 @@ export default class MovieDetailsController {
           this._changeData();
         }
       });
+
+    this._movieRatingPanel
+      .getElement()
+      .querySelector(`.film-details__user-rating-score`)
+      .addEventListener(`click`, e => {
+        if (e.target.tagName !== `INPUT`) {
+          return;
+        }
+        this._changeData();
+      });
+
+    this._movieRatingPanel
+      .getElement()
+      .querySelector(`.film-details__watched-reset`)
+      .addEventListener(`click`, () => {
+        this._resetPersonalRating();
+        this._changeData();
+      });
   }
 
   _updateMovieData(movie) {
@@ -126,17 +149,8 @@ export default class MovieDetailsController {
       return;
     }
     this._movie = movie;
-    // this._movieDetails
-    //   .getElement()
-    //   .querySelector(`.film-details__comments-list`).innerHTML = ``;
-    // this._movie.comments.forEach(comment => {
-    //   this._addComment(comment);
-    // });
-    // this._movieDetails
-    //   .getElement()
-    //   .querySelector(
-    //     `.film-details__comments-count`
-    //   ).innerHTML = `${this._movie.comments.length}`;
+
+    this._updateRatingPanel();
     this._updateCommentsList();
     this._commentFormReset();
   }
@@ -177,5 +191,32 @@ export default class MovieDetailsController {
       .querySelector(
         `.film-details__comments-count`
       ).innerHTML = `${this._movie.comments.length}`;
+  }
+
+  _updateRatingPanel() {
+    const panelNode = this._movieRatingPanel.getElement();
+    if (
+      this._movie.isWatched &&
+      panelNode.classList.contains(`visually-hidden`)
+    ) {
+      panelNode.classList.remove(`visually-hidden`);
+    }
+    if (
+      !this._movie.isWatched &&
+      !panelNode.classList.contains(`visually-hidden`)
+    ) {
+      panelNode.classList.add(`visually-hidden`);
+    }
+    if (!this._movie.isWatched) {
+      this._resetPersonalRating();
+    }
+  }
+
+  _resetPersonalRating() {
+    this._movieRatingPanel
+      .getElement()
+      .querySelector(`.film-details__user-rating-score`)
+      .querySelectorAll(`input`)
+      .forEach(input => (input.checked = false));
   }
 }

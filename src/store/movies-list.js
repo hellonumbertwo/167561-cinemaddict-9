@@ -109,6 +109,7 @@ const createMovie = () => {
     country,
     genresList,
     rate: Math.round(Math.random() * 9 * 10) / 10,
+    personalRating: Math.floor(Math.random() * 10).toString(),
     description: getDescription(),
     isWatched: !!Math.round(Math.random()),
     isFavorite: !!Math.round(Math.random()),

@@ -174,19 +174,4 @@ export default class PageController {
       subscription(this._movies);
     });
   }
-
-  // _onDataChange(newMovieData, movieId, updateMovie) {
-  //   this._mutateMovieDataInInitialList(this._movies[movieId], newMovieData);
-  //   updateMovie();
-  // }
-
-  // _mutateMovieDataInInitialList(oldObjData, newObjData) {
-  //   Object.keys(newObjData).forEach(function(key) {
-  //     delete oldObjData[key];
-  //   });
-
-  //   Object.keys(newObjData).forEach(function(key) {
-  //     oldObjData[key] = newObjData[key];
-  //   });
-  // }
 }
