@@ -16,6 +16,7 @@ export default class MovieDetailsController {
 
     this.hide = this.hide.bind(this);
     this._onRemoveComment = this._onRemoveComment.bind(this);
+    this._onEscapeKeyDown = this._onEscapeKeyDown.bind(this);
   }
 
   init() {
@@ -39,6 +40,7 @@ export default class MovieDetailsController {
       .getElement()
       .querySelector(`.film-details__close-btn`)
       .removeEventListener(`click`, this._hide, false);
+    document.removeEventListener(`keydown`, this._onEscapeKeyDown);
   }
 
   _renderMoviedDtails() {
@@ -142,6 +144,8 @@ export default class MovieDetailsController {
         this._resetPersonalRating();
         this._changeData();
       });
+
+    document.addEventListener(`keydown`, this._onEscapeKeyDown);
   }
 
   _updateMovieData(movie) {
@@ -218,5 +222,19 @@ export default class MovieDetailsController {
       .querySelector(`.film-details__user-rating-score`)
       .querySelectorAll(`input`)
       .forEach(input => (input.checked = false));
+  }
+
+  _onEscapeKeyDown(e) {
+    // не выполняем код повторно, если событие уже запущено
+    if (e.defaultPrevented) {
+      document.removeEventListener(`keydown`, this._onEscKeyDown);
+      return;
+    }
+    e.preventDefault();
+
+    if (e.key === `esc` || e.key === `Escape`) {
+      this.hide();
+    }
+    document.removeEventListener(`keydown`, this._onEscKeyDown);
   }
 }
