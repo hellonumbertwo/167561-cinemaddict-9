@@ -1,4 +1,4 @@
-import { render } from "../utils";
+import { render, createElement } from "../utils";
 import ShowMoreButton from "../components/show-more-button";
 import MovieController from "./movie-controller";
 
@@ -36,6 +36,16 @@ export default class MoviesListController {
   }
 
   init() {
+    if (this._initialMoviesList.length === 0) {
+      const plug = createElement(`
+      <div class="no-result">
+        There are no movies in our database.
+      </div>
+      `);
+      render(this._container, plug, `afterend`);
+      return;
+    }
+
     this._renderMoviesListByChuncks(SHOW_MOVIES_STEP);
 
     if (this._initialMoviesList.length > SHOW_MOVIES_STEP) {
