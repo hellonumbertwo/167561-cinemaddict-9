@@ -146,6 +146,20 @@ export default class MovieDetailsController {
       });
 
     document.addEventListener(`keydown`, this._onEscapeKeyDown);
+
+    this._commentForm
+      .getElement()
+      .querySelector(`.film-details__comment-input`)
+      .addEventListener(`focus`, () => {
+        document.removeEventListener(`keydown`, this._onEscapeKeyDown);
+      });
+
+    this._commentForm
+      .getElement()
+      .querySelector(`.film-details__comment-input`)
+      .addEventListener(`blur`, () => {
+        document.addEventListener(`keydown`, this._onEscapeKeyDown);
+      });
   }
 
   _updateMovieData(movie) {
