@@ -1,178 +1,57 @@
-import { render } from "../utils";
-import Content from "../components/content";
-import Sorting from "../components/sorting";
-import ExtraMoviesList from "../components/extra-movies-list";
-import Statistics from "./../components/statistics";
-import MoviesListController from "./movies-list-controller";
+import { Screens } from "./../utils/index";
 import NavigationController from "./navigation-controller";
+import StatisticsController from "./statistics-controller";
+import MoviesBoardController from "./movies-board-controller";
 
 export default class PageController {
-  constructor(container, movies, statistics) {
+  constructor(container, movies) {
     this._container = container;
     this._movies = movies;
-    this._statistics = statistics;
-    this._onDataChange = this._onDataChange.bind(this);
 
-    this._content = new Content();
-    this._sorting = new Sorting();
-    this._topRatedContainer = new ExtraMoviesList(`Top rated`);
-    this._mostCommentedContainer = new ExtraMoviesList(`Most commented`);
-    this._statistics = new Statistics(statistics);
+    this._currentScreen = Screens.FILMS;
+    this._updateScreen = this._updateScreen.bind(this);
+    this._updateScreenSubscription = [];
 
-    this._moviesListController = new MoviesListController(
-      this._content.getElement().querySelector(`.films-list__container`),
-      this._movies,
-      this._onDataChange
+    this._navigationController = new NavigationController(
+      container,
+      movies,
+      this._updateScreen
     );
-    this._topRatedMoviesListController = new MoviesListController(
-      this._topRatedContainer
-        .getElement()
-        .querySelector(`.films-list__container`),
-      this._topRatedMovies,
-      this._onDataChange
-    );
-    this._mostCommentedMoviesListController = new MoviesListController(
-      this._mostCommentedContainer
-        .getElement()
-        .querySelector(`.films-list__container`),
-      this._mostCommentedMovies,
-      this._onDataChange
-    );
-    this._navigationController = new NavigationController(container, movies);
-
-    this._onSortingChangeSubscriptions = [];
-    this._onDataChangeSubscriptions = [];
-  }
-
-  get _mostCommentedMovies() {
-    return [...this._movies]
-      .sort((a, b) => b.comments.length - a.comments.length)
-      .slice(0, 2);
-  }
-
-  get _topRatedMovies() {
-    return [...this._movies].sort((a, b) => b.rate - a.rate).slice(0, 2);
+    this._statisticsController = new StatisticsController(container, movies);
+    this._moviesBoardController = new MoviesBoardController(container, movies);
   }
 
   init() {
     this._navigationController.init();
-    [
-      // this._statistics,
-      this._sorting,
-      this._content
-    ].forEach(component =>
-      render(this._container, component.getElement(), `beforeend`)
-    );
+    this._statisticsController.init();
+    this._moviesBoardController.init();
 
-    this._moviesListController.init();
-    this._onSortingChangeSubscriptions.push(
-      this._moviesListController._onHandleSorting.bind(
-        this._moviesListController
-      )
-    );
-    this._onDataChangeSubscriptions.push(
-      this._moviesListController._onMoviesListDataChange.bind(
-        this._moviesListController
+    this._updateScreenSubscription.push(
+      this._navigationController._updateCurrentScreen.bind(
+        this._navigationController
       )
     );
 
-    [this._mostCommentedContainer, this._topRatedContainer].forEach(component =>
-      render(this._content.getElement(), component.getElement(), `beforeend`)
-    );
-
-    this._topRatedMoviesListController.init();
-    this._onDataChangeSubscriptions.push(
-      this._topRatedMoviesListController._onMoviesListDataChange.bind(
-        this._topRatedMoviesListController
-      )
-    );
-
-    this._mostCommentedMoviesListController.init();
-    this._onDataChangeSubscriptions.push(
-      this._mostCommentedMoviesListController._onMoviesListDataChange.bind(
-        this._mostCommentedMoviesListController
-      )
-    );
-
-    this._setSortingEventListeners();
+    this._updateScreen(this._currentScreen);
   }
 
-  _setSortingEventListeners() {
-    this._sorting.getElement().addEventListener(`click`, e => {
-      this._sortMoviesByLinkClick(e);
-    });
-  }
-
-  _renderExtraMovies() {
-    [this._topRatedMoviesList, this._mostCommentedMoviesList].forEach(
-      component => {
-        render(this._content.getElement(), component.getElement(), `beforeend`);
-      }
-    );
-
-    this._topRatedMovies.forEach(movie => {
-      this._initMovieController(
-        this._topRatedMoviesList
-          .getElement()
-          .querySelector(`.films-list__container`),
-        movie
-      );
-    });
-
-    this._mostCommentedMovies.forEach(movie => {
-      this._initMovieController(
-        this._mostCommentedMoviesList
-          .getElement()
-          .querySelector(`.films-list__container`),
-        movie
-      );
-    });
-  }
-
-  /**
-   * отсортировать preview-карточки фильмов по клику на ссылку в панели sort controls
-   * @private
-   * @param {event} e – событие `click`
-   */
-  _sortMoviesByLinkClick(e) {
-    e.preventDefault();
-
-    if (e.target.tagName !== `A`) {
-      return;
+  _updateScreen(screen) {
+    switch (screen) {
+      case Screens.STATISTICS:
+        this._statisticsController.show();
+        this._moviesBoardController.hide();
+        break;
+      case Screens.FILMS:
+        this._statisticsController.hide();
+        this._moviesBoardController.show();
+        break;
     }
-
-    this._onSortingChangeSubscriptions.forEach(subscription => {
+    this._currentScreen = screen;
+    this._updateScreenSubscription.forEach(subscription => {
       if (!(subscription instanceof Function)) {
         return;
       }
-      this._sorting
-        .getElement()
-        .querySelectorAll(`.sort__button`)
-        .forEach(control => {
-          if (
-            control !== e.target &&
-            control.classList.contains(`sort__button--active`)
-          ) {
-            control.classList.remove(`sort__button--active`);
-          }
-          if (
-            control === e.target &&
-            !control.classList.contains(`sort__button--active`)
-          ) {
-            control.classList.add(`sort__button--active`);
-          }
-        });
-      subscription(e.target.dataset.sortType);
-    });
-  }
-
-  _onDataChange(updatedMovie) {
-    this._movies[updatedMovie.id] = { ...updatedMovie };
-    this._onDataChangeSubscriptions.forEach(subscription => {
-      if (!(subscription instanceof Function)) {
-        return;
-      }
-      subscription(this._movies);
+      subscription(screen);
     });
   }
 }

@@ -21,7 +21,7 @@ export default class Navigation extends AbstractComponent {
         `
           )
           .join(``)}
-          <a href="#stats" class="main-navigation__item main-navigation__item--additional">Stats</a>
+          <a href="#stats" class="main-navigation__item main-navigation__item--additional" id="statistics">Stats</a>
       </nav>
     `;
   }

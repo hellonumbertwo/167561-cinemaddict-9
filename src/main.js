@@ -13,8 +13,7 @@ const profile = new Profile(statisticsData);
 const footer = new Footer(moviesList);
 const pageController = new PageController(
   document.getElementById(`main`),
-  moviesList,
-  statisticsData
+  moviesList
 );
 
 [search, profile].forEach(component =>

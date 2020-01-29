@@ -61,6 +61,11 @@ const Filters = {
   FAVORITES: `Favorites`
 };
 
+export const Screens = {
+  STATISTICS: `Statistics`,
+  FILMS: `Films`
+};
+
 /*
  *
  *
