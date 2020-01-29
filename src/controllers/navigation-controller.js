@@ -19,6 +19,18 @@ export default class NavigationController {
     this._setEventListeners();
   }
 
+  show() {
+    if (this._navigation.getElement().classList.contains(`visually-hidden`)) {
+      this._navigation.getElement().classList.remove(`visually-hidden`);
+    }
+  }
+
+  hide() {
+    if (!this._navigation.getElement().classList.contains(`visually-hidden`)) {
+      this._navigation.getElement().classList.add(`visually-hidden`);
+    }
+  }
+
   _processData() {
     const filtersData = getMoviesDataByFilters(this._movies);
     this._filters = Object.keys(filtersData).map(filter => ({

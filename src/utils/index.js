@@ -63,7 +63,8 @@ const Filters = {
 
 export const Screens = {
   STATISTICS: `Statistics`,
-  FILMS: `Films`
+  FILMS: `Films`,
+  SEARCH: `Search`
 };
 
 /*
