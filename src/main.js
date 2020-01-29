@@ -1,6 +1,5 @@
-import { filtersList } from "./store/filters-list";
 import { calculateStatistics } from "./store/statistics";
-import { moviesList, SHOW_MOVIES_STEP } from "./store/movies-list";
+import { moviesList } from "./store/movies-list";
 import { render } from "./utils";
 import Footer from "./components/footer";
 import Search from "./components/search";
@@ -15,7 +14,6 @@ const footer = new Footer(moviesList);
 const pageController = new PageController(
   document.getElementById(`main`),
   moviesList,
-  filtersList,
   statisticsData
 );
 

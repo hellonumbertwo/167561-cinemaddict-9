@@ -28,6 +28,50 @@ export const createElement = template => {
   return newTemplate.content.firstElementChild;
 };
 
+export const formatDuration = ms => {
+  return `${moment.duration(ms).hours()}h ${moment.duration(ms).minutes()}m`;
+};
+
+export const getMoviesDataByFilters = list => {
+  const getMoviesListByFilter = filter => {
+    switch (filter) {
+      case Filters.ALL:
+        return list;
+      case Filters.WATCHLIST:
+        return list.filter(({ isInWatchList }) => !!isInWatchList);
+      case Filters.HISTORY:
+        return list.filter(({ isWatched }) => !!isWatched);
+      case Filters.FAVORITES:
+        return list.filter(({ isFavorite }) => !!isFavorite);
+    }
+    return list;
+  };
+
+  return Object.values(Filters).reduce((acc, filter) => {
+    acc[filter] = getMoviesListByFilter(filter);
+    return acc;
+  }, {});
+};
+
+// ENUMS
+const Filters = {
+  ALL: `All movies`,
+  WATCHLIST: `Watchlist`,
+  HISTORY: `History`,
+  FAVORITES: `Favorites`
+};
+
+/*
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
 /** Возвращает рыбный текст – 1-3 рандомных предложения, но обязательно хотя бы одно
  * @return {string} – рандомный тект
  */
@@ -53,10 +97,6 @@ export const getRandomDate = startDate => {
   const from = new Date(startDate).getTime();
   const to = Date.now();
   return new Date(from + Math.random() * (to - from));
-};
-
-export const formatDuration = ms => {
-  return `${moment.duration(ms).hours()}h ${moment.duration(ms).minutes()}m`;
 };
 
 export const getRandomArrayItem = array => {

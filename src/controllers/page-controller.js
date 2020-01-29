@@ -1,20 +1,19 @@
 import { render } from "../utils";
 import Content from "../components/content";
-import FiltersPanel from "../components/filters-panel";
 import Sorting from "../components/sorting";
 import ExtraMoviesList from "../components/extra-movies-list";
 import Statistics from "./../components/statistics";
 import MoviesListController from "./movies-list-controller";
+import NavigationController from "./navigation-controller";
 
 export default class PageController {
-  constructor(container, movies, filters, statistics) {
+  constructor(container, movies, statistics) {
     this._container = container;
     this._movies = movies;
     this._statistics = statistics;
     this._onDataChange = this._onDataChange.bind(this);
 
     this._content = new Content();
-    this._filtersPanel = new FiltersPanel(filters);
     this._sorting = new Sorting();
     this._topRatedContainer = new ExtraMoviesList(`Top rated`);
     this._mostCommentedContainer = new ExtraMoviesList(`Most commented`);
@@ -39,6 +38,8 @@ export default class PageController {
       this._mostCommentedMovies,
       this._onDataChange
     );
+    this._navigationController = new NavigationController(container, movies);
+
     this._onSortingChangeSubscriptions = [];
     this._onDataChangeSubscriptions = [];
   }
@@ -54,9 +55,9 @@ export default class PageController {
   }
 
   init() {
+    this._navigationController.init();
     [
       // this._statistics,
-      // this._filtersPanel,
       this._sorting,
       this._content
     ].forEach(component =>

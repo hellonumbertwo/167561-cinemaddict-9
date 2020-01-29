@@ -1,18 +1,18 @@
 import AbstractComponent from "./abstract-component";
 
-export default class FiltersPanel extends AbstractComponent {
-  constructor(filtersList) {
+export default class Navigation extends AbstractComponent {
+  constructor(filters) {
     super();
-    this._filtersList = filtersList;
+    this._filters = filters;
   }
   getTemplate() {
     return `
       <nav class="main-navigation">
-        ${this._filtersList
+        ${this._filters
           .map(
-            ({ name, amount }) => `
+            ({ filter, amount }) => `
           <a href="#watchlist" class="main-navigation__item">
-          ${name}
+          ${filter}
           ${
             amount
               ? `<span class="main-navigation__item-count">${amount}</span>`
@@ -21,6 +21,7 @@ export default class FiltersPanel extends AbstractComponent {
         `
           )
           .join(``)}
+          <a href="#stats" class="main-navigation__item main-navigation__item--additional">Stats</a>
       </nav>
     `;
   }
