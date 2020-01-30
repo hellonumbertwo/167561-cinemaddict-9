@@ -47,19 +47,28 @@ export default class NavigationController {
         e.preventDefault();
         if (this._currentScreen === Screens.STATISTICS) {
           this._onScreenChange(Screens.FILMS);
-          if (e.target.classList.contains(ACTIVE_CLASS)) {
-            e.target.classList.remove(ACTIVE_CLASS);
-          }
         } else {
           this._onScreenChange(Screens.STATISTICS);
-          if (!e.target.classList.contains(ACTIVE_CLASS)) {
-            e.target.classList.add(ACTIVE_CLASS);
-          }
         }
       });
   }
 
   _updateCurrentScreen(screen) {
     this._currentScreen = screen;
+    const statsLink = this._navigation
+      .getElement()
+      .querySelector(`#statistics`);
+    if (
+      this._currentScreen !== Screens.STATISTICS &&
+      statsLink.classList.contains(ACTIVE_CLASS)
+    ) {
+      statsLink.classList.remove(ACTIVE_CLASS);
+    }
+    if (
+      this._currentScreen === Screens.STATISTICS &&
+      !statsLink.classList.contains(ACTIVE_CLASS)
+    ) {
+      statsLink.classList.add(ACTIVE_CLASS);
+    }
   }
 }
