@@ -1,196 +1,88 @@
-import { render } from "../utils";
-import Content from "../components/content";
-import ShowMoreButton from "../components/show-more-button";
-import MovieController from "./movie-controller";
-import FiltersPanel from "../components/filters-panel";
-import Sorting from "../components/sorting";
-import ExtraMoviesList from "../components/extra-movies-list";
-import Statistics from "./../components/statistics";
+import { render, Screens } from "./../utils/index";
+import NavigationController from "./navigation-controller";
+import StatisticsController from "./statistics-controller";
+import MoviesBoardController from "./movies-board-controller";
+import SearchController from "./search-controller";
+import Footer from "../components/footer";
+import Profile from "../components/profile";
 
 export default class PageController {
-  constructor(container, movies, showMoviesStep, filters, statistics) {
+  constructor(container, movies) {
     this._container = container;
-    this._movies = [...movies];
-    this._defaultOrderedMovies = [...movies];
-    this._showMoviesStep = showMoviesStep;
-    this._numberOfShownMovies = 0;
-    this._statistics = statistics;
-    this._content = new Content();
-    this._showMoreButton = new ShowMoreButton();
-    this._filtersPanel = new FiltersPanel(filters);
-    this._sorting = new Sorting();
-    this._topRatedMoviesList = new ExtraMoviesList(`Top rated`);
-    this._mostCommentedMoviesList = new ExtraMoviesList(`Most commented`);
-    this._statistics = new Statistics(statistics);
-  }
+    this._movies = movies;
 
-  get _mostCommentedMovies() {
-    return [...this._movies]
-      .sort((a, b) => b.comments.length - a.comments.length)
-      .slice(0, 2);
-  }
+    this._currentScreen = Screens.FILMS;
+    this._updateScreen = this._updateScreen.bind(this);
+    this._updateScreenSubscription = [];
 
-  get _topRatedMovies() {
-    return [...this._movies].sort((a, b) => b.rate - a.rate).slice(0, 2);
+    this._navigationController = new NavigationController(
+      container,
+      movies,
+      this._updateScreen
+    );
+    this._statisticsController = new StatisticsController(container, movies);
+    this._moviesBoardController = new MoviesBoardController(container, movies);
+    this._searchController = new SearchController(
+      document.getElementById(`header`),
+      movies,
+      this._updateScreen
+    );
+    this._footer = new Footer(movies);
+    this._profile = new Profile();
   }
 
   init() {
-    [
-      this._statistics,
-      this._filtersPanel,
-      this._sorting,
-      this._content
-    ].forEach(component =>
-      render(this._container, component.getElement(), `beforeend`)
-    );
-
+    this._searchController.init();
     render(
-      this._content.getElement().querySelector(`.films-list__container`),
-      this._showMoreButton.getElement(),
+      document.getElementById(`header`),
+      this._profile.getElement(),
+      `beforeend`
+    );
+    render(
+      document.getElementById(`main`),
+      this._footer.getElement(),
       `afterend`
     );
+    this._navigationController.init();
+    this._statisticsController.init();
+    this._moviesBoardController.init();
 
-    this._renderMoviesListByChunks();
-
-    this._renderExtraMovies();
-
-    this._setEventListeners();
-  }
-
-  _setEventListeners() {
-    this._showMoreButton.getElement().addEventListener(
-      `click`,
-      () => {
-        this._renderMoviesListByChunks();
-      },
-      false
+    this._updateScreenSubscription.push(
+      this._navigationController._updateCurrentScreen.bind(
+        this._navigationController
+      )
     );
 
-    this._sorting.getElement().addEventListener(`click`, e => {
-      this._sortMoviesByLinkClick(e);
-    });
+    this._updateScreen(this._currentScreen);
   }
 
-  // TODO: комментарий
-  _renderMoviesListByChunks() {
-    const prevNumberOfMovies = this._numberOfShownMovies;
-    const numberMoviesToShow = prevNumberOfMovies + this._showMoviesStep;
-    this._numberOfShownMovies = numberMoviesToShow;
-
-    for (let i = prevNumberOfMovies; i < numberMoviesToShow; i++) {
-      this._initMovieController(
-        this._container.querySelector(`.films-list__container`),
-        this._movies[i]
-      );
+  _updateScreen(screen) {
+    switch (screen) {
+      case Screens.STATISTICS:
+        this._navigationController.show();
+        this._statisticsController.show();
+        this._moviesBoardController.hide();
+        this._searchController.hide();
+        break;
+      case Screens.FILMS:
+        this._navigationController.show();
+        this._statisticsController.hide();
+        this._moviesBoardController.show();
+        this._searchController.hide();
+        break;
+      case Screens.SEARCH:
+        this._navigationController.hide();
+        this._statisticsController.hide();
+        this._moviesBoardController.hide();
+        this._searchController.show();
+        break;
     }
-
-    this._handleShowMoreButtonVisibility();
-  }
-
-  // TODO: комментарий
-  _initMovieController(container, movie) {
-    const movieController = new MovieController(
-      container,
-      movie,
-      this._onDataChange.bind(this)
-    );
-    movieController.init();
-  }
-
-  // TODO: комментарий
-  _renderExtraMovies() {
-    [this._topRatedMoviesList, this._mostCommentedMoviesList].forEach(
-      component => {
-        render(this._content.getElement(), component.getElement(), `beforeend`);
+    this._currentScreen = screen;
+    this._updateScreenSubscription.forEach(subscription => {
+      if (!(subscription instanceof Function)) {
+        return;
       }
-    );
-
-    this._topRatedMovies.forEach(movie => {
-      this._initMovieController(
-        this._topRatedMoviesList
-          .getElement()
-          .querySelector(`.films-list__container`),
-        movie
-      );
-    });
-
-    this._mostCommentedMovies.forEach(movie => {
-      this._initMovieController(
-        this._mostCommentedMoviesList
-          .getElement()
-          .querySelector(`.films-list__container`),
-        movie
-      );
-    });
-  }
-
-  /**
-   * отсортировать preview-карточки фильмов по клику на ссылку в панели sort controls
-   * @private
-   * @param {event} e – событие `click`
-   */
-  _sortMoviesByLinkClick(e) {
-    e.preventDefault();
-
-    if (e.target.tagName !== `A`) {
-      return;
-    }
-
-    this._numberOfShownMovies = 0;
-    this._container.querySelector(`.films-list__container`).innerHTML = ``;
-
-    switch (e.target.dataset.sortType) {
-      case `by-date`:
-        this._movies.slice().sort((a, b) => a.releaseDate - b.releaseDate);
-        break;
-      case `by-rate`:
-        this._movies.sort((a, b) => a.rate - b.rate);
-        break;
-      default:
-        this._movies = [...this._defaultOrdered];
-        break;
-    }
-
-    this._renderMoviesListByChunks();
-  }
-
-  // TODO: комментарий
-  _handleShowMoreButtonVisibility() {
-    const isButtonNeedToBeShown =
-      this._getIsMoreMoviesLeft(this._movies) &&
-      this._showMoreButton.getElement().classList.contains(`visually-hidden`);
-
-    const isButtonNeedToBeHidden =
-      !this._getIsMoreMoviesLeft(this._movies) &&
-      !this._showMoreButton.getElement().classList.contains(`visually-hidden`);
-
-    if (isButtonNeedToBeShown) {
-      this._showMoreButton.getElement().classList.remove(`visually-hidden`);
-    }
-
-    if (isButtonNeedToBeHidden) {
-      this._showMoreButton.getElement().classList.add(`visually-hidden`);
-    }
-  }
-
-  // TODO: комментарий
-  _getIsMoreMoviesLeft(fullList) {
-    return this._numberOfShownMovies < fullList.length;
-  }
-
-  _onDataChange(newMovieData, movieId, updateMovie) {
-    this._mutateMovieDataInInitialList(this._movies[movieId], newMovieData);
-    updateMovie();
-  }
-
-  // TODO: оставить комментарий
-  _mutateMovieDataInInitialList(oldObjData, newObjData) {
-    Object.keys(newObjData).forEach(function(key) {
-      delete oldObjData[key];
-    });
-
-    Object.keys(newObjData).forEach(function(key) {
-      oldObjData[key] = newObjData[key];
+      subscription(screen);
     });
   }
 }

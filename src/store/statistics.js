@@ -2,6 +2,9 @@
  * @param {array} movies – список фильмов в сервисе
  * @return {string} – строка с перечнем жанров*/
 const getFavoriteGenre = movies => {
+  if (movies.length === 0) {
+    return;
+  }
   const genresStats = movies
     .filter(movie => !!movie.isFavorite)
     .map(({ genresList }) => genresList)

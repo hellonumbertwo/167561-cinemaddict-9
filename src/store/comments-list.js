@@ -2,11 +2,11 @@ import { getFishText, getRandomDate, getRandomArrayItem } from "../utils/index";
 
 const createComment = () => {
   const emoji = getRandomArrayItem([
-    `angry.png`,
-    `puke.png`,
-    `sleeping.png`,
-    `smile.png`,
-    `trophy.png`
+    `angry`,
+    `puke`,
+    `sleeping`,
+    `smile`,
+    `trophy`
   ]);
 
   const author = `${getRandomArrayItem([
@@ -49,7 +49,7 @@ export const createCommentsList = () => {
   const commentsListMaxLength = Math.round(Math.random() * 30);
 
   for (let i = 0; i < commentsListMaxLength; i++) {
-    commentsList.push(createComment());
+    commentsList.push({ ...createComment(), id: i });
   }
   return commentsList;
 };
