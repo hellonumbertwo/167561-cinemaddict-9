@@ -44,10 +44,10 @@ export default class MovieController {
         this._moviePreview.getElement(),
         this._elementToBeUpdated
       );
-      this._elementToBeUpdated = null;
     } else {
       render(this._container, this._moviePreview.getElement(), `beforeend`);
     }
+    this._elementToBeUpdated = null;
   }
 
   _setEventListenerForShowDetails() {

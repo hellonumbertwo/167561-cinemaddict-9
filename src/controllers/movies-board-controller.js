@@ -1,4 +1,4 @@
-import { render } from "../utils";
+import { render, getMoviesDataByFilters } from "../utils";
 import Content from "../components/content";
 import Sorting from "../components/sorting";
 import ExtraMoviesList from "../components/extra-movies-list";
@@ -37,6 +37,7 @@ export default class PageController {
 
     this._onSortingChangeSubscriptions = [];
     this._onDataChangeSubscriptions = [];
+    this._onFilterChangeSubscriptions = [];
   }
 
   get _mostCommentedMovies() {
@@ -84,6 +85,11 @@ export default class PageController {
     );
     this._onDataChangeSubscriptions.push(
       this._moviesListController._onMoviesListDataChange.bind(
+        this._moviesListController
+      )
+    );
+    this._onFilterChangeSubscriptions.push(
+      this._moviesListController._onFilterChange.bind(
         this._moviesListController
       )
     );
@@ -175,6 +181,16 @@ export default class PageController {
           }
         });
       subscription(e.target.dataset.sortType);
+    });
+  }
+
+  _onFilterChange(filter) {
+    const filteredMovies = getMoviesDataByFilters(this._movies)[filter];
+    this._onFilterChangeSubscriptions.forEach(subscription => {
+      if (!(subscription instanceof Function)) {
+        return;
+      }
+      subscription(filteredMovies);
     });
   }
 

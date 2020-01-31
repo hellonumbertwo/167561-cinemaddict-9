@@ -13,12 +13,15 @@ export default class PageController {
 
     this._currentScreen = Screens.FILMS;
     this._updateScreen = this._updateScreen.bind(this);
+    this._onFilterChange = this._onFilterChange.bind(this);
     this._updateScreenSubscription = [];
+    this._onFilterChangeSubscriptions = [];
 
     this._navigationController = new NavigationController(
       container,
       movies,
-      this._updateScreen
+      this._updateScreen,
+      this._onFilterChange
     );
     this._statisticsController = new StatisticsController(container, movies);
     this._moviesBoardController = new MoviesBoardController(container, movies);
@@ -53,6 +56,12 @@ export default class PageController {
       )
     );
 
+    this._onFilterChangeSubscriptions.push(
+      this._moviesBoardController._onFilterChange.bind(
+        this._moviesBoardController
+      )
+    );
+
     this._updateScreen(this._currentScreen);
   }
 
@@ -83,6 +92,15 @@ export default class PageController {
         return;
       }
       subscription(screen);
+    });
+  }
+
+  _onFilterChange(filter) {
+    this._onFilterChangeSubscriptions.forEach(subscription => {
+      if (!(subscription instanceof Function)) {
+        return;
+      }
+      subscription(filter);
     });
   }
 }

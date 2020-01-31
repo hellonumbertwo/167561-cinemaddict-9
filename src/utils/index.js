@@ -54,7 +54,7 @@ export const getMoviesDataByFilters = list => {
 };
 
 // ENUMS
-const Filters = {
+export const Filters = {
   ALL: `All movies`,
   WATCHLIST: `Watchlist`,
   HISTORY: `History`,

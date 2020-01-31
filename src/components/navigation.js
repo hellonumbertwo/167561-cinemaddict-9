@@ -11,7 +11,7 @@ export default class Navigation extends AbstractComponent {
         ${this._filters
           .map(
             ({ filter, amount }) => `
-          <a href="#watchlist" class="main-navigation__item">
+          <a href="#watchlist" class="main-navigation__item" data-filter="${filter}">
           ${filter}
           ${
             amount

@@ -33,9 +33,21 @@ export default class MoviesListController {
 
     this._onDataChange = onDataChange;
     this._onDataChangeSubscriptions = [];
+
+    this._renderMoviesListByChuncks = this._renderMoviesListByChuncks.bind(
+      this,
+      SHOW_MOVIES_STEP
+    );
+  }
+
+  get _isMoreMoviesLeft() {
+    return this._numberOfShownMovies < this._initialMoviesList.length;
   }
 
   init() {
+    this._onShowDetailsSubscriptions = [];
+    this._onDataChangeSubscriptions = [];
+
     if (this._initialMoviesList.length === 0) {
       const plug = createElement(`
       <div class="no-result">
@@ -45,36 +57,23 @@ export default class MoviesListController {
       render(this._container, plug, `afterend`);
       return;
     }
-
-    this._renderMoviesListByChuncks(SHOW_MOVIES_STEP);
-
     if (this._initialMoviesList.length > SHOW_MOVIES_STEP) {
       render(this._container, this._showMoreButton.getElement(), `afterend`);
     }
 
+    this._numberOfShownMovies = 0;
+    this._onHandleSorting();
     this._setShowMoreEventListener();
   }
 
-  get _isMoreMoviesLeft() {
-    return this._numberOfShownMovies < this._initialMoviesList.length;
-  }
-
-  _renderMoviesListByChuncks(step = null) {
-    if (step) {
-      const prevNumberOfShownMovies = this._numberOfShownMovies;
-      this._numberOfShownMovies += step;
-      this._sortedMoviesList
-        .slice(prevNumberOfShownMovies, this._numberOfShownMovies)
-        .forEach(movie => {
-          this._renderMovie(movie);
-        });
-    } else {
-      this._sortedMoviesList
-        .slice(0, this._numberOfShownMovies)
-        .forEach(movie => {
-          this._renderMovie(movie);
-        });
-    }
+  _renderMoviesListByChuncks() {
+    const prevNumberOfShownMovies = this._numberOfShownMovies;
+    this._numberOfShownMovies += SHOW_MOVIES_STEP;
+    this._sortedMoviesList
+      .slice(prevNumberOfShownMovies, this._numberOfShownMovies)
+      .forEach(movie => {
+        this._renderMovie(movie);
+      });
 
     this._handleShowMoreButtonVisibility();
   }
@@ -98,29 +97,25 @@ export default class MoviesListController {
   }
 
   _renderMovie(movie) {
-    this._movieController = new MovieController(
+    const movieController = new MovieController(
       this._container,
       movie,
       this._onShowDetails,
       this._onDataChange
     );
-    this._movieController.init();
+    movieController.init();
     this._onShowDetailsSubscriptions.push(
-      this._movieController._hideMovieDetails.bind(this._movieController)
+      movieController._hideMovieDetails.bind(movieController)
     );
     this._onDataChangeSubscriptions.push(
-      this._movieController._updateMovie.bind(this._movieController)
+      movieController._updateMovie.bind(movieController)
     );
   }
 
   _setShowMoreEventListener() {
-    this._showMoreButton.getElement().addEventListener(
-      `click`,
-      () => {
-        this._renderMoviesListByChuncks(SHOW_MOVIES_STEP);
-      },
-      false
-    );
+    this._showMoreButton
+      .getElement()
+      .addEventListener(`click`, this._renderMoviesListByChuncks, false);
   }
 
   _onHandleSorting(sortType) {
@@ -142,7 +137,7 @@ export default class MoviesListController {
         break;
     }
 
-    this._renderMoviesListByChuncks();
+    this._renderMoviesListByChuncks(null);
   }
 
   _onShowDetails() {
@@ -154,6 +149,7 @@ export default class MoviesListController {
     });
   }
 
+  // менются данные в списке фильмов
   _onMoviesListDataChange(movies) {
     this._initialMoviesList = movies;
     this._onDataChangeSubscriptions.forEach(subscription => {
@@ -162,5 +158,11 @@ export default class MoviesListController {
       }
       subscription(this._initialMoviesList);
     });
+  }
+
+  // меняется список фильмов
+  _onFilterChange(movies) {
+    this._initialMoviesList = movies;
+    this.init();
   }
 }
