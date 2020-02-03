@@ -23,8 +23,8 @@ export default class PageController {
       this._updateScreen,
       this._onFilterChange
     );
-    this._statisticsController = new StatisticsController(container, movies);
     this._moviesBoardController = new MoviesBoardController(container, movies);
+    this._statisticsController = new StatisticsController(container, movies);
     this._searchController = new SearchController(
       document.getElementById(`header`),
       movies,
@@ -36,16 +36,6 @@ export default class PageController {
 
   init() {
     this._searchController.init();
-    render(
-      document.getElementById(`header`),
-      this._profile.getElement(),
-      `beforeend`
-    );
-    render(
-      document.getElementById(`main`),
-      this._footer.getElement(),
-      `afterend`
-    );
     this._navigationController.init();
     this._statisticsController.init();
     this._moviesBoardController.init();
@@ -60,6 +50,17 @@ export default class PageController {
       this._moviesBoardController._onFilterChange.bind(
         this._moviesBoardController
       )
+    );
+
+    render(
+      document.getElementById(`header`),
+      this._profile.getElement(),
+      `beforeend`
+    );
+    render(
+      document.getElementById(`main`),
+      this._footer.getElement(),
+      `afterend`
     );
 
     this._updateScreen(this._currentScreen);
