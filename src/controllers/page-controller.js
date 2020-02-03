@@ -1,4 +1,4 @@
-import { render, Screens } from "./../utils/index";
+import { render, Screens, createElement } from "./../utils/index";
 import NavigationController from "./navigation-controller";
 import StatisticsController from "./statistics-controller";
 import MoviesBoardController from "./movies-board-controller";
@@ -14,8 +14,10 @@ export default class PageController {
     this._currentScreen = Screens.FILMS;
     this._updateScreen = this._updateScreen.bind(this);
     this._onFilterChange = this._onFilterChange.bind(this);
-    this._updateScreenSubscription = [];
+    this._updateScreenSubscriptions = [];
     this._onFilterChangeSubscriptions = [];
+    this._onDataChangeSubscriptions = [];
+    this._onDataChange = this._onDataChange.bind(this);
 
     this._navigationController = new NavigationController(
       container,
@@ -23,24 +25,65 @@ export default class PageController {
       this._updateScreen,
       this._onFilterChange
     );
-    this._moviesBoardController = new MoviesBoardController(container, movies);
+    this._moviesBoardController = new MoviesBoardController(
+      container,
+      movies,
+      this._onDataChange
+    );
     this._statisticsController = new StatisticsController(container, movies);
     this._searchController = new SearchController(
       document.getElementById(`header`),
       movies,
-      this._updateScreen
+      this._updateScreen,
+      this._onDataChange
     );
     this._footer = new Footer(movies);
     this._profile = new Profile();
   }
 
   init() {
+    render(
+      document.getElementById(`main`),
+      this._footer.getElement(),
+      `afterend`
+    );
+    if (this._movies.length === 0) {
+      this._renderPlug();
+      return;
+    }
+
     this._searchController.init();
     this._navigationController.init();
     this._statisticsController.init();
     this._moviesBoardController.init();
 
-    this._updateScreenSubscription.push(
+    render(
+      document.getElementById(`header`),
+      this._profile.getElement(),
+      `beforeend`
+    );
+
+    this._setEventsSubscriptions();
+    this._updateScreen(this._currentScreen);
+  }
+
+  _renderPlug() {
+    const plug = createElement(`
+    <section class="films">
+      <section class="films-list">
+        <h2 class="films-list__title">All movies. Upcoming</h2>
+
+        <div class="no-result">
+        There are no movies in our database.
+        </div>
+      </section>
+    </section>
+  `);
+    render(this._container, plug, `afterend`);
+  }
+
+  _setEventsSubscriptions() {
+    this._updateScreenSubscriptions.push(
       this._navigationController._updateCurrentScreen.bind(
         this._navigationController
       )
@@ -52,18 +95,12 @@ export default class PageController {
       )
     );
 
-    render(
-      document.getElementById(`header`),
-      this._profile.getElement(),
-      `beforeend`
+    this._onDataChangeSubscriptions.push(
+      this._moviesBoardController._updateMoviesListData.bind(
+        this._moviesBoardController
+      ),
+      this._searchController._updateMoviesListData.bind(this._searchController)
     );
-    render(
-      document.getElementById(`main`),
-      this._footer.getElement(),
-      `afterend`
-    );
-
-    this._updateScreen(this._currentScreen);
   }
 
   _updateScreen(screen) {
@@ -88,7 +125,7 @@ export default class PageController {
         break;
     }
     this._currentScreen = screen;
-    this._updateScreenSubscription.forEach(subscription => {
+    this._updateScreenSubscriptions.forEach(subscription => {
       if (!(subscription instanceof Function)) {
         return;
       }
@@ -102,6 +139,16 @@ export default class PageController {
         return;
       }
       subscription(filter);
+    });
+  }
+
+  _onDataChange(updatedMovie) {
+    this._movies[updatedMovie.id] = { ...updatedMovie };
+    this._onDataChangeSubscriptions.forEach(subscription => {
+      if (!(subscription instanceof Function)) {
+        return;
+      }
+      subscription(this._movies);
     });
   }
 }

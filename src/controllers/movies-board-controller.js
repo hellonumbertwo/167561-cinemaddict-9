@@ -4,11 +4,11 @@ import Sorting from "../components/sorting";
 import ExtraMoviesList from "../components/extra-movies-list";
 import MoviesListController from "./movies-list-controller";
 
-export default class PageController {
-  constructor(container, movies) {
+export default class MoviesBoardController {
+  constructor(container, movies, onDataChange) {
     this._container = container;
     this._movies = movies;
-    this._onDataChange = this._onDataChange.bind(this);
+    this._onDataChange = onDataChange;
 
     this._content = new Content();
     this._sorting = new Sorting();
@@ -53,7 +53,7 @@ export default class PageController {
   show() {
     [
       this._sorting.getElement(),
-      this._container.querySelector(`.films`)
+      this._container.querySelector(`#main-films-list`)
     ].forEach(node => {
       if (node.classList.contains(`visually-hidden`)) {
         node.classList.remove(`visually-hidden`);
@@ -64,7 +64,7 @@ export default class PageController {
   hide() {
     [
       this._sorting.getElement(),
-      this._container.querySelector(`.films`)
+      this._container.querySelector(`#main-films-list`)
     ].forEach(node => {
       if (!node.classList.contains(`visually-hidden`)) {
         node.classList.add(`visually-hidden`);
@@ -194,8 +194,17 @@ export default class PageController {
     });
   }
 
-  _onDataChange(updatedMovie) {
-    this._movies[updatedMovie.id] = { ...updatedMovie };
+  // _onDataChange(updatedMovie) {
+  //   this._movies[updatedMovie.id] = { ...updatedMovie };
+  //   this._onDataChangeSubscriptions.forEach(subscription => {
+  //     if (!(subscription instanceof Function)) {
+  //       return;
+  //     }
+  //     subscription(this._movies);
+  //   });
+  // }
+  _updateMoviesListData(movies) {
+    this._movies = movies;
     this._onDataChangeSubscriptions.forEach(subscription => {
       if (!(subscription instanceof Function)) {
         return;

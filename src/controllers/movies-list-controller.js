@@ -1,4 +1,4 @@
-import { render, createElement } from "../utils";
+import { render } from "../utils";
 import ShowMoreButton from "../components/show-more-button";
 import MovieController from "./movie-controller";
 
@@ -48,15 +48,6 @@ export default class MoviesListController {
     this._onShowDetailsSubscriptions = [];
     this._onDataChangeSubscriptions = [];
 
-    if (this._initialMoviesList.length === 0) {
-      const plug = createElement(`
-      <div class="no-result">
-        There are no movies in our database.
-      </div>
-      `);
-      render(this._container, plug, `afterend`);
-      return;
-    }
     if (this._initialMoviesList.length > SHOW_MOVIES_STEP) {
       render(this._container, this._showMoreButton.getElement(), `afterend`);
     }
@@ -162,6 +153,7 @@ export default class MoviesListController {
 
   // меняется список фильмов
   _onFilterChange(movies) {
+    console.log(`результаты поиска`, movies);
     this._initialMoviesList = movies;
     this.init();
   }
