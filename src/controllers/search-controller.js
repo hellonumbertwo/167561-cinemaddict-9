@@ -39,9 +39,7 @@ export default class SearchController {
     );
     this._moviesListController.init();
     this._onChangeResultsSubscriptions.push(
-      this._moviesListController._onFilterChange.bind(
-        this._moviesListController
-      )
+      this._moviesListController._onListChange.bind(this._moviesListController)
     );
     this._onDataChangeSubscriptions.push(
       this._moviesListController._onMoviesListDataChange.bind(

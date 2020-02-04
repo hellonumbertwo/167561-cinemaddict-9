@@ -15,39 +15,25 @@ export default class MoviesBoardController {
     this._topRatedContainer = new ExtraMoviesList(`Top rated`);
     this._mostCommentedContainer = new ExtraMoviesList(`Most commented`);
 
-    this._moviesListController = new MoviesListController(
-      this._content.getElement().querySelector(`.films-list__container`),
-      this._movies,
-      this._onDataChange
-    );
-    this._topRatedMoviesListController = new MoviesListController(
-      this._topRatedContainer
-        .getElement()
-        .querySelector(`.films-list__container`),
-      this._topRatedMovies,
-      this._onDataChange
-    );
-    this._mostCommentedMoviesListController = new MoviesListController(
-      this._mostCommentedContainer
-        .getElement()
-        .querySelector(`.films-list__container`),
-      this._mostCommentedMovies,
-      this._onDataChange
-    );
-
     this._onSortingChangeSubscriptions = [];
     this._onDataChangeSubscriptions = [];
+    this._onTopRatedDataChangeSubscriptions = [];
+    this._onMostCommentedDataChangeSubscriptions = [];
     this._onFilterChangeSubscriptions = [];
   }
 
   get _mostCommentedMovies() {
     return [...this._movies]
+      .filter(({ comments }) => !!comments && comments.length > 0)
       .sort((a, b) => b.comments.length - a.comments.length)
       .slice(0, 2);
   }
 
   get _topRatedMovies() {
-    return [...this._movies].sort((a, b) => b.rate - a.rate).slice(0, 2);
+    return [...this._movies]
+      .filter(({ rate }) => rate > 0)
+      .sort((a, b) => b.rate - a.rate)
+      .slice(0, 2);
   }
 
   show() {
@@ -76,7 +62,22 @@ export default class MoviesBoardController {
     [this._sorting, this._content].forEach(component =>
       render(this._container, component.getElement(), `beforeend`)
     );
+    [this._mostCommentedContainer, this._topRatedContainer].forEach(component =>
+      render(this._content.getElement(), component.getElement(), `beforeend`)
+    );
+    this._updateExtraListsBoard();
+    this._initCommonList();
+    this._initMostCommentesList();
+    this._initTopRatedList();
+    this._setSortingEventListeners();
+  }
 
+  _initCommonList() {
+    this._moviesListController = new MoviesListController(
+      this._content.getElement().querySelector(`.films-list__container`),
+      this._movies,
+      this._onDataChange
+    );
     this._moviesListController.init();
     this._onSortingChangeSubscriptions.push(
       this._moviesListController._onHandleSorting.bind(
@@ -89,61 +90,45 @@ export default class MoviesBoardController {
       )
     );
     this._onFilterChangeSubscriptions.push(
-      this._moviesListController._onFilterChange.bind(
-        this._moviesListController
-      )
+      this._moviesListController._onListChange.bind(this._moviesListController)
     );
+  }
 
-    [this._mostCommentedContainer, this._topRatedContainer].forEach(component =>
-      render(this._content.getElement(), component.getElement(), `beforeend`)
+  _initMostCommentesList() {
+    this._mostCommentedMoviesListController = new MoviesListController(
+      this._mostCommentedContainer
+        .getElement()
+        .querySelector(`.films-list__container`),
+      this._mostCommentedMovies,
+      this._onDataChange
     );
-
-    this._topRatedMoviesListController.init();
-    this._onDataChangeSubscriptions.push(
-      this._topRatedMoviesListController._onMoviesListDataChange.bind(
-        this._topRatedMoviesListController
-      )
-    );
-
     this._mostCommentedMoviesListController.init();
-    this._onDataChangeSubscriptions.push(
-      this._mostCommentedMoviesListController._onMoviesListDataChange.bind(
+    this._onMostCommentedDataChangeSubscriptions.push(
+      this._mostCommentedMoviesListController._onListChange.bind(
         this._mostCommentedMoviesListController
       )
     );
+  }
 
-    this._setSortingEventListeners();
+  _initTopRatedList() {
+    this._topRatedMoviesListController = new MoviesListController(
+      this._topRatedContainer
+        .getElement()
+        .querySelector(`.films-list__container`),
+      this._topRatedMovies,
+      this._onDataChange
+    );
+    this._topRatedMoviesListController.init();
+    this._onTopRatedDataChangeSubscriptions.push(
+      this._topRatedMoviesListController._onListChange.bind(
+        this._topRatedMoviesListController
+      )
+    );
   }
 
   _setSortingEventListeners() {
     this._sorting.getElement().addEventListener(`click`, e => {
       this._sortMoviesByLinkClick(e);
-    });
-  }
-
-  _renderExtraMovies() {
-    [this._topRatedMoviesList, this._mostCommentedMoviesList].forEach(
-      component => {
-        render(this._content.getElement(), component.getElement(), `beforeend`);
-      }
-    );
-
-    this._topRatedMovies.forEach(movie => {
-      this._initMovieController(
-        this._topRatedMoviesList
-          .getElement()
-          .querySelector(`.films-list__container`),
-        movie
-      );
-    });
-
-    this._mostCommentedMovies.forEach(movie => {
-      this._initMovieController(
-        this._mostCommentedMoviesList
-          .getElement()
-          .querySelector(`.films-list__container`),
-        movie
-      );
     });
   }
 
@@ -194,22 +179,43 @@ export default class MoviesBoardController {
     });
   }
 
-  // _onDataChange(updatedMovie) {
-  //   this._movies[updatedMovie.id] = { ...updatedMovie };
-  //   this._onDataChangeSubscriptions.forEach(subscription => {
-  //     if (!(subscription instanceof Function)) {
-  //       return;
-  //     }
-  //     subscription(this._movies);
-  //   });
-  // }
   _updateMoviesListData(movies) {
     this._movies = movies;
+    this._updateExtraListsBoard();
     this._onDataChangeSubscriptions.forEach(subscription => {
       if (!(subscription instanceof Function)) {
         return;
       }
       subscription(this._movies);
     });
+    this._onMostCommentedDataChangeSubscriptions.forEach(subscription => {
+      if (!(subscription instanceof Function)) {
+        return;
+      }
+      subscription(this._mostCommentedMovies);
+    });
+    this._onTopRatedDataChangeSubscriptions.forEach(subscription => {
+      if (!(subscription instanceof Function)) {
+        return;
+      }
+      subscription(this._topRatedMovies);
+    });
+  }
+
+  _updateExtraListsBoard() {
+    if (this._topRatedMovies.length === 0) {
+      this._topRatedContainer.getElement().classList.add(`visually-hidden`);
+    } else {
+      this._topRatedContainer.getElement().classList.remove(`visually-hidden`);
+    }
+    if (this._mostCommentedMovies.length === 0) {
+      this._mostCommentedContainer
+        .getElement()
+        .classList.add(`visually-hidden`);
+    } else {
+      this._mostCommentedContainer
+        .getElement()
+        .classList.remove(`visually-hidden`);
+    }
   }
 }

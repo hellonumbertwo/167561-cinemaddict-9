@@ -29,7 +29,7 @@ export default class MoviesListController {
     this._showMoreButton = new ShowMoreButton();
 
     this._onShowDetailsSubscriptions = [];
-    this._onShowDetails = this._onShowDetails.bind(this);
+    this._onCloseOddDetails = this._onShowDetails.bind(this);
 
     this._onDataChange = onDataChange;
     this._onDataChangeSubscriptions = [];
@@ -152,9 +152,9 @@ export default class MoviesListController {
   }
 
   // меняется список фильмов
-  _onFilterChange(movies) {
-    console.log(`результаты поиска`, movies);
+  _onListChange(movies) {
     this._initialMoviesList = movies;
+    this._onShowDetails();
     this.init();
   }
 }
