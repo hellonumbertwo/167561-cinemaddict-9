@@ -5,6 +5,7 @@ import MoviesBoardController from "./movies-board-controller";
 import SearchController from "./search-controller";
 import Footer from "../components/footer";
 import Profile from "../components/profile";
+import api from "./../api/index";
 
 export default class PageController {
   constructor(container, movies) {
@@ -143,12 +144,14 @@ export default class PageController {
   }
 
   _onDataChange(updatedMovie) {
-    this._movies[updatedMovie.id] = { ...updatedMovie };
-    this._onDataChangeSubscriptions.forEach(subscription => {
-      if (!(subscription instanceof Function)) {
-        return;
-      }
-      subscription(this._movies);
+    api.updateMovie(updatedMovie).then(movie => {
+      this._movies[updatedMovie.id] = { ...movie };
+      this._onDataChangeSubscriptions.forEach(subscription => {
+        if (!(subscription instanceof Function)) {
+          return;
+        }
+        subscription(this._movies);
+      });
     });
   }
 }

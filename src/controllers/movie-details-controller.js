@@ -5,12 +5,14 @@ import MovieStatusPanel from "../components/movie-status-panel";
 import MovieRatingPanel from "../components/movie-rating-panel";
 import CommentForm from "../components/comment-form";
 import CommentController from "./comment-controller";
+import api from "./../api/index";
 
 export default class MovieDetailsController {
   constructor(container, movie, onDataChange) {
     this._container = container;
     this._movie = movie;
     this._onDataChange = onDataChange;
+    this._comments = [];
 
     this._commentForm = new CommentForm();
 
@@ -62,10 +64,6 @@ export default class MovieDetailsController {
       }
     );
 
-    this._movie.comments.forEach(comment => {
-      this._addComment(comment);
-    });
-
     render(
       this._movieDetails
         .getElement()
@@ -73,34 +71,24 @@ export default class MovieDetailsController {
       this._commentForm.getElement(),
       `beforeend`
     );
+    api.getComments(this._movie).then(comments => {
+      this._comments = [...comments];
+      this._comments.forEach(comment => this._renderComment(comment));
+    });
   }
 
-  _changeData(payload = null) {
+  _changeData() {
     const form = this._movieDetails
       .getElement()
       .querySelector(`.film-details__inner`);
     const formData = new FormData(form);
 
     const entry = {
-      isInWatchList: formData.get(`watchlist`),
-      isWatched: formData.get(`watched`),
-      isFavorite: formData.get(`favorite`),
-      personalRating: formData.get(`score`),
-      comments: [...this._movie.comments]
+      isInWatchList: Boolean(formData.get(`watchlist`)),
+      isWatched: Boolean(formData.get(`watched`)),
+      isFavorite: Boolean(formData.get(`favorite`)),
+      personalRate: parseInt(formData.get(`score`), 10) || 0
     };
-
-    if (payload) {
-      entry = { ...entry, ...payload };
-    }
-
-    if (formData.get(`comment`) && formData.get(`comment-emoji`)) {
-      entry.comments.push({
-        text: formData.get(`comment`),
-        emoji: formData.get(`comment-emoji`),
-        data: Date.now(),
-        author: `Random author`
-      });
-    }
 
     this._onDataChange({ ...this._movie, ...entry });
   }
@@ -118,12 +106,12 @@ export default class MovieDetailsController {
       this._changeData();
     });
 
-    this._movieDetails
+    this._commentForm
       .getElement()
-      .querySelector(`.film-details__inner`)
+      .querySelector(`.film-details__comment-input`)
       .addEventListener(`keydown`, e => {
         if ((event.ctrlKey || event.metaKey) && e.code === `Enter`) {
-          this._changeData();
+          this._createComment();
         }
       });
 
@@ -141,7 +129,7 @@ export default class MovieDetailsController {
       .getElement()
       .querySelector(`.film-details__watched-reset`)
       .addEventListener(`click`, () => {
-        this._resetPersonalRating();
+        this._resetpersonalRate();
         this._changeData();
       });
 
@@ -173,7 +161,7 @@ export default class MovieDetailsController {
     this._commentFormReset();
   }
 
-  _addComment(comment) {
+  _renderComment(comment) {
     const commentInstanse = new CommentController(
       this._movieDetails
         .getElement()
@@ -191,24 +179,44 @@ export default class MovieDetailsController {
   }
 
   _onRemoveComment(comment) {
-    this._movie.comments = this._movie.comments.filter(
-      ({ id }) => comment.id !== id
-    );
-    this._changeData();
+    api.deleteComment(comment).then(() => {
+      this._onDataChange(this._movie);
+    });
+  }
+
+  _createComment() {
+    const form = this._movieDetails
+      .getElement()
+      .querySelector(`.film-details__inner`);
+    const formData = new FormData(form);
+
+    const comment = {
+      text: formData.get(`comment`),
+      emoji: formData.get(`comment-emoji`),
+      date: new Date().toISOString()
+    };
+
+    api.createComment(this._movie.id, comment).then(() => {
+      this._onDataChange(this._movie);
+    });
   }
 
   _updateCommentsList() {
-    this._movieDetails
-      .getElement()
-      .querySelector(`.film-details__comments-list`).innerHTML = ``;
-    this._movie.comments.forEach(comment => {
-      this._addComment(comment);
+    api.getComments(this._movie).then(comments => {
+      this._comments = [...comments];
+      this._movieDetails
+        .getElement()
+        .querySelector(`.film-details__comments-list`).innerHTML = ``;
+
+      this._comments.forEach(comment => {
+        this._renderComment(comment);
+      });
+      this._movieDetails
+        .getElement()
+        .querySelector(
+          `.film-details__comments-count`
+        ).innerHTML = `${this._movie.comments.length}`;
     });
-    this._movieDetails
-      .getElement()
-      .querySelector(
-        `.film-details__comments-count`
-      ).innerHTML = `${this._movie.comments.length}`;
   }
 
   _updateRatingPanel() {
@@ -226,11 +234,11 @@ export default class MovieDetailsController {
       panelNode.classList.add(`visually-hidden`);
     }
     if (!this._movie.isWatched) {
-      this._resetPersonalRating();
+      this._resetpersonalRate();
     }
   }
 
-  _resetPersonalRating() {
+  _resetpersonalRate() {
     this._movieRatingPanel
       .getElement()
       .querySelector(`.film-details__user-rating-score`)

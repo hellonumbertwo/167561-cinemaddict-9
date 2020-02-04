@@ -40,7 +40,7 @@ export default class Movie extends AbstractComponent {
             }h ${formatDuration(this._duration).minutes}m</span>
             <span class="film-card__genre">${this._genresList.join(`, `)}</span>
         </p>
-        <img src="./images/posters/${
+        <img src="${
           this._poster
         }" alt="" class="film-card__poster" id="movie-poster">
         <p class="film-card__description">${this._trimDescriptionString(

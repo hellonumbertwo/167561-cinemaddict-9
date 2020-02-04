@@ -1,12 +1,12 @@
 import AbstractComponent from "./abstract-component";
 
 export default class MovieRatingPanel extends AbstractComponent {
-  constructor({ poster, title, isWatched, personalRating }) {
+  constructor({ poster, title, isWatched, personalRate }) {
     super();
     this._poster = poster;
     this._title = title;
     this._isWatched = isWatched;
-    this._rate = personalRating;
+    this._rate = personalRate;
   }
   getTemplate() {
     return `
@@ -19,7 +19,7 @@ export default class MovieRatingPanel extends AbstractComponent {
 
         <div class="film-details__user-score">
           <div class="film-details__user-rating-poster">
-            <img src="./images/posters/${
+            <img src="${
               this._poster
             }" alt="film-poster" class="film-details__user-rating-img">
           </div>
@@ -38,7 +38,7 @@ export default class MovieRatingPanel extends AbstractComponent {
     `;
   }
   _renderRatingGrade() {
-    const grade = [`0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`];
+    const grade = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
     return grade
       .map(
         mark =>

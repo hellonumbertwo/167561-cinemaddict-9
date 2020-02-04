@@ -29,7 +29,7 @@ export default class MoviesListController {
     this._showMoreButton = new ShowMoreButton();
 
     this._onShowDetailsSubscriptions = [];
-    this._onCloseOddDetails = this._onShowDetails.bind(this);
+    this._onShowDetails = this._onShowDetails.bind(this);
 
     this._onDataChange = onDataChange;
     this._onDataChangeSubscriptions = [];

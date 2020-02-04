@@ -1,8 +1,11 @@
 import { moviesList } from "./store/movies-list";
 import PageController from "./controllers/page-controller";
+import api from "./api/index";
 
-const pageController = new PageController(
-  document.getElementById(`main`),
-  moviesList
-);
-pageController.init();
+api.getMovies().then(movies => {
+  const pageController = new PageController(
+    document.getElementById(`main`),
+    movies
+  );
+  pageController.init();
+});
