@@ -7,6 +7,15 @@ import Footer from "../components/footer";
 import Profile from "../components/profile";
 import api from "./../api/index";
 
+const Plug = createElement(`<section class="films">
+  <section class="films-list">
+    <h2 class="films-list__title">All movies. Upcoming</h2>
+    <div class="no-result">
+    There are no movies in our database.
+    </div>
+  </section>
+</section>`);
+
 export default class PageController {
   constructor(container, movies) {
     this._container = container;
@@ -49,7 +58,7 @@ export default class PageController {
       `afterend`
     );
     if (this._movies.length === 0) {
-      this._renderPlug();
+      render(this._container, Plug, `afterend`);
       return;
     }
 
@@ -66,21 +75,6 @@ export default class PageController {
 
     this._setEventsSubscriptions();
     this._updateScreen(this._currentScreen);
-  }
-
-  _renderPlug() {
-    const plug = createElement(`
-    <section class="films">
-      <section class="films-list">
-        <h2 class="films-list__title">All movies. Upcoming</h2>
-
-        <div class="no-result">
-        There are no movies in our database.
-        </div>
-      </section>
-    </section>
-  `);
-    render(this._container, plug, `afterend`);
   }
 
   _setEventsSubscriptions() {
@@ -144,7 +138,7 @@ export default class PageController {
   }
 
   _onDataChange(updatedMovie) {
-    api.updateMovie(updatedMovie).then(movie => {
+    return api.updateMovie(updatedMovie).then(movie => {
       this._movies[updatedMovie.id] = { ...movie };
       this._onDataChangeSubscriptions.forEach(subscription => {
         if (!(subscription instanceof Function)) {

@@ -1,7 +1,11 @@
-import { render } from "./../utils/index";
+import { render, createElement, unrender } from "./../utils/index";
 import api from "./../api/index";
 import CommentController from "./comment-controller";
 import CommentForm from "./../components/comment-form";
+
+const Loader = createElement(
+  `<p class="film-details__comment-text">Loading...</p>`
+);
 
 export default class CommentsListController {
   constructor(
@@ -21,9 +25,13 @@ export default class CommentsListController {
 
     this._commentForm = new CommentForm();
     this._onRemoveComment = this._onRemoveComment.bind(this);
+    this._onDeleteRequestStartSubscriptions = [];
+    this._onDeleteRequestEndSubscriptions = [];
   }
 
   init() {
+    this._onDeleteRequestStartSubscriptions = [];
+    this._onDeleteRequestEndSubscriptions = [];
     render(
       this._container.querySelector(`.form-details__bottom-container`),
       this._commentForm.getElement(),
@@ -38,8 +46,10 @@ export default class CommentsListController {
   }
 
   _loadCommentsByMovieId() {
+    this._setLoadingStatus();
     return api.getComments(this._movie).then(comments => {
       this._comments = [...comments];
+      this._setDefaultStatus();
     });
   }
 
@@ -76,6 +86,12 @@ export default class CommentsListController {
         this._onRemoveComment
       );
       commentInstanse.init();
+      this._onDeleteRequestStartSubscriptions.push(
+        commentInstanse._onSetLoadingStatus.bind(commentInstanse)
+      );
+      this._onDeleteRequestEndSubscriptions.push(
+        commentInstanse._onSetDefaultStatus.bind(commentInstanse)
+      );
     });
   }
 
@@ -89,19 +105,42 @@ export default class CommentsListController {
       date: new Date().toISOString()
     };
     const { id } = this._movie;
-    api.createComment(id, comment).then(() => {
-      this._onDataChange(this._movie);
-    });
+
+    this._setCommentFormDisabledStatus(true);
+    api
+      .createComment(id, comment)
+      .then(() => {
+        return this._onDataChange(this._movie);
+      })
+      .finally(() => {
+        this._setCommentFormDisabledStatus(false);
+      });
   }
 
   _onRemoveComment(comment) {
-    api.deleteComment(comment).then(() => {
-      this._onDataChange(this._movie);
+    this._onDeleteRequestStartSubscriptions.forEach(subscription => {
+      if (!(subscription instanceof Function)) {
+        return;
+      }
+      subscription(comment);
     });
+    api
+      .deleteComment(comment)
+      .then(() => {
+        return this._onDataChange(this._movie);
+      })
+      .finally(() => {
+        this._onDeleteRequestEndSubscriptions.forEach(subscription => {
+          if (!(subscription instanceof Function)) {
+            return;
+          }
+          subscription(comment);
+        });
+      });
   }
 
   _updateCommentsList() {
-    this._loadCommentsByMovieId().then(() => {
+    return this._loadCommentsByMovieId().then(() => {
       this._container.querySelector(
         `.film-details__comments-list`
       ).innerHTML = ``;
@@ -122,5 +161,25 @@ export default class CommentsListController {
     this._commentForm.getElement().replaceWith(newCommentForm.getElement());
     this._commentForm = newCommentForm;
     this._setEventListeners();
+  }
+
+  _setLoadingStatus() {
+    render(
+      this._container.querySelector(`.film-details__comments-list`),
+      Loader,
+      `beforeend`
+    );
+  }
+
+  _setDefaultStatus() {
+    unrender(Loader);
+  }
+
+  _setCommentFormDisabledStatus(status = false) {
+    const form = this._container.querySelector(`.film-details__inner`);
+    form.querySelector(`.film-details__comment-input`).disabled = status;
+    form.querySelectorAll(`.film-details__emoji-item`).forEach(input => {
+      input.disabled = status;
+    });
   }
 }

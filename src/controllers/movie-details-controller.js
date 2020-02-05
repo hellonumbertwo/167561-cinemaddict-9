@@ -89,7 +89,7 @@ export default class MovieDetailsController {
       personalRate: parseInt(formData.get(`score`), 10) || 0
     };
 
-    this._onDataChange({ ...this._movie, ...entry });
+    return this._onDataChange({ ...this._movie, ...entry });
   }
 
   _addEventListeners() {
@@ -102,7 +102,11 @@ export default class MovieDetailsController {
       if (e.target.tagName !== `INPUT`) {
         return;
       }
-      this._changeData();
+      if (e.target.name === `watched`) {
+        this._changePersonalRating();
+      } else {
+        this._changeData();
+      }
     });
 
     this._movieRatingPanel
@@ -119,8 +123,7 @@ export default class MovieDetailsController {
       .getElement()
       .querySelector(`.film-details__watched-reset`)
       .addEventListener(`click`, () => {
-        this._resetpersonalRate();
-        this._changeData();
+        this._changePersonalRating();
       });
 
     document.addEventListener(`keydown`, this._onEscapeKeyDown);
@@ -141,6 +144,36 @@ export default class MovieDetailsController {
     });
   }
 
+  _setRatingPanelDisableStatus(status) {
+    this._movieRatingPanel
+      .getElement()
+      .querySelector(`.film-details__user-rating-score`)
+      .querySelectorAll(`input`)
+      .forEach(input => (input.disabled = status));
+    this._movieRatingPanel
+      .getElement()
+      .querySelector(`.film-details__watched-reset`).disabled = status;
+  }
+
+  _changePersonalRating() {
+    this._setRatingPanelDisableStatus(true);
+    this._changeData()
+      .then(() => {
+        this._resetPersonalRateForm();
+      })
+      .finally(() => {
+        this._setRatingPanelDisableStatus(false);
+      });
+  }
+
+  _resetPersonalRateForm() {
+    this._movieRatingPanel
+      .getElement()
+      .querySelector(`.film-details__user-rating-score`)
+      .querySelectorAll(`input`)
+      .forEach(input => (input.checked = false));
+  }
+
   _updateRatingPanel() {
     const panelNode = this._movieRatingPanel.getElement();
     if (
@@ -156,16 +189,16 @@ export default class MovieDetailsController {
       panelNode.classList.add(`visually-hidden`);
     }
     if (!this._movie.isWatched) {
-      this._resetpersonalRate();
+      this._resetPersonalRateForm();
     }
   }
 
-  _resetpersonalRate() {
-    this._movieRatingPanel
-      .getElement()
-      .querySelector(`.film-details__user-rating-score`)
-      .querySelectorAll(`input`)
-      .forEach(input => (input.checked = false));
+  _onCommentInputFocus() {
+    document.removeEventListener(`keydown`, this._onEscapeKeyDown);
+  }
+
+  _onCommentInputBlur() {
+    document.addEventListener(`keydown`, this._onEscapeKeyDown);
   }
 
   _onEscapeKeyDown(e) {
@@ -180,13 +213,5 @@ export default class MovieDetailsController {
       this.hide();
     }
     document.removeEventListener(`keydown`, this._onEscapeKeyDown);
-  }
-
-  _onCommentInputFocus() {
-    document.removeEventListener(`keydown`, this._onEscapeKeyDown);
-  }
-
-  _onCommentInputBlur() {
-    document.addEventListener(`keydown`, this._onEscapeKeyDown);
   }
 }

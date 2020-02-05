@@ -24,4 +24,26 @@ export default class CommentController {
         this._onRemoveComment(this._commentData);
       });
   }
+
+  _onSetLoadingStatus({ id }) {
+    if (id !== this._commentData.id) {
+      return;
+    }
+    const buttonElem = this._comment
+      .getElement()
+      .querySelector(`.film-details__comment-delete`);
+    buttonElem.innerHTML = `Deleting...`;
+    buttonElem.disabled = true;
+  }
+
+  _onSetDefaultStatus({ id }) {
+    if (id !== this._commentData.id) {
+      return;
+    }
+    const buttonElem = this._comment
+      .getElement()
+      .querySelector(`.film-details__comment-delete`);
+    buttonElem.innerHTML = `Delete`;
+    buttonElem.disabled = false;
+  }
 }
