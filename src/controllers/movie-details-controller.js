@@ -3,9 +3,7 @@ import MovieDetails from "../components/movie-details";
 import MovieInfo from "../components/movie-info";
 import MovieStatusPanel from "../components/movie-status-panel";
 import MovieRatingPanel from "../components/movie-rating-panel";
-import CommentForm from "../components/comment-form";
-import CommentController from "./comment-controller";
-import api from "./../api/index";
+import CommentsListController from "./comments-list-controller";
 
 export default class MovieDetailsController {
   constructor(container, movie, onDataChange) {
@@ -13,12 +11,12 @@ export default class MovieDetailsController {
     this._movie = movie;
     this._onDataChange = onDataChange;
     this._comments = [];
-
-    this._commentForm = new CommentForm();
+    this._onDataChangeSubscriptions = [];
 
     this.hide = this.hide.bind(this);
-    this._onRemoveComment = this._onRemoveComment.bind(this);
     this._onEscapeKeyDown = this._onEscapeKeyDown.bind(this);
+    this._onCommentInputFocus = this._onCommentInputFocus.bind(this);
+    this._onCommentInputBlur = this._onCommentInputBlur.bind(this);
   }
 
   init() {
@@ -26,12 +24,25 @@ export default class MovieDetailsController {
     this._movieInfo = new MovieInfo(this._movie);
     this._movieStatusPanel = new MovieStatusPanel(this._movie);
     this._movieRatingPanel = new MovieRatingPanel(this._movie);
-    this._commentForm = new CommentForm();
+    this._commentsListController = new CommentsListController(
+      this._movieDetails.getElement(),
+      this._movie,
+      this._onDataChange,
+      this._onCommentInputFocus,
+      this._onCommentInputBlur
+    );
+    this._onDataChangeSubscriptions = [];
   }
 
   show() {
     this._renderMoviedDtails();
     this._addEventListeners();
+    this._commentsListController.init();
+    this._onDataChangeSubscriptions.push(
+      this._commentsListController._updateCommentsList.bind(
+        this._commentsListController
+      )
+    );
   }
 
   hide() {
@@ -63,18 +74,6 @@ export default class MovieDetailsController {
         );
       }
     );
-
-    render(
-      this._movieDetails
-        .getElement()
-        .querySelector(`.form-details__bottom-container`),
-      this._commentForm.getElement(),
-      `beforeend`
-    );
-    api.getComments(this._movie).then(comments => {
-      this._comments = [...comments];
-      this._comments.forEach(comment => this._renderComment(comment));
-    });
   }
 
   _changeData() {
@@ -106,15 +105,6 @@ export default class MovieDetailsController {
       this._changeData();
     });
 
-    this._commentForm
-      .getElement()
-      .querySelector(`.film-details__comment-input`)
-      .addEventListener(`keydown`, e => {
-        if ((event.ctrlKey || event.metaKey) && e.code === `Enter`) {
-          this._createComment();
-        }
-      });
-
     this._movieRatingPanel
       .getElement()
       .querySelector(`.film-details__user-rating-score`)
@@ -134,20 +124,6 @@ export default class MovieDetailsController {
       });
 
     document.addEventListener(`keydown`, this._onEscapeKeyDown);
-
-    this._commentForm
-      .getElement()
-      .querySelector(`.film-details__comment-input`)
-      .addEventListener(`focus`, () => {
-        document.removeEventListener(`keydown`, this._onEscapeKeyDown);
-      });
-
-    this._commentForm
-      .getElement()
-      .querySelector(`.film-details__comment-input`)
-      .addEventListener(`blur`, () => {
-        document.addEventListener(`keydown`, this._onEscapeKeyDown);
-      });
   }
 
   _updateMovieData(movie) {
@@ -157,65 +133,11 @@ export default class MovieDetailsController {
     this._movie = movie;
 
     this._updateRatingPanel();
-    this._updateCommentsList();
-    this._commentFormReset();
-  }
-
-  _renderComment(comment) {
-    const commentInstanse = new CommentController(
-      this._movieDetails
-        .getElement()
-        .querySelector(`.film-details__comments-list`),
-      comment,
-      this._onRemoveComment
-    );
-    commentInstanse.init();
-  }
-
-  _commentFormReset() {
-    const newCommentForm = new CommentForm();
-    this._commentForm.getElement().replaceWith(newCommentForm.getElement());
-    this._commentForm = newCommentForm;
-  }
-
-  _onRemoveComment(comment) {
-    api.deleteComment(comment).then(() => {
-      this._onDataChange(this._movie);
-    });
-  }
-
-  _createComment() {
-    const form = this._movieDetails
-      .getElement()
-      .querySelector(`.film-details__inner`);
-    const formData = new FormData(form);
-
-    const comment = {
-      text: formData.get(`comment`),
-      emoji: formData.get(`comment-emoji`),
-      date: new Date().toISOString()
-    };
-
-    api.createComment(this._movie.id, comment).then(() => {
-      this._onDataChange(this._movie);
-    });
-  }
-
-  _updateCommentsList() {
-    api.getComments(this._movie).then(comments => {
-      this._comments = [...comments];
-      this._movieDetails
-        .getElement()
-        .querySelector(`.film-details__comments-list`).innerHTML = ``;
-
-      this._comments.forEach(comment => {
-        this._renderComment(comment);
-      });
-      this._movieDetails
-        .getElement()
-        .querySelector(
-          `.film-details__comments-count`
-        ).innerHTML = `${this._movie.comments.length}`;
+    this._onDataChangeSubscriptions.forEach(subscription => {
+      if (!(subscription instanceof Function)) {
+        return;
+      }
+      subscription();
     });
   }
 
@@ -249,7 +171,7 @@ export default class MovieDetailsController {
   _onEscapeKeyDown(e) {
     // не выполняем код повторно, если событие уже запущено
     if (e.defaultPrevented) {
-      document.removeEventListener(`keydown`, this._onEscKeyDown);
+      document.removeEventListener(`keydown`, this._onEscapeKeyDown);
       return;
     }
     e.preventDefault();
@@ -257,6 +179,14 @@ export default class MovieDetailsController {
     if (e.key === `esc` || e.key === `Escape`) {
       this.hide();
     }
-    document.removeEventListener(`keydown`, this._onEscKeyDown);
+    document.removeEventListener(`keydown`, this._onEscapeKeyDown);
+  }
+
+  _onCommentInputFocus() {
+    document.removeEventListener(`keydown`, this._onEscapeKeyDown);
+  }
+
+  _onCommentInputBlur() {
+    document.addEventListener(`keydown`, this._onEscapeKeyDown);
   }
 }
