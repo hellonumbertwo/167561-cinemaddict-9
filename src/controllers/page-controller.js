@@ -97,6 +97,9 @@ export default class PageController {
       this._searchController._updateMoviesListData.bind(this._searchController),
       this._navigationController._updateFiltersData.bind(
         this._navigationController
+      ),
+      this._statisticsController._updateStatisticsData.bind(
+        this._statisticsController
       )
     );
   }

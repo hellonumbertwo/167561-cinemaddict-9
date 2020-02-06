@@ -1,6 +1,6 @@
-import { formatDuration } from "./../utils/index";
 import AbstractComponent from "./abstract-component";
 import moment from "moment";
+import { formatDurationFromMinutes } from "./../utils/index";
 
 export default class MovieInfo extends AbstractComponent {
   constructor({
@@ -9,7 +9,7 @@ export default class MovieInfo extends AbstractComponent {
     poster,
     rate,
     director,
-    writters,
+    writers,
     starring,
     releaseDate,
     duration,
@@ -23,17 +23,13 @@ export default class MovieInfo extends AbstractComponent {
     this._poster = poster;
     this._rate = rate;
     this._director = director;
-    this._writters = writters;
+    this._writers = writers;
     this._starring = starring;
     this._releaseDate = releaseDate;
     this._duration = duration;
     this._country = country;
     this._description = description;
     this._genresList = genresList;
-  }
-
-  get _formettedDuration() {
-    return formatDuration(this._duration);
   }
 
   get _formattedReleaseDate() {
@@ -70,7 +66,7 @@ export default class MovieInfo extends AbstractComponent {
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Writers</td>
-              <td class="film-details__cell">${this._writters}</td>
+              <td class="film-details__cell">${this._writers}</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Actors</td>
@@ -82,7 +78,9 @@ export default class MovieInfo extends AbstractComponent {
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Runtime</td>
-              <td class="film-details__cell">${this._formettedDuration}</td>
+              <td class="film-details__cell">${formatDurationFromMinutes(
+                this._duration
+              )}</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Country</td>

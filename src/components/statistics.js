@@ -1,4 +1,3 @@
-import moment from "moment";
 import AbstractComponent from "./abstract-component";
 
 export default class Statistics extends AbstractComponent {
@@ -12,8 +11,8 @@ export default class Statistics extends AbstractComponent {
 
   get _formattedDuration() {
     return {
-      hours: `${moment.duration(this._totalDuration).hours()}`,
-      minutes: `${moment.duration(this._totalDuration).minutes()}`
+      hours: `${Math.trunc(this._totalDuration / 60)}`,
+      minutes: `${this._totalDuration % 60}`
     };
   }
 

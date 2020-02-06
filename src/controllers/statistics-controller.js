@@ -118,4 +118,10 @@ export default class StatisticsController {
     );
     return horizontalBarChart;
   }
+
+  _updateStatisticsData(movies) {
+    this._movies = movies;
+    this._statistics.removeElement();
+    this.init();
+  }
 }
