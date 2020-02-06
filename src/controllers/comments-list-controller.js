@@ -100,7 +100,7 @@ export default class CommentsListController {
     const formData = new FormData(form);
 
     const comment = {
-      text: formData.get(`comment`),
+      text: this._escapeUserInput(formData.get(`comment`)),
       emoji: formData.get(`comment-emoji`),
       date: new Date().toISOString()
     };
@@ -180,6 +180,23 @@ export default class CommentsListController {
     form.querySelector(`.film-details__comment-input`).disabled = status;
     form.querySelectorAll(`.film-details__emoji-item`).forEach(input => {
       input.disabled = status;
+    });
+  }
+
+  _escapeUserInput(string) {
+    let signMap = {
+      "&": `&amp;`,
+      "<": `&lt;`,
+      ">": `&gt;`,
+      '"': `&quot;`,
+      "'": `&#39;`,
+      "/": `&#x2F;`,
+      "`": `&#x60;`,
+      "=": `&#x3D;`,
+      "#": `&#35;`
+    };
+    return String(string).replace(/[&<>"'`=\/]/g, function(s) {
+      return signMap[s];
     });
   }
 }
