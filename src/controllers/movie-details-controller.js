@@ -3,20 +3,20 @@ import MovieDetails from "../components/movie-details";
 import MovieInfo from "../components/movie-info";
 import MovieStatusPanel from "../components/movie-status-panel";
 import MovieRatingPanel from "../components/movie-rating-panel";
-import CommentForm from "../components/comment-form";
-import CommentController from "./comment-controller";
+import CommentsListController from "./comments-list-controller";
 
 export default class MovieDetailsController {
   constructor(container, movie, onDataChange) {
     this._container = container;
     this._movie = movie;
     this._onDataChange = onDataChange;
-
-    this._commentForm = new CommentForm();
+    this._comments = [];
+    this._onDataChangeSubscriptions = [];
 
     this.hide = this.hide.bind(this);
-    this._onRemoveComment = this._onRemoveComment.bind(this);
     this._onEscapeKeyDown = this._onEscapeKeyDown.bind(this);
+    this._onCommentInputFocus = this._onCommentInputFocus.bind(this);
+    this._onCommentInputBlur = this._onCommentInputBlur.bind(this);
   }
 
   init() {
@@ -24,12 +24,25 @@ export default class MovieDetailsController {
     this._movieInfo = new MovieInfo(this._movie);
     this._movieStatusPanel = new MovieStatusPanel(this._movie);
     this._movieRatingPanel = new MovieRatingPanel(this._movie);
-    this._commentForm = new CommentForm();
+    this._commentsListController = new CommentsListController(
+      this._movieDetails.getElement(),
+      this._movie,
+      this._onDataChange,
+      this._onCommentInputFocus,
+      this._onCommentInputBlur
+    );
+    this._onDataChangeSubscriptions = [];
   }
 
   show() {
     this._renderMoviedDtails();
     this._addEventListeners();
+    this._commentsListController.init();
+    this._onDataChangeSubscriptions.push(
+      this._commentsListController._updateCommentsList.bind(
+        this._commentsListController
+      )
+    );
   }
 
   hide() {
@@ -61,48 +74,22 @@ export default class MovieDetailsController {
         );
       }
     );
-
-    this._movie.comments.forEach(comment => {
-      this._addComment(comment);
-    });
-
-    render(
-      this._movieDetails
-        .getElement()
-        .querySelector(`.form-details__bottom-container`),
-      this._commentForm.getElement(),
-      `beforeend`
-    );
   }
 
-  _changeData(payload = null) {
+  _changeData() {
     const form = this._movieDetails
       .getElement()
       .querySelector(`.film-details__inner`);
     const formData = new FormData(form);
 
     const entry = {
-      isInWatchList: formData.get(`watchlist`),
-      isWatched: formData.get(`watched`),
-      isFavorite: formData.get(`favorite`),
-      personalRating: formData.get(`score`),
-      comments: [...this._movie.comments]
+      isInWatchList: Boolean(formData.get(`watchlist`)),
+      isWatched: Boolean(formData.get(`watched`)),
+      isFavorite: Boolean(formData.get(`favorite`)),
+      personalRate: parseInt(formData.get(`score`), 10) || 0
     };
 
-    if (payload) {
-      entry = { ...entry, ...payload };
-    }
-
-    if (formData.get(`comment`) && formData.get(`comment-emoji`)) {
-      entry.comments.push({
-        text: formData.get(`comment`),
-        emoji: formData.get(`comment-emoji`),
-        data: Date.now(),
-        author: `Random author`
-      });
-    }
-
-    this._onDataChange({ ...this._movie, ...entry });
+    return this._onDataChange({ ...this._movie, ...entry });
   }
 
   _addEventListeners() {
@@ -115,17 +102,12 @@ export default class MovieDetailsController {
       if (e.target.tagName !== `INPUT`) {
         return;
       }
-      this._changeData();
+      if (e.target.name === `watched`) {
+        this._changePersonalRating();
+      } else {
+        this._changeData();
+      }
     });
-
-    this._movieDetails
-      .getElement()
-      .querySelector(`.film-details__inner`)
-      .addEventListener(`keydown`, e => {
-        if ((event.ctrlKey || event.metaKey) && e.code === `Enter`) {
-          this._changeData();
-        }
-      });
 
     this._movieRatingPanel
       .getElement()
@@ -141,25 +123,10 @@ export default class MovieDetailsController {
       .getElement()
       .querySelector(`.film-details__watched-reset`)
       .addEventListener(`click`, () => {
-        this._resetPersonalRating();
-        this._changeData();
+        this._changePersonalRating();
       });
 
     document.addEventListener(`keydown`, this._onEscapeKeyDown);
-
-    this._commentForm
-      .getElement()
-      .querySelector(`.film-details__comment-input`)
-      .addEventListener(`focus`, () => {
-        document.removeEventListener(`keydown`, this._onEscapeKeyDown);
-      });
-
-    this._commentForm
-      .getElement()
-      .querySelector(`.film-details__comment-input`)
-      .addEventListener(`blur`, () => {
-        document.addEventListener(`keydown`, this._onEscapeKeyDown);
-      });
   }
 
   _updateMovieData(movie) {
@@ -169,46 +136,42 @@ export default class MovieDetailsController {
     this._movie = movie;
 
     this._updateRatingPanel();
-    this._updateCommentsList();
-    this._commentFormReset();
-  }
-
-  _addComment(comment) {
-    const commentInstanse = new CommentController(
-      this._movieDetails
-        .getElement()
-        .querySelector(`.film-details__comments-list`),
-      comment,
-      this._onRemoveComment
-    );
-    commentInstanse.init();
-  }
-
-  _commentFormReset() {
-    const newCommentForm = new CommentForm();
-    this._commentForm.getElement().replaceWith(newCommentForm.getElement());
-    this._commentForm = newCommentForm;
-  }
-
-  _onRemoveComment(comment) {
-    this._movie.comments = this._movie.comments.filter(
-      ({ id }) => comment.id !== id
-    );
-    this._changeData();
-  }
-
-  _updateCommentsList() {
-    this._movieDetails
-      .getElement()
-      .querySelector(`.film-details__comments-list`).innerHTML = ``;
-    this._movie.comments.forEach(comment => {
-      this._addComment(comment);
+    this._onDataChangeSubscriptions.forEach(subscription => {
+      if (!(subscription instanceof Function)) {
+        return;
+      }
+      subscription();
     });
-    this._movieDetails
+  }
+
+  _setRatingPanelDisableStatus(status) {
+    this._movieRatingPanel
       .getElement()
-      .querySelector(
-        `.film-details__comments-count`
-      ).innerHTML = `${this._movie.comments.length}`;
+      .querySelector(`.film-details__user-rating-score`)
+      .querySelectorAll(`input`)
+      .forEach(input => (input.disabled = status));
+    this._movieRatingPanel
+      .getElement()
+      .querySelector(`.film-details__watched-reset`).disabled = status;
+  }
+
+  _changePersonalRating() {
+    this._setRatingPanelDisableStatus(true);
+    this._changeData()
+      .then(() => {
+        this._resetPersonalRateForm();
+      })
+      .finally(() => {
+        this._setRatingPanelDisableStatus(false);
+      });
+  }
+
+  _resetPersonalRateForm() {
+    this._movieRatingPanel
+      .getElement()
+      .querySelector(`.film-details__user-rating-score`)
+      .querySelectorAll(`input`)
+      .forEach(input => (input.checked = false));
   }
 
   _updateRatingPanel() {
@@ -226,22 +189,22 @@ export default class MovieDetailsController {
       panelNode.classList.add(`visually-hidden`);
     }
     if (!this._movie.isWatched) {
-      this._resetPersonalRating();
+      this._resetPersonalRateForm();
     }
   }
 
-  _resetPersonalRating() {
-    this._movieRatingPanel
-      .getElement()
-      .querySelector(`.film-details__user-rating-score`)
-      .querySelectorAll(`input`)
-      .forEach(input => (input.checked = false));
+  _onCommentInputFocus() {
+    document.removeEventListener(`keydown`, this._onEscapeKeyDown);
+  }
+
+  _onCommentInputBlur() {
+    document.addEventListener(`keydown`, this._onEscapeKeyDown);
   }
 
   _onEscapeKeyDown(e) {
     // не выполняем код повторно, если событие уже запущено
     if (e.defaultPrevented) {
-      document.removeEventListener(`keydown`, this._onEscKeyDown);
+      document.removeEventListener(`keydown`, this._onEscapeKeyDown);
       return;
     }
     e.preventDefault();
@@ -249,6 +212,6 @@ export default class MovieDetailsController {
     if (e.key === `esc` || e.key === `Escape`) {
       this.hide();
     }
-    document.removeEventListener(`keydown`, this._onEscKeyDown);
+    document.removeEventListener(`keydown`, this._onEscapeKeyDown);
   }
 }

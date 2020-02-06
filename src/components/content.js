@@ -6,7 +6,7 @@ export default class Content extends AbstractComponent {
   }
   getTemplate() {
     return `
-      <section class="films">
+      <section class="films" id="main-films-list">
           <section class="films-list">
             <div class="films-list__container"></div>
           </section>

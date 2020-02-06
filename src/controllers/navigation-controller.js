@@ -1,20 +1,29 @@
-import { render, getMoviesDataByFilters, Screens } from "../utils/index";
+import {
+  render,
+  getMoviesDataByFilters,
+  Screens,
+  Filters
+} from "../utils/index";
 import Navigation from "../components/navigation";
 
 const ACTIVE_CLASS = `main-navigation__item--active`;
 
 export default class NavigationController {
-  constructor(container, movies, onScreenChange) {
+  constructor(container, movies, onScreenChange, onFilterChange) {
     this._container = container;
     this._movies = movies;
     this._onScreenChange = onScreenChange;
+    this._onFilterChange = onFilterChange;
     this._filters = [];
     this._currentScreen = Screens.FILM;
+    this._activeFilter = Filters.ALL;
   }
 
   init() {
     this._processData();
     this._navigation = new Navigation(this._filters);
+    this._setFiltersPanel();
+
     render(this._container, this._navigation.getElement(), `beforeend`);
     this._setEventListeners();
   }
@@ -51,6 +60,19 @@ export default class NavigationController {
           this._onScreenChange(Screens.STATISTICS);
         }
       });
+
+    this._navigation.getElement().addEventListener(`click`, e => {
+      e.preventDefault();
+      if (
+        e.target.tagName !== `A` ||
+        e.target.classList.contains(`main-navigation__item--additional`)
+      ) {
+        return;
+      }
+      this._onFilterChange(e.target.dataset.filter);
+      this._activeFilter = e.target.dataset.filter;
+      this._setFiltersPanel();
+    });
   }
 
   _updateCurrentScreen(screen) {
@@ -70,5 +92,22 @@ export default class NavigationController {
     ) {
       statsLink.classList.add(ACTIVE_CLASS);
     }
+  }
+
+  _setFiltersPanel() {
+    this._navigation
+      .getElement()
+      .querySelectorAll(`.main-navigation__item`)
+      .forEach(filter => {
+        if (filter.dataset && filter.dataset.filter === this._activeFilter) {
+          if (!filter.classList.contains(ACTIVE_CLASS)) {
+            filter.classList.add(ACTIVE_CLASS);
+          }
+        } else {
+          if (filter.classList.contains(ACTIVE_CLASS)) {
+            filter.classList.remove(ACTIVE_CLASS);
+          }
+        }
+      });
   }
 }

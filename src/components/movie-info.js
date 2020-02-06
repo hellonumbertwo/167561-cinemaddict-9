@@ -44,11 +44,9 @@ export default class MovieInfo extends AbstractComponent {
     return `
       <div class="film-details__info-wrap">
         <div class="film-details__poster">
-          <img class="film-details__poster-img" src="./images/posters/${
-            this._poster
-          }" alt="">
+          <img class="film-details__poster-img" src="${this._poster}" alt="">
 
-          <p class="film-details__age">${this._ageRestriction}</p>
+          <p class="film-details__age">${this._ageRestriction}+</p>
         </div>
 
         <div class="film-details__info">
