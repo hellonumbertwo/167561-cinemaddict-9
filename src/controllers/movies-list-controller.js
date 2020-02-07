@@ -35,8 +35,7 @@ export default class MoviesListController {
     this._onDataChangeSubscriptions = [];
 
     this._renderMoviesListByChuncks = this._renderMoviesListByChuncks.bind(
-      this,
-      SHOW_MOVIES_STEP
+      this
     );
   }
 
@@ -127,8 +126,8 @@ export default class MoviesListController {
         this._sortedMoviesList = this._initialMoviesList.slice();
         break;
     }
-
-    this._renderMoviesListByChuncks(null);
+    this._numberOfShownMovies = 0;
+    this._renderMoviesListByChuncks(0);
   }
 
   _onShowDetails() {

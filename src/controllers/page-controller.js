@@ -1,4 +1,4 @@
-import { render, Screens, createElement } from "./../utils/index";
+import { render, Screens, createElement, Positioning } from "./../utils/index";
 import NavigationController from "./navigation-controller";
 import StatisticsController from "./statistics-controller";
 import MoviesBoardController from "./movies-board-controller";
@@ -55,10 +55,10 @@ export default class PageController {
     render(
       document.getElementById(`main`),
       this._footer.getElement(),
-      `afterend`
+      Positioning.AFTEREND
     );
     if (this._movies.length === 0) {
-      render(this._container, Plug, `afterend`);
+      render(this._container, Plug, Positioning.AFTEREND);
       return;
     }
 
@@ -70,7 +70,7 @@ export default class PageController {
     render(
       document.getElementById(`header`),
       this._profile.getElement(),
-      `beforeend`
+      Positioning.BEFOREEND
     );
 
     this._setEventsSubscriptions();

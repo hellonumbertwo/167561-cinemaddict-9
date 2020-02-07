@@ -1,4 +1,4 @@
-import { render } from "./../utils/index";
+import { render, Positioning } from "./../utils/index";
 import Comment from "./../components/comment";
 
 export default class CommentController {
@@ -11,7 +11,7 @@ export default class CommentController {
   }
 
   init() {
-    render(this._container, this._comment.getElement(), `beforeend`);
+    render(this._container, this._comment.getElement(), Positioning.BEFOREEND);
     this._setEventListeners();
   }
 

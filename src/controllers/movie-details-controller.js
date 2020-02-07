@@ -1,4 +1,4 @@
-import { render } from "./../utils/index";
+import { render, Positioning } from "./../utils/index";
 import MovieDetails from "../components/movie-details";
 import MovieInfo from "../components/movie-info";
 import MovieStatusPanel from "../components/movie-status-panel";
@@ -60,7 +60,7 @@ export default class MovieDetailsController {
     render(
       document.getElementById(`main`),
       this._movieDetails.getElement(),
-      `beforeend`
+      Positioning.BEFOREEND
     );
 
     [this._movieInfo, this._movieStatusPanel, this._movieRatingPanel].forEach(
@@ -70,7 +70,7 @@ export default class MovieDetailsController {
             .getElement()
             .querySelector(`.form-details__top-container`),
           component.getElement(),
-          `beforeend`
+          Positioning.BEFOREEND
         );
       }
     );

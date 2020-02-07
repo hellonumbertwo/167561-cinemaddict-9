@@ -1,4 +1,4 @@
-import { render, createElement, unrender } from "./../utils/index";
+import { render, createElement, unrender, Positioning } from "./../utils/index";
 import api from "./../api/index";
 import CommentController from "./comment-controller";
 import CommentForm from "./../components/comment-form";
@@ -35,7 +35,7 @@ export default class CommentsListController {
     render(
       this._container.querySelector(`.form-details__bottom-container`),
       this._commentForm.getElement(),
-      `beforeend`
+      Positioning.BEFOREEND
     );
 
     this._setEventListeners();
@@ -167,7 +167,7 @@ export default class CommentsListController {
     render(
       this._container.querySelector(`.film-details__comments-list`),
       Loader,
-      `beforeend`
+      Positioning.BEFOREEND
     );
   }
 

@@ -3,13 +3,13 @@ import moment from "moment";
 export const render = (container, element, place) => {
   if (container) {
     switch (place) {
-      case `afterbegin`:
+      case Positioning.AFTERBEGIN:
         container.prepend(element);
         break;
-      case `beforeend`:
+      case Positioning.BEFOREEND:
         container.append(element);
         break;
-      case `afterend`:
+      case Positioning.AFTEREND:
         container.after(element);
         break;
     }
@@ -84,6 +84,12 @@ export const Screens = {
   STATISTICS: `Statistics`,
   FILMS: `Films`,
   SEARCH: `Search`
+};
+
+export const Positioning = {
+  BEFOREEND: `beforeend`,
+  AFTERBEGIN: `afterbegin`,
+  AFTEREND: `afterend`
 };
 
 // Mocs
