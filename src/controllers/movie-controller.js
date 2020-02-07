@@ -1,4 +1,4 @@
-import { render } from "../utils";
+import { render, Positioning } from "../utils";
 import MovieDetailsController from "./movie-details-controller";
 import MoviePreview from "../components/movie-preview";
 
@@ -45,7 +45,11 @@ export default class MovieController {
         this._elementToBeUpdated
       );
     } else {
-      render(this._container, this._moviePreview.getElement(), `beforeend`);
+      render(
+        this._container,
+        this._moviePreview.getElement(),
+        Positioning.BEFOREEND
+      );
     }
     this._elementToBeUpdated = null;
   }

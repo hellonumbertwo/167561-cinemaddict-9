@@ -1,7 +1,6 @@
-import { moviesList } from "./store/movies-list";
 import PageController from "./controllers/page-controller";
 import api from "./api/index";
-import { render, unrender, createElement } from "./utils";
+import { render, unrender, createElement, Positioning } from "./utils";
 
 const Loader = createElement(`
   <section class="films">
@@ -15,7 +14,7 @@ const Loader = createElement(`
   </section>
 `);
 
-render(document.getElementById(`main`), Loader, `beforeend`);
+render(document.getElementById(`main`), Loader, Positioning.BEFOREEND);
 api.getMovies().then(movies => {
   unrender(Loader);
   const pageController = new PageController(

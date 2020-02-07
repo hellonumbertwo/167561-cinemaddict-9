@@ -1,4 +1,4 @@
-import { render, Screens } from "./../utils/index";
+import { render, Screens, Positioning } from "./../utils/index";
 import SearchLine from "../components/search-line";
 import SearchResults from "../components/search-results";
 import MoviesListController from "./movies-list-controller";
@@ -20,16 +20,20 @@ export default class SearchController {
   }
 
   init() {
-    render(this._container, this._searchLine.getElement(), `beforeend`);
+    render(
+      this._container,
+      this._searchLine.getElement(),
+      Positioning.BEFOREEND
+    );
     render(
       document.querySelector(`.main`),
       this._searchResults.getElement(),
-      `beforeend`
+      Positioning.BEFOREEND
     );
     render(
       this._searchResults.getElement(),
       this._noSearchResults.getElement(),
-      `beforeend`
+      Positioning.BEFOREEND
     );
 
     this._moviesListController = new MoviesListController(

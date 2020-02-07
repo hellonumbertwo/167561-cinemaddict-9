@@ -1,4 +1,4 @@
-import { render, getMoviesDataByFilters } from "../utils";
+import { render, getMoviesDataByFilters, Positioning } from "../utils";
 import Content from "../components/content";
 import Sorting from "../components/sorting";
 import ExtraMoviesList from "../components/extra-movies-list";
@@ -60,10 +60,14 @@ export default class MoviesBoardController {
 
   init() {
     [this._sorting, this._content].forEach(component =>
-      render(this._container, component.getElement(), `beforeend`)
+      render(this._container, component.getElement(), Positioning.BEFOREEND)
     );
     [this._mostCommentedContainer, this._topRatedContainer].forEach(component =>
-      render(this._content.getElement(), component.getElement(), `beforeend`)
+      render(
+        this._content.getElement(),
+        component.getElement(),
+        Positioning.BEFOREEND
+      )
     );
     this._updateExtraListsBoard();
     this._initCommonList();

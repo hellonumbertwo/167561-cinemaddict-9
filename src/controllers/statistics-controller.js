@@ -1,5 +1,5 @@
 import moment from "moment";
-import { render } from "./../utils";
+import { render, Positioning } from "./../utils";
 import StatisticsContainer from "./../components/statistics-container";
 import StatisticsBrief from "../components/statistics-brief";
 import Chart from "chart.js";
@@ -32,7 +32,11 @@ export default class StatisticsController {
   }
 
   init() {
-    render(this._container, this._statistics.getElement(), `beforeend`);
+    render(
+      this._container,
+      this._statistics.getElement(),
+      Positioning.BEFOREEND
+    );
     this._setFilterByPeriodListeners();
     this._updateFiltersPanel();
     this._showStatsByPeriod(this._activeFilter);
@@ -187,7 +191,7 @@ export default class StatisticsController {
     render(
       this._statistics.getElement().querySelector(`.statistic__text`),
       this._statisticsBrief.getElement(),
-      `beforeend`
+      Positioning.BEFOREEND
     );
 
     this._renderHorizontalChard();
