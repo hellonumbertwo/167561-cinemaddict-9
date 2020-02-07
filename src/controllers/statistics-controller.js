@@ -1,26 +1,41 @@
+import moment from "moment";
 import { render } from "./../utils";
-import Statistics from "./../components/statistics";
+import StatisticsContainer from "./../components/statistics-container";
+import StatisticsBrief from "../components/statistics-brief";
 import Chart from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 
 const CHART_BARS_COLOR = `#ffe800`;
+
+/**
+ * Типы сиртировки списка фильмов.
+ * @readonly
+ * @enum {string}
+ */
+const StatsPeriods = {
+  ALL_TIME: `all-time`,
+  TODAY: `today`,
+  WEEK: `week`,
+  MONTH: `month`,
+  YEAR: `year`
+};
 
 export default class StatisticsController {
   constructor(container, movies) {
     this._movies = movies;
     this._container = container;
     this._statisticsData = {};
+    this._statistics = new StatisticsContainer();
+
+    this._filteredMovies = [];
+    this._activeFilter = StatsPeriods.ALL_TIME;
   }
 
   init() {
-    this._statistics = new Statistics(
-      this._watchedFilms().length,
-      this._getTotalDuration(),
-      this._getTopGenre()
-    );
     render(this._container, this._statistics.getElement(), `beforeend`);
-
-    this._renderHorizontalChard();
+    this._setFilterByPeriodListeners();
+    this._updateFiltersPanel();
+    this._showStatsByPeriod(this._activeFilter);
   }
 
   show() {
@@ -35,12 +50,12 @@ export default class StatisticsController {
     }
   }
 
-  _watchedFilms() {
+  get _watchedMovies() {
     return this._movies.filter(({ isWatched }) => !!isWatched);
   }
 
   _getGenresData() {
-    return this._watchedFilms().reduce((stat, { genresList }) => {
+    return this._filteredMovies.reduce((stat, { genresList }) => {
       genresList.forEach(genre => {
         if (stat[genre]) {
           stat[genre] += 1;
@@ -66,7 +81,7 @@ export default class StatisticsController {
   }
 
   _getTotalDuration() {
-    return this._watchedFilms().reduce((totalDuration, { duration }) => {
+    return this._filteredMovies.reduce((totalDuration, { duration }) => {
       return totalDuration + duration;
     }, 0);
   }
@@ -112,7 +127,7 @@ export default class StatisticsController {
       genre => this._getGenresData()[genre]
     );
     const horizontalBarChart = this._initHorizontalBarChart(
-      this._container.querySelector(`.statistic__chart`),
+      this._statistics.getElement().querySelector(`.statistic__chart`),
       genresList,
       numbersOfMovies
     );
@@ -121,7 +136,85 @@ export default class StatisticsController {
 
   _updateStatisticsData(movies) {
     this._movies = movies;
-    this._statistics.removeElement();
-    this.init();
+    this._showStatsByPeriod(this._activeFilter);
+  }
+
+  _showStatsByPeriod(period) {
+    switch (period) {
+      case StatsPeriods.TODAY:
+        this._filteredMovies = this._watchedMovies.filter(({ watchingDate }) =>
+          moment(watchingDate).isSame(Date.now(), `date`)
+        );
+        this._activeFilter = StatsPeriods.TODAY;
+        break;
+      case StatsPeriods.WEEK:
+        this._filteredMovies = this._watchedMovies.filter(({ watchingDate }) =>
+          moment(watchingDate).isSame(Date.now(), `week`)
+        );
+        break;
+      case StatsPeriods.MONTH:
+        this._filteredMovies = this._watchedMovies.filter(({ watchingDate }) =>
+          moment(watchingDate).isSame(Date.now(), `month`)
+        );
+        this._activeFilter = StatsPeriods.MONTH;
+        break;
+      case StatsPeriods.YEAR:
+        this._filteredMovies = this._watchedMovies.filter(({ watchingDate }) =>
+          moment(watchingDate).isSame(Date.now(), `year`)
+        );
+        this._activeFilter = StatsPeriods.YEAR;
+        break;
+      default:
+        this._filteredMovies = this._watchedMovies;
+        this._activeFilter = StatsPeriods.ALL_TIME;
+        break;
+    }
+
+    this._renderStatistics();
+  }
+
+  _renderStatistics() {
+    if (this._statisticsBrief) {
+      this._statisticsBrief.removeElement();
+    }
+
+    this._statisticsBrief = new StatisticsBrief(
+      this._filteredMovies.length,
+      this._getTotalDuration(),
+      this._getTopGenre()
+    );
+
+    render(
+      this._statistics.getElement().querySelector(`.statistic__text`),
+      this._statisticsBrief.getElement(),
+      `beforeend`
+    );
+
+    this._renderHorizontalChard();
+  }
+
+  _setFilterByPeriodListeners() {
+    this._statistics
+      .getElement()
+      .querySelector(`.statistic__filters`)
+      .addEventListener(`change`, e => {
+        if (e.target.tagName !== `INPUT`) {
+          return;
+        }
+        this._showStatsByPeriod(e.target.value);
+      });
+  }
+
+  _updateFiltersPanel() {
+    this._statistics
+      .getElement()
+      .querySelectorAll(`.statistic__filters-input`)
+      .forEach(input => {
+        if (input.value === this._activeFilter) {
+          input.checked = true;
+        } else {
+          input.checked = false;
+        }
+      });
   }
 }
