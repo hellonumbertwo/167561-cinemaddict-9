@@ -71,9 +71,10 @@ export default class SearchController {
       .querySelector(`.search__field`)
       .addEventListener(`input`, e => {
         if (e.target.value.length >= 3) {
-          this._searchResultMovies = this._movies.filter(({ title }) =>
-            title.includes(e.target.value)
-          );
+          this._searchResultMovies = this._movies.filter(({ title }) => {
+            const regexp = new RegExp(`${e.target.value}`, `gi`);
+            return regexp.test(title);
+          });
           this._onChangeResultsSubscriptions.forEach(subscription => {
             if (!(subscription instanceof Function)) {
               return;
