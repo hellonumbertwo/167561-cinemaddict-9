@@ -53,6 +53,12 @@ export const getMoviesDataByFilters = list => {
   }, {});
 };
 
+export const formatDurationFromMinutes = duration => {
+  const hours = `${Math.trunc(duration / 60)}`;
+  const minutes = `${duration % 60}`;
+  return `${hours > 0 ? `${hours}h ` : ``}${minutes}m`;
+};
+
 /**
  * @function
  * @return {number} - возыращает уникальный id
@@ -80,20 +86,7 @@ export const Screens = {
   SEARCH: `Search`
 };
 
-/*
- *
- *
- *
- *
- *
- *
- *
- *
- *
- */
-/** Возвращает рыбный текст – 1-3 рандомных предложения, но обязательно хотя бы одно
- * @return {string} – рандомный тект
- */
+// Mocs
 export const getFishText = () =>
   [
     `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,

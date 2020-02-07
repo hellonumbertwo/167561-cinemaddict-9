@@ -23,8 +23,7 @@ export default class NavigationController {
     this._processData();
     this._navigation = new Navigation(this._filters);
     this._setFiltersPanel();
-
-    render(this._container, this._navigation.getElement(), `beforeend`);
+    render(this._container, this._navigation.getElement(), `afterbegin`);
     this._setEventListeners();
   }
 
@@ -109,5 +108,11 @@ export default class NavigationController {
           }
         }
       });
+  }
+
+  _updateFiltersData(movies) {
+    this._movies = movies;
+    this._navigation.removeElement();
+    this.init();
   }
 }
