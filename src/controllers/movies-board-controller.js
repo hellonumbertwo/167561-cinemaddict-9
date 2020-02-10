@@ -1,14 +1,25 @@
-import { render, getMoviesDataByFilters, Positioning } from "../utils";
+import { render, getMoviesDataByFilters, Positioning, Filters } from "../utils";
 import Content from "../components/content";
 import Sorting from "../components/sorting";
 import ExtraMoviesList from "../components/extra-movies-list";
 import MoviesListController from "./movies-list-controller";
+
+/**
+ * @module
+ * @class
+ * @name MoviesBoardController
+ * @classdesc контроллер для управления доской со списком фильмов: отрисовка, фильтрация, сортировка, одновление данных.
+ * @param {String} container – id родительского контенйера для рендеринга.
+ * @param {Object} movies – список фильмов.
+ * @param {Func} onDataChange – обработчик, который вызывается при изменении данных в списке фильмов.
+ */
 
 export default class MoviesBoardController {
   constructor(container, movies, onDataChange) {
     this._container = container;
     this._movies = movies;
     this._onDataChange = onDataChange;
+    this._currentFilter = Filters.ALL;
 
     this._content = new Content();
     this._sorting = new Sorting();
@@ -36,28 +47,11 @@ export default class MoviesBoardController {
       .slice(0, 2);
   }
 
-  show() {
-    [
-      this._sorting.getElement(),
-      this._container.querySelector(`#main-films-list`)
-    ].forEach(node => {
-      if (node.classList.contains(`visually-hidden`)) {
-        node.classList.remove(`visually-hidden`);
-      }
-    });
-  }
-
-  hide() {
-    [
-      this._sorting.getElement(),
-      this._container.querySelector(`#main-films-list`)
-    ].forEach(node => {
-      if (!node.classList.contains(`visually-hidden`)) {
-        node.classList.add(`visually-hidden`);
-      }
-    });
-  }
-
+  /**
+   * @method
+   * @memberof MoviesBoardController
+   * @public
+   */
   init() {
     [this._sorting, this._content].forEach(component =>
       render(this._container, component.getElement(), Positioning.BEFOREEND)
@@ -76,6 +70,46 @@ export default class MoviesBoardController {
     this._setSortingEventListeners();
   }
 
+  /**
+   * показать доску со списком фильмов
+   * @method
+   * @memberof MoviesBoardController
+   * @public
+   */
+  show() {
+    [
+      this._sorting.getElement(),
+      this._container.querySelector(`#main-films-list`)
+    ].forEach(node => {
+      if (node.classList.contains(`visually-hidden`)) {
+        node.classList.remove(`visually-hidden`);
+      }
+    });
+  }
+
+  /**
+   * скрыть доску со списком фильмов
+   * @method
+   * @memberof MoviesBoardController
+   * @public
+   */
+  hide() {
+    [
+      this._sorting.getElement(),
+      this._container.querySelector(`#main-films-list`)
+    ].forEach(node => {
+      if (!node.classList.contains(`visually-hidden`)) {
+        node.classList.add(`visually-hidden`);
+      }
+    });
+  }
+
+  /**
+   * инициализировать контроллер для общего списка фильмов, который будет управлять его отрисовкой и изменением данных
+   * @method
+   * @memberof MoviesBoardController
+   * @private
+   */
   _initCommonList() {
     this._moviesListController = new MoviesListController(
       this._content.getElement().querySelector(`.films-list__container`),
@@ -98,6 +132,12 @@ export default class MoviesBoardController {
     );
   }
 
+  /**
+   * инициализировать контроллер для 'Most Commented' фильмов, который будет управлять его отрисовкой и изменением данных
+   * @method
+   * @memberof MoviesBoardController
+   * @private
+   */
   _initMostCommentesList() {
     this._mostCommentedMoviesListController = new MoviesListController(
       this._mostCommentedContainer
@@ -114,6 +154,12 @@ export default class MoviesBoardController {
     );
   }
 
+  /**
+   * инициализировать контроллер для 'Top Rated' фильмов, который будет управлять его отрисовкой и изменением данных
+   * @method
+   * @memberof MoviesBoardController
+   * @private
+   */
   _initTopRatedList() {
     this._topRatedMoviesListController = new MoviesListController(
       this._topRatedContainer
@@ -129,7 +175,12 @@ export default class MoviesBoardController {
       )
     );
   }
-
+  /**
+   * установить событие для панели с сортировками – сортировать список при клике на тип сортировки
+   * @method
+   * @memberof MoviesBoardController
+   * @private
+   */
   _setSortingEventListeners() {
     this._sorting.getElement().addEventListener(`click`, e => {
       this._sortMoviesByLinkClick(e);
@@ -137,7 +188,9 @@ export default class MoviesBoardController {
   }
 
   /**
-   * отсортировать preview-карточки фильмов по клику на ссылку в панели sort controls
+   * отсортировать карточки фильмов по клику на ссылку в панели sort controls, обновить панель сортировки в DOM
+   * @method
+   * @memberof MoviesBoardController
    * @private
    * @param {event} e – событие `click`
    */
@@ -173,8 +226,16 @@ export default class MoviesBoardController {
     });
   }
 
+  /**
+   * отфильтровать список фильмов
+   * @method
+   * @memberof MoviesBoardController
+   * @private
+   * @param {String} filter – тип фильтра
+   */
   _onFilterChange(filter) {
     const filteredMovies = getMoviesDataByFilters(this._movies)[filter];
+    this._currentFilter = filter;
     this._onFilterChangeSubscriptions.forEach(subscription => {
       if (!(subscription instanceof Function)) {
         return;
@@ -183,9 +244,16 @@ export default class MoviesBoardController {
     });
   }
 
+  /**
+   * обновить список фильмов до актуального
+   * @method
+   * @memberof MoviesBoardController
+   * @private
+   * @param {Array} movies – список фильмов с актуальными данными
+   */
   _updateMoviesListData(movies) {
     this._movies = movies;
-    this._updateExtraListsBoard();
+
     this._onDataChangeSubscriptions.forEach(subscription => {
       if (!(subscription instanceof Function)) {
         return;
@@ -204,8 +272,18 @@ export default class MoviesBoardController {
       }
       subscription(this._topRatedMovies);
     });
+
+    this._updateExtraListsBoard();
+    this._onFilterChange(this._currentFilter);
   }
 
+  /**
+   * Обновить панель с extra списками: `Top Rated` и `Most Commented`
+   * @method
+   * @memberof MoviesBoardController
+   * @private
+   * @param {Array} movies – список фильмов с актуальными данными
+   */
   _updateExtraListsBoard() {
     if (this._topRatedMovies.length === 0) {
       this._topRatedContainer.getElement().classList.add(`visually-hidden`);

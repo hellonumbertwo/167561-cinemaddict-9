@@ -3,14 +3,14 @@ import ShowMoreButton from "../components/show-more-button";
 import MovieController from "./movie-controller";
 
 /**
- * количество фильмов, которые добавляются в отобращаемый список при нажатии на кноку 'show more'.
+ * количество фильмов, которые добавляются в отображаемый список при нажатии на кноку 'show more'.
  * @constant {number}
  * @default
  */
 const SHOW_MOVIES_STEP = 5;
 
 /**
- * Типы сиртировки списка фильмов.
+ * типы сиртировки списка фильмов
  * @readonly
  * @enum {string}
  */
@@ -19,6 +19,14 @@ const Sortings = {
   BY_RATE: `by-rate`
 };
 
+/**
+ * @module
+ * @class
+ * @name MoviesListController
+ * @classdesc контроллер для отрисовки списка фильмов.
+ * @param {string} containerId – id родительского контенйера для рендеринга.
+ * @param {func} onDataChange – обработчик, который вызывается при изменении данных в списке по фильму
+ */
 export default class MoviesListController {
   constructor(container, movies, onDataChange) {
     this._container = container;
@@ -39,10 +47,11 @@ export default class MoviesListController {
     );
   }
 
-  get _isMoreMoviesLeft() {
-    return this._numberOfShownMovies < this._initialMoviesList.length;
-  }
-
+  /**
+   * @method
+   * @memberof MoviesListController
+   * @public
+   */
   init() {
     this._onShowDetailsSubscriptions = [];
     this._onDataChangeSubscriptions = [];
@@ -56,6 +65,23 @@ export default class MoviesListController {
     this._setShowMoreEventListener();
   }
 
+  /**
+   * проверяет, есть ли в списке ещё не отрендеренные фильмы
+   * @method
+   * @memberof MoviesListController
+   * @private
+   * @return {Boolean}
+   */
+  _isMoreMoviesLeft() {
+    return this._numberOfShownMovies < this._initialMoviesList.length;
+  }
+
+  /**
+   * рендерит фильмы из списка в дом по частям
+   * @method
+   * @memberof MoviesListController
+   * @private
+   */
   _renderMoviesListByChuncks() {
     const prevNumberOfShownMovies = this._numberOfShownMovies;
     this._numberOfShownMovies += SHOW_MOVIES_STEP;
@@ -68,13 +94,19 @@ export default class MoviesListController {
     this._handleShowMoreButtonVisibility();
   }
 
+  /**
+   * скрывает/показывет кнопку "ahow more", в зависимости от того, есть ли не отрендеренные фильмы в списке
+   * @method
+   * @memberof MoviesListController
+   * @private
+   */
   _handleShowMoreButtonVisibility() {
     const isButtonNeedToBeShown =
-      this._isMoreMoviesLeft &&
+      this._isMoreMoviesLeft() &&
       this._showMoreButton.getElement().classList.contains(`visually-hidden`);
 
     const isButtonNeedToBeHidden =
-      !this._isMoreMoviesLeft &&
+      !this._isMoreMoviesLeft() &&
       !this._showMoreButton.getElement().classList.contains(`visually-hidden`);
 
     if (isButtonNeedToBeShown) {
@@ -86,6 +118,13 @@ export default class MoviesListController {
     }
   }
 
+  /**
+   * для конкретного фильма инициализует контроллер, который упраляет его отриосвкой и изменением данных
+   * @method
+   * @memberof MoviesListController
+   * @private
+   * @param {Object} movie – объект с данными фильма
+   */
   _renderMovie(movie) {
     const movieController = new MovieController(
       this._container,
@@ -102,12 +141,25 @@ export default class MoviesListController {
     );
   }
 
+  /**
+   * установить событие для кнопки "show more" – показать очередную часть списка фильмов.
+   * @method
+   * @memberof MoviesListController
+   * @private
+   */
   _setShowMoreEventListener() {
     this._showMoreButton
       .getElement()
       .addEventListener(`click`, this._renderMoviesListByChuncks, false);
   }
 
+  /**
+    сортировка и рендинг в DOM отсортированного списка фильмов
+   * @method
+   * @memberof MoviesListController
+   * @private
+   * @param {String} sortType – тип сортировки
+   */
   _onHandleSorting(sortType) {
     this._container.innerHTML = ``;
 
@@ -130,6 +182,12 @@ export default class MoviesListController {
     this._renderMoviesListByChuncks(0);
   }
 
+  /**
+   * если открыт popup с деталями для какого-то конкретного фильма, то нужно закрыть все остальные, единовременно можно работать только с одним popup.
+   * @method
+   * @memberof MoviesListController
+   * @private
+   */
   _onShowDetails() {
     this._onShowDetailsSubscriptions.forEach(subscription => {
       if (!(subscription instanceof Function)) {
@@ -139,7 +197,13 @@ export default class MoviesListController {
     });
   }
 
-  // менются данные в списке фильмов
+  /**
+   * обновляет список фильмов на актуальный, если поменялись данные в списке фильмов
+   * @method
+   * @memberof MoviesListController
+   * @private
+   * @param {Array} movies – актуальный список фильмов
+   */
   _onMoviesListDataChange(movies) {
     this._initialMoviesList = movies;
     this._onDataChangeSubscriptions.forEach(subscription => {
@@ -150,7 +214,13 @@ export default class MoviesListController {
     });
   }
 
-  // меняется список фильмов
+  /**
+   * обновляет и рендерит новый список фильмов, например, список по для другого фильтра или результаты поиска.
+   * @method
+   * @memberof MoviesListController
+   * @private
+   * @param {Array} movies – новый список фильмов
+   */
   _onListChange(movies) {
     this._initialMoviesList = movies;
     this._onShowDetails();
