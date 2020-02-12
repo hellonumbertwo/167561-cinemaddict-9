@@ -1,4 +1,4 @@
-import { render } from "../utils";
+import { render, createElement, unrender } from "../utils";
 import ShowMoreButton from "../components/show-more-button";
 import MovieController from "./movie-controller";
 
@@ -20,6 +20,11 @@ const Sortings = {
   BY_DATE: `by-date`,
   BY_RATE: `by-rate`
 };
+
+/**
+ *
+ */
+const Plug = createElement(`<p>There is nothing here yet</p>`);
 
 /**
  * @module
@@ -58,13 +63,20 @@ export default class MoviesListController {
     this._onShowDetailsSubscriptions = [];
     this._onDataChangeSubscriptions = [];
 
-    if (this._initialMoviesList.length > SHOW_MOVIES_STEP) {
-      render(this._container, this._showMoreButton.getElement(), `afterend`);
-    }
-
     this._numberOfShownMovies = 0;
     this._onHandleSorting();
-    this._setShowMoreEventListener();
+
+    if (this._initialMoviesList.length > SHOW_MOVIES_STEP) {
+      render(this._container, this._showMoreButton.getElement(), `afterend`);
+      this._setShowMoreEventListener();
+    }
+
+    // если список пуст, показываем заглушку
+    if (this._initialMoviesList.length === 0) {
+      render(this._container, Plug, `afterend`);
+    } else if (document.contains(Plug)) {
+      unrender(Plug);
+    }
   }
 
   /**
