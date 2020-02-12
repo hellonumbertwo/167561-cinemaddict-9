@@ -1,9 +1,5 @@
 import { createElement, unrender } from "./../utils/index";
 
-/**
- * абстрактный класс – содержит общую логику и данные компонентов
- * @class
- */
 export default class AbstractComponent {
   constructor() {
     if (new.target === AbstractComponent) {
