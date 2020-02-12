@@ -10,14 +10,10 @@ const NUMBER_OF_MOVIES = 34;
 const SHOW_MOVIES_STEP = 5;
 
 const createMovie = () => {
-  /**
-   * @constant {number} - продолжительность фильма в милесекундах - минимум час
-   */
+  // продолжительность фильма в милесекундах - минимум час
   const duration = Math.round(Math.random() * 1000 * 60 * 60 + 60000 * 60);
 
-  /**
-   * @constant {array} – массив жанров – 1-3 жанра на фильм
-   */
+  // массив жанров – 1-3 жанра на фильм
   const genresList = [
     `Action`,
     `Horror`,
@@ -30,9 +26,7 @@ const createMovie = () => {
     .sort(() => Math.random() - Math.random())
     .slice(0, Math.ceil(Math.random() * 3));
 
-  /**
-   * @constant {string} – страна производства фильма
-   */
+  // страна производства фильма
   const country = getRandomArrayItem([
     `USA`,
     `Russia`,
@@ -43,9 +37,7 @@ const createMovie = () => {
     `Brazil`
   ]);
 
-  /**
-   * @constant {string} – возрастное ограничение для просмотра
-   */
+  // возрастное ограничение для просмотра
   const ageRestriction = getRandomArrayItem([`0+`, `6+`, `12+`, `16+`, `18+`]);
 
   const visualAndCastMocs = [

@@ -7,13 +7,15 @@
     "eslint": "eslint src/**/**/*.js",
     "test": "npm run eslint",
     "build": "webpack",
-    "start": "webpack-dev-server --open"
+    "start": "webpack-dev-server --open",
+    "jsdoc": "./node_modules/.bin/jsdoc -r src -d docs -a all README.md"
   },
   "devDependencies": {
     "eslint": "6.1.0",
     "eslint-config-htmlacademy": "0.5.2",
     "eslint-config-prettier": "^6.9.0",
     "eslint-plugin-prettier": "^3.1.2",
+    "jsdoc": "^3.6.3",
     "prettier": "^1.19.1",
     "webpack": "4.39.1",
     "webpack-cli": "3.3.6",

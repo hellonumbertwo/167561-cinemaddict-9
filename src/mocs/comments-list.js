@@ -25,10 +25,7 @@ const createComment = () => {
     `Espinosa`
   ])}`;
 
-  /**
-   * @constant
-   * дата самого старого комментария не раньше 5 лет назал
-   */
+  // дата самого старого комментария не раньше 5 лет назал
   const theOldestCommentDate = new Date().setFullYear(
     new Date().getFullYear() - 5
   );
@@ -43,9 +40,7 @@ const createComment = () => {
 
 export const createCommentsList = () => {
   const commentsList = [];
-  /**
-   * @constant {number} - рандомное кол-во комментарией до 30
-   */
+  // рандомное кол-во комментарией до 30
   const commentsListMaxLength = Math.round(Math.random() * 30);
 
   for (let i = 0; i < commentsListMaxLength; i++) {
