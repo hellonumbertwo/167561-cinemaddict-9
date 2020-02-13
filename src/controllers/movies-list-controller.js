@@ -49,9 +49,7 @@ export default class MoviesListController {
     this._onDataChange = onDataChange;
     this._onDataChangeSubscriptions = [];
 
-    this._renderMoviesListByChuncks = this._renderMoviesListByChuncks.bind(
-      this
-    );
+    this._showMoreMovies = this._showMoreMovies.bind(this);
   }
 
   /**
@@ -62,8 +60,6 @@ export default class MoviesListController {
   init() {
     this._onShowDetailsSubscriptions = [];
     this._onDataChangeSubscriptions = [];
-
-    this._numberOfShownMovies = 0;
     this._onHandleSorting();
 
     if (this._initialMoviesList.length > SHOW_MOVIES_STEP) {
@@ -91,12 +87,36 @@ export default class MoviesListController {
   }
 
   /**
-   * рендерит фильмы из списка в дом по частям
+   * рендерит список фильмов в DOM с начала и до текущей позиции
    * @method
    * @memberof MoviesListController
    * @private
    */
-  _renderMoviesListByChuncks() {
+  _renderMoviesListFromScratch() {
+    this._container.innerHTML = ``;
+
+    if (this._numberOfShownMovies === 0) {
+      this._numberOfShownMovies = SHOW_MOVIES_STEP;
+    }
+    this._sortedMoviesList
+      .slice(0, this._numberOfShownMovies)
+      .forEach(movie => {
+        this._renderMovie(movie);
+      });
+
+    this._handleShowMoreButtonVisibility();
+  }
+
+  /**
+   * рендерит доволнительно несколько фильмов к уже отрисованным в DOM
+   * @method
+   * @memberof MoviesListController
+   * @private
+   */
+  _showMoreMovies() {
+    if (!this._isMoreMoviesLeft()) {
+      return;
+    }
     const prevNumberOfShownMovies = this._numberOfShownMovies;
     this._numberOfShownMovies += SHOW_MOVIES_STEP;
     this._sortedMoviesList
@@ -164,7 +184,7 @@ export default class MoviesListController {
   _setShowMoreEventListener() {
     this._showMoreButton
       .getElement()
-      .addEventListener(`click`, this._renderMoviesListByChuncks, false);
+      .addEventListener(`click`, this._showMoreMovies, false);
   }
 
   /**
@@ -175,8 +195,6 @@ export default class MoviesListController {
    * @param {String} sortType – тип сортировки
    */
   _onHandleSorting(sortType) {
-    this._container.innerHTML = ``;
-
     switch (sortType) {
       case Sortings.BY_DATE:
         this._sortedMoviesList = this._initialMoviesList
@@ -192,8 +210,7 @@ export default class MoviesListController {
         this._sortedMoviesList = this._initialMoviesList.slice();
         break;
     }
-    this._numberOfShownMovies = 0;
-    this._renderMoviesListByChuncks(0);
+    this._renderMoviesListFromScratch();
   }
 
   /**
