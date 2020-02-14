@@ -174,6 +174,7 @@ export default class PageController {
       }
       subscription(filter);
     });
+    this._updateScreen(Screens.FILMS);
   }
 
   /**
