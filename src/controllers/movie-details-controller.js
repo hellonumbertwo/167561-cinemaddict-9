@@ -15,9 +15,9 @@ import CommentsListController from "./comments-list-controller";
  * @param {Func} onDataChange – обработчик, который вызывается при изменении данных в списке по фильму.
  */
 export default class MovieDetailsController {
-  constructor(container, movie, onDataChange) {
+  constructor(container, onDataChange) {
     this._container = container;
-    this._movie = movie;
+    this._movie = null;
     this._onDataChange = onDataChange;
     this._comments = [];
     this._onDataChangeSubscriptions = [];
@@ -45,7 +45,12 @@ export default class MovieDetailsController {
       this._onCommentInputFocus,
       this._onCommentInputBlur
     );
-    this._onDataChangeSubscriptions = [];
+    this._commentsListController.init();
+    this._onDataChangeSubscriptions.push(
+      this._commentsListController._updateCommentsList.bind(
+        this._commentsListController
+      )
+    );
   }
 
   /**
@@ -53,16 +58,16 @@ export default class MovieDetailsController {
    * @method
    * @memberof MovieDetailsController
    * @public
+   * @param {Object} movie - объект фильма
    */
-  show() {
+  show(movie) {
+    if (this._movieDetails) {
+      this.hide();
+    }
+    this._movie = movie;
+    this.init();
     this._renderMoviedDtails();
     this._addEventListeners();
-    this._commentsListController.init();
-    this._onDataChangeSubscriptions.push(
-      this._commentsListController._updateCommentsList.bind(
-        this._commentsListController
-      )
-    );
   }
 
   /**
@@ -75,6 +80,7 @@ export default class MovieDetailsController {
     if (document.body.contains(this._movieDetails.getElement())) {
       this._movieDetails.removeElement();
     }
+    this._onDataChangeSubscriptions = [];
     this._movieDetails
       .getElement()
       .querySelector(`.film-details__close-btn`)
@@ -179,20 +185,19 @@ export default class MovieDetailsController {
    * @method
    * @memberof MovieDetailsController
    * @private
-   * @param {Object} movie – актуальный объект фильма
+   * @param {Array} movies – актуальный список фильмов
    */
-  _updateMovieData(movie) {
-    if (movie === this._movie) {
+  _updateMovieData(movies) {
+    if (!this._movie) {
       return;
     }
-    this._movie = movie;
-
+    this._movie = movies.find(({ id }) => id === this._movie.id);
     this._updateRatingPanel();
     this._onDataChangeSubscriptions.forEach(subscription => {
       if (!(subscription instanceof Function)) {
         return;
       }
-      subscription();
+      subscription(this._movie);
     });
   }
 

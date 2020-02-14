@@ -191,9 +191,11 @@ export default class CommentsListController {
    * @method
    * @memberof CommentsListController
    * @private
+   * @param {Object} movie – объект фильма
    * @return {Promise}
    */
-  _updateCommentsList() {
+  _updateCommentsList(movie) {
+    this._movie = movie;
     return this._loadCommentsByMovieId().then(() => {
       this._container.querySelector(
         `.film-details__comments-list`
@@ -223,6 +225,7 @@ export default class CommentsListController {
    * @private
    */
   _commentFormReset() {
+    this._onCommentInputBlur();
     const newCommentForm = new CommentForm();
     this._commentForm.getElement().replaceWith(newCommentForm.getElement());
     this._commentForm = newCommentForm;

@@ -3,7 +3,6 @@ import { render, Positioning } from "./../utils";
 import StatisticsContainer from "./../components/statistics-container";
 import StatisticsBrief from "../components/statistics-brief";
 import Chart from "chart.js";
-import ChartDataLabels from "chartjs-plugin-datalabels";
 
 /**
  * цвет заливки для диаграммы

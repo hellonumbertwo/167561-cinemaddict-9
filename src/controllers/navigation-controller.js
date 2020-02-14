@@ -143,6 +143,7 @@ export default class NavigationController {
     ) {
       statsLink.classList.add(ACTIVE_CLASS);
     }
+    this._setFiltersPanel();
   }
 
   /**
@@ -156,6 +157,13 @@ export default class NavigationController {
       .getElement()
       .querySelectorAll(`.main-navigation__item`)
       .forEach(filter => {
+        if (
+          this._currentScreen === Screens.STATISTICS &&
+          filter.classList.contains(ACTIVE_CLASS)
+        ) {
+          filter.classList.remove(ACTIVE_CLASS);
+          return;
+        }
         if (filter.dataset && filter.dataset.filter === this._activeFilter) {
           if (!filter.classList.contains(ACTIVE_CLASS)) {
             filter.classList.add(ACTIVE_CLASS);

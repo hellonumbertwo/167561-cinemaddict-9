@@ -1,5 +1,4 @@
 import { render, Positioning } from "../utils";
-import MovieDetailsController from "./movie-details-controller";
 import MoviePreview from "../components/movie-preview";
 
 /**
@@ -17,12 +16,7 @@ export default class MovieController {
     this._movie = movie;
     this._onShowDetails = onShowDetails;
     this._onDataChange = onDataChange;
-    this._elementToBeUpdated = null;
-    this._movieDetailsToBeUpdated = null;
-
-    this._showMovieDetails = this._showMovieDetails.bind(this);
-    this._hideMovieDetails = this._hideMovieDetails.bind(this);
-    this._onDataChangeSubscriptions = [];
+    this._moviePreview = new MoviePreview(movie);
   }
 
   /**
@@ -31,19 +25,6 @@ export default class MovieController {
    * @public
    */
   init() {
-    this._moviePreview = new MoviePreview(this._movie);
-    this._movieDetailsController = new MovieDetailsController(
-      document.getElementById(`main`),
-      this._movie,
-      this._onDataChange
-    );
-    this._onDataChangeSubscriptions.push(
-      this._movieDetailsController._updateMovieData.bind(
-        this._movieDetailsController
-      )
-    );
-    this._movieDetailsController.init();
-
     this._renderCardPreview();
     this._setEventListenerForShowDetails();
     this._changeCategoryFromPreview();
@@ -89,7 +70,7 @@ export default class MovieController {
           e.target.id === `movie-title` ||
           e.target.id === `movie-comments-title`
         ) {
-          this._showMovieDetails();
+          this._showMovieDetails(this._movie);
         }
       },
       false
@@ -103,8 +84,7 @@ export default class MovieController {
    * @private
    */
   _showMovieDetails() {
-    this._onShowDetails();
-    this._movieDetailsController.show();
+    this._onShowDetails(this._movie);
   }
 
   /**
@@ -115,30 +95,6 @@ export default class MovieController {
    */
   _hideMovieDetails() {
     this._movieDetailsController.hide();
-  }
-
-  /**
-   * обновить данные о фильме и элемент в DOM
-   * @method
-   * @memberof MovieController
-   * @private
-   * @param {Object} movies – список фильмов с актуальными данными
-   */
-  _updateMovie(movies) {
-    if (this._movie === movies[this._movie.id]) {
-      return;
-    }
-    this._movie = movies[this._movie.id];
-    this._elementToBeUpdated = this._moviePreview.getElement();
-    this.init();
-
-    // обновляем popup
-    this._onDataChangeSubscriptions.forEach(subscription => {
-      if (!(subscription instanceof Function)) {
-        return;
-      }
-      subscription(this._movie);
-    });
   }
 
   /**

@@ -2,7 +2,6 @@ import { render, Screens, Positioning } from "./../utils/index";
 import SearchLine from "../components/search-line";
 import SearchResults from "../components/search-results";
 import MoviesListController from "./movies-list-controller";
-import NoSearchResults from "./../components/no-search-results";
 
 /**
  * @module
@@ -21,12 +20,9 @@ export default class SearchController {
     this._onScreenChange = onScreenChange;
     this._onDataChange = onDataChange;
     this._searchResultMovies = movies;
-    this._onChangeResultsSubscriptions = [];
-    this._onDataChangeSubscriptions = [];
 
     this._searchLine = new SearchLine();
     this._searchResults = new SearchResults(this._searchResultMovies.length);
-    this._noSearchResults = new NoSearchResults();
   }
 
   /**
@@ -35,6 +31,9 @@ export default class SearchController {
    * @public
    */
   init() {
+    this._onChangeResultsSubscriptions = [];
+    this._onDataChangeSubscriptions = [];
+
     render(
       this._container,
       this._searchLine.getElement(),
@@ -43,11 +42,6 @@ export default class SearchController {
     render(
       document.querySelector(`.main`),
       this._searchResults.getElement(),
-      Positioning.BEFOREEND
-    );
-    render(
-      this._searchResults.getElement(),
-      this._noSearchResults.getElement(),
       Positioning.BEFOREEND
     );
 
@@ -66,7 +60,6 @@ export default class SearchController {
       )
     );
 
-    this._updateSearchResultsBoard();
     this._setEventListeners();
   }
 
@@ -118,7 +111,6 @@ export default class SearchController {
             }
             subscription(this._searchResultMovies);
           });
-          this._updateSearchResultsBoard();
           this._updateResultsCount();
           this._onScreenChange(Screens.SEARCH);
         }
@@ -148,20 +140,6 @@ export default class SearchController {
       .querySelector(
         `.result__count`
       ).innerHTML = `${this._searchResultMovies.length}`;
-  }
-
-  /**
-   * показать/скрыть в DOM заглушку – поиск не дал результатов.
-   * @method
-   * @memberof SearchController
-   * @private
-   */
-  _updateSearchResultsBoard() {
-    if (this._searchResultMovies.length === 0) {
-      this._noSearchResults.getElement().classList.remove(`visually-hidden`);
-    } else {
-      this._noSearchResults.getElement().classList.add(`visually-hidden`);
-    }
   }
 
   /**

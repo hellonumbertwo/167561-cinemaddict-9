@@ -22,11 +22,6 @@ const Sortings = {
 };
 
 /**
- *
- */
-const Plug = createElement(`<p>There is nothing here yet</p>`);
-
-/**
  * @module
  * @class
  * @name MoviesListController
@@ -35,21 +30,19 @@ const Plug = createElement(`<p>There is nothing here yet</p>`);
  * @param {Func} onDataChange – обработчик, который вызывается при изменении данных в списке по фильму
  */
 export default class MoviesListController {
-  constructor(container, movies, onDataChange) {
+  constructor(container, movies, onDataChange, onShowDetails) {
     this._container = container;
     this._initialMoviesList = movies;
     this._sortedMoviesList = movies;
+    this._onDataChange = onDataChange;
+    this._plug = createElement(`<p>There is no movies for your request.</p>`);
 
     this._numberOfShownMovies = 0;
-    this._showMoreButton = new ShowMoreButton();
-
-    this._onShowDetailsSubscriptions = [];
-    this._onShowDetails = this._onShowDetails.bind(this);
-
-    this._onDataChange = onDataChange;
     this._onDataChangeSubscriptions = [];
-
+    this._onShowDetails = onShowDetails;
     this._showMoreMovies = this._showMoreMovies.bind(this);
+
+    this._showMoreButton = new ShowMoreButton();
   }
 
   /**
@@ -58,20 +51,18 @@ export default class MoviesListController {
    * @public
    */
   init() {
-    this._onShowDetailsSubscriptions = [];
-    this._onDataChangeSubscriptions = [];
     this._onHandleSorting();
 
-    if (this._initialMoviesList.length > SHOW_MOVIES_STEP) {
+    if (this._sortedMoviesList.length > SHOW_MOVIES_STEP) {
       render(this._container, this._showMoreButton.getElement(), `afterend`);
       this._setShowMoreEventListener();
     }
 
     // если список пуст, показываем заглушку
-    if (this._initialMoviesList.length === 0) {
-      render(this._container, Plug, `afterend`);
-    } else if (document.contains(Plug)) {
-      unrender(Plug);
+    if (this._sortedMoviesList.length === 0) {
+      render(this._container, this._plug, `afterend`);
+    } else if (document.contains(this._plug)) {
+      unrender(this._plug);
     }
   }
 
@@ -83,7 +74,7 @@ export default class MoviesListController {
    * @return {Boolean}
    */
   _isMoreMoviesLeft() {
-    return this._numberOfShownMovies < this._initialMoviesList.length;
+    return this._numberOfShownMovies < this._sortedMoviesList.length;
   }
 
   /**
@@ -167,12 +158,6 @@ export default class MoviesListController {
       this._onDataChange
     );
     movieController.init();
-    this._onShowDetailsSubscriptions.push(
-      movieController._hideMovieDetails.bind(movieController)
-    );
-    this._onDataChangeSubscriptions.push(
-      movieController._updateMovie.bind(movieController)
-    );
   }
 
   /**
@@ -214,21 +199,6 @@ export default class MoviesListController {
   }
 
   /**
-   * если открыт popup с деталями для какого-то конкретного фильма, то нужно закрыть все остальные, единовременно можно работать только с одним popup.
-   * @method
-   * @memberof MoviesListController
-   * @private
-   */
-  _onShowDetails() {
-    this._onShowDetailsSubscriptions.forEach(subscription => {
-      if (!(subscription instanceof Function)) {
-        return;
-      }
-      subscription();
-    });
-  }
-
-  /**
    * обновляет список фильмов на актуальный, если поменялись данные в списке фильмов
    * @method
    * @memberof MoviesListController
@@ -237,12 +207,7 @@ export default class MoviesListController {
    */
   _onMoviesListDataChange(movies) {
     this._initialMoviesList = movies;
-    this._onDataChangeSubscriptions.forEach(subscription => {
-      if (!(subscription instanceof Function)) {
-        return;
-      }
-      subscription(this._initialMoviesList);
-    });
+    this.init();
   }
 
   /**
@@ -250,11 +215,11 @@ export default class MoviesListController {
    * @method
    * @memberof MoviesListController
    * @private
-   * @param {Array} movies – новый список фильмов
+   * @param {Array} movies – актуальный список фильмов
    */
   _onListChange(movies) {
     this._initialMoviesList = movies;
-    this._onShowDetails();
+    this._numberOfShownMovies = 0;
     this.init();
   }
 }
