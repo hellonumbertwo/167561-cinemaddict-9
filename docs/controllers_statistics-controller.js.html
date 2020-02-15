@@ -34,12 +34,15 @@ import Chart from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 
 /**
- * цвет заливки для диаграммы
- * @constant {number}
+ * цвета диаграммы
+ * @enum {String}
  * @memberof StatisticsController
- * @default
+ * @readonly
  */
-const CHART_BARS_COLOR = `#ffe800`;
+const ChartColors = {
+  BARS: `#ffe800`,
+  FONT: `#ffffff`
+};
 
 /**
  * Фильтры статистики просмотренных фильмов по периодам.
@@ -69,6 +72,7 @@ export default class StatisticsController {
     this._container = container;
     this._statisticsData = {};
     this._statistics = new StatisticsContainer();
+    this._chart = null;
 
     this._filteredMovies = [];
     this._activeFilter = StatsPeriods.ALL_TIME;
@@ -87,6 +91,7 @@ export default class StatisticsController {
     );
     this._setFilterByPeriodListeners();
     this._updateFiltersPanel();
+
     this._showStatsByPeriod(this._activeFilter);
   }
 
@@ -172,71 +177,6 @@ export default class StatisticsController {
   }
 
   /**
-   * настроить диаграмму – количество просмотренных фильмов в разрезе жанров
-   * @method
-   * @memberof StatisticsController
-   * @private
-   * @param {*} ctx – ссылка на DOM-элемент для отрисовки
-   * @param {Array} genresList – список жанров для легенды
-   * @param {Array} numbersOfMovies – список с количеством фильмов по жанрам для данных
-   * @return {Object}
-   */
-  _initHorizontalBarChart(ctx, genresList, numbersOfMovies) {
-    return new Chart(ctx, {
-      type: `horizontalBar`,
-      data: {
-        datasets: [
-          {
-            label: `number of movies`,
-            data: numbersOfMovies,
-            backgroundColor: CHART_BARS_COLOR,
-            borderColor: CHART_BARS_COLOR,
-            borderWidth: 1
-          }
-        ]
-      },
-      options: {
-        scales: {
-          fontSize: 14,
-          xAxes: [
-            {
-              display: false,
-              stacked: true
-            }
-          ],
-          yAxes: [
-            {
-              type: `category`,
-              labels: genresList,
-              stacked: true
-            }
-          ]
-        }
-      }
-    });
-  }
-
-  /**
-   * отрисовать диаграмму в DOM
-   * @method
-   * @memberof StatisticsController
-   * @private
-   * @return {Object}
-   */
-  _renderHorizontalChard() {
-    const genresList = Object.keys(this._getGenresData());
-    const numbersOfMovies = genresList.map(
-      genre => this._getGenresData()[genre]
-    );
-    const horizontalBarChart = this._initHorizontalBarChart(
-      this._statistics.getElement().querySelector(`.statistic__chart`),
-      genresList,
-      numbersOfMovies
-    );
-    return horizontalBarChart;
-  }
-
-  /**
    * обновить список фильмов до актуального
    * @method
    * @memberof StatisticsController
@@ -287,6 +227,7 @@ export default class StatisticsController {
     }
 
     this._renderStatistics();
+    this._processChart();
   }
 
   /**
@@ -311,8 +252,6 @@ export default class StatisticsController {
       this._statisticsBrief.getElement(),
       Positioning.BEFOREEND
     );
-
-    this._renderHorizontalChard();
   }
 
   /**
@@ -351,6 +290,96 @@ export default class StatisticsController {
         }
       });
   }
+
+  /**
+   * построить или обновить диаграмму
+   * @method
+   * @memberof StatisticsController
+   * @private
+   */
+  _processChart() {
+    const genresList = Object.keys(this._getGenresData());
+    const numbersOfMovies = genresList.map(
+      genre => this._getGenresData()[genre]
+    );
+    if (this._chart === null) {
+      this._chart = new Chart(
+        this._statistics.getElement().querySelector(`.statistic__chart`),
+        this._getChartConfigure(genresList, numbersOfMovies)
+      );
+    } else {
+      this._chart.data.datasets.forEach(dataset => {
+        dataset.data = numbersOfMovies;
+      });
+      this._chart.options.scales.yAxes[0].labels = genresList;
+      this._chart.update();
+    }
+  }
+
+  /**
+   * генерирует настройки диаграммы
+   * @method
+   * @memberof StatisticsController
+   * @private
+   * @param {Array} labels
+   * @param {Array} data
+   * @return {Object}
+   */
+  _getChartConfigure(labels, data) {
+    return {
+      type: `horizontalBar`,
+      data: {
+        datasets: [
+          {
+            data,
+            backgroundColor: ChartColors.BARS,
+            borderColor: ChartColors.BARS,
+            borderWidth: 1
+          }
+        ]
+      },
+      plugins: [ChartDataLabels],
+      options: {
+        legend: {
+          display: false
+        },
+        plugins: {
+          datalabels: {
+            align: `start`,
+            offset: 16,
+            color: ChartColors.FONT,
+            clamp: true,
+            anchor: `start`,
+            font: {
+              size: 14,
+              weight: `500`
+            }
+          }
+        },
+        scales: {
+          xAxes: [
+            {
+              display: false,
+              stacked: true
+            }
+          ],
+          yAxes: [
+            {
+              labels,
+              stacked: true,
+              type: `category`,
+              ticks: {
+                fontColor: ChartColors.FONT,
+                fontSize: 14,
+                fontStyle: `500`,
+                padding: 56
+              }
+            }
+          ]
+        }
+      }
+    };
+  }
 }
 </code></pre>
         </article>
@@ -368,7 +397,7 @@ export default class StatisticsController {
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Wed Feb 12 2020 15:42:11 GMT+0300 (Moscow Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Sat Feb 15 2020 23:49:05 GMT+0300 (Moscow Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

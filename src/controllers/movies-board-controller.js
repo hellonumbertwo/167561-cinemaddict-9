@@ -9,7 +9,7 @@ import MovieDetailsController from "./movie-details-controller";
  * @module
  * @class
  * @name MoviesBoardController
- * @classdesc контроллер для управления доской со списком фильмов: отрисовка, фильтрация, сортировка, одновление данных.
+ * @classdesc контроллер для управления доской со списком фильмов: отрисовка, фильтрация, сортировка, обновление данных.
  * @param {String} container – id родительского контенйера для рендеринга.
  * @param {Object} movies – список фильмов.
  * @param {Func} onDataChange – обработчик, который вызывается при изменении данных в списке фильмов.
