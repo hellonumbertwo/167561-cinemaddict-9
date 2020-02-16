@@ -94,6 +94,27 @@ export const getUniqueID = () => {
   );
 };
 
+/**
+ * получить ранг пользователя (по просмотренным фильмам)
+ * @function
+ * @param {Array} movies – список фильмов
+ * @return {String}
+ */
+export const getUserRank = movies => {
+  const watchedMoviesNumber = movies.filter(({ isWatched }) => !!isWatched)
+    .length;
+  switch (true) {
+    case watchedMoviesNumber > 0 && watchedMoviesNumber <= 10:
+      return `novice`;
+    case watchedMoviesNumber > 10 && watchedMoviesNumber <= 20:
+      return `fan`;
+    case watchedMoviesNumber > 20:
+      return `movie buff`;
+    default:
+      return null;
+  }
+};
+
 // ENUMS_______________________
 
 /**
