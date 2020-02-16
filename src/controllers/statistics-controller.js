@@ -1,7 +1,8 @@
 import moment from "moment";
-import { render, Positioning } from "./../utils";
+import { render, Positioning, getUserRank } from "./../utils";
 import StatisticsContainer from "./../components/statistics-container";
 import StatisticsBrief from "../components/statistics-brief";
+import StatisticsProfile from "../components/statistics-profile";
 import Chart from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 
@@ -43,8 +44,10 @@ export default class StatisticsController {
     this._movies = movies;
     this._container = container;
     this._statisticsData = {};
-    this._statistics = new StatisticsContainer();
+    this._statistics = new StatisticsContainer(getUserRank(this._movies));
     this._chart = null;
+    this._rank = null;
+    this._profile = null;
 
     this._filteredMovies = [];
     this._activeFilter = StatsPeriods.ALL_TIME;
@@ -61,6 +64,8 @@ export default class StatisticsController {
       this._statistics.getElement(),
       Positioning.BEFOREEND
     );
+    this._manageUserRank();
+
     this._setFilterByPeriodListeners();
     this._updateFiltersPanel();
 
@@ -158,6 +163,7 @@ export default class StatisticsController {
   _updateStatisticsData(movies) {
     this._movies = movies;
     this._showStatsByPeriod(this._activeFilter);
+    this._manageUserRank();
   }
 
   /**
@@ -261,6 +267,32 @@ export default class StatisticsController {
           input.checked = false;
         }
       });
+  }
+
+  /**
+   * отобращение актуального ранга пользователя в DOM (render + update)
+   * @method
+   * @memberof PageController
+   * @private
+   */
+  _manageUserRank() {
+    const rank = getUserRank(this._movies);
+    if (!this._profile) {
+      this._profile = new StatisticsProfile(rank);
+      render(
+        this._statistics.getElement(),
+        this._profile.getElement(),
+        Positioning.AFTERBEGIN
+      );
+    } else if (
+      rank !== this._rank &&
+      document.contains(this._profile.getElement())
+    ) {
+      const prevProfileElement = this._profile.getElement();
+      this._profile = new StatisticsProfile(rank);
+      prevProfileElement.replaceWith(this._profile.getElement());
+    }
+    this._rank = rank;
   }
 
   /**

@@ -1,4 +1,10 @@
-import { render, Screens, createElement, Positioning } from "./../utils/index";
+import {
+  render,
+  Screens,
+  createElement,
+  Positioning,
+  getUserRank
+} from "./../utils/index";
 import NavigationController from "./navigation-controller";
 import StatisticsController from "./statistics-controller";
 import MoviesBoardController from "./movies-board-controller";
@@ -36,6 +42,8 @@ export default class PageController {
     this._onFilterChangeSubscriptions = [];
     this._onDataChangeSubscriptions = [];
     this._onDataChange = this._onDataChange.bind(this);
+    this._rank = null;
+    this._profile = null;
 
     this._navigationController = new NavigationController(
       container,
@@ -56,7 +64,6 @@ export default class PageController {
       this._onDataChange
     );
     this._footer = new Footer(movies);
-    this._profile = new Profile();
   }
 
   /**
@@ -80,12 +87,7 @@ export default class PageController {
     this._statisticsController.init();
     this._moviesBoardController.init();
 
-    render(
-      document.getElementById(`header`),
-      this._profile.getElement(),
-      Positioning.BEFOREEND
-    );
-
+    this._manageUserRank();
     this._setEventsSubscriptions();
     this._updateScreen(this._currentScreen);
   }
@@ -194,6 +196,33 @@ export default class PageController {
         }
         subscription(this._movies);
       });
+      this._manageUserRank();
     });
+  }
+
+  /**
+   * отобращение актуального ранга пользователя в DOM (render + update)
+   * @method
+   * @memberof PageController
+   * @private
+   */
+  _manageUserRank() {
+    const rank = getUserRank(this._movies);
+    if (!this._profile) {
+      this._profile = new Profile(rank);
+      render(
+        document.getElementById(`header`),
+        this._profile.getElement(),
+        Positioning.BEFOREEND
+      );
+    } else if (
+      rank !== this._rank &&
+      document.contains(this._profile.getElement())
+    ) {
+      const prevProfileElement = this._profile.getElement();
+      this._profile = new Profile(rank);
+      prevProfileElement.replaceWith(this._profile.getElement());
+    }
+    this._rank = rank;
   }
 }
