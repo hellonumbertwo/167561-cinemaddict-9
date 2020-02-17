@@ -85,13 +85,6 @@ class ModelMovie {
         [`watching_date`]: watchingDate
       }
     };
-    // return {
-    //   [`personal_rating`]: personalRate,
-    //   [`already_watched`]: isWatched,
-    //   favorite: isFavorite,
-    //   watchlist: isInWatchList,
-    //   [`watching_date`]: watchingDate
-    // };
   }
 
   static convertToRAW(data) {

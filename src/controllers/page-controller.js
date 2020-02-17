@@ -12,6 +12,7 @@ import SearchController from "./search-controller";
 import Footer from "../components/footer";
 import Profile from "../components/profile";
 import api from "./../api/index";
+import moment from "moment";
 
 const Plug = createElement(`<section class="films">
   <section class="films-list">
@@ -188,8 +189,12 @@ export default class PageController {
    * @return {Promise}
    */
   _onDataChange(updatedMovie) {
+    const { id, isWatched } = updatedMovie;
+    if (!this._movies[id].isWatched && isWatched) {
+      updatedMovie.watchingDate = moment().toISOString();
+    }
     return api.updateMovie(updatedMovie).then(movie => {
-      this._movies[updatedMovie.id] = { ...movie };
+      this._movies[id] = { ...movie };
       this._onDataChangeSubscriptions.forEach(subscription => {
         if (!(subscription instanceof Function)) {
           return;
