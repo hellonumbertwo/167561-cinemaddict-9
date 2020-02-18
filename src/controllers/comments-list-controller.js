@@ -7,6 +7,10 @@ const Loader = createElement(
   `<p class="film-details__comment-text">Loading...</p>`
 );
 
+const getErrorMessage = message => {
+  return createElement(`<p class="film-details__comment-text">${message}</p>`);
+};
+
 /**
  * @module
  * @class
@@ -35,6 +39,11 @@ export default class CommentsListController {
     this._onRemoveComment = this._onRemoveComment.bind(this);
     this._onDeleteRequestStartSubscriptions = [];
     this._onDeleteRequestEndSubscriptions = [];
+
+    this._errors = {
+      createComment: null,
+      loadComments: null
+    };
   }
 
   /**
@@ -67,10 +76,19 @@ export default class CommentsListController {
    */
   _loadCommentsByMovieId() {
     this._setLoadingStatus(true);
-    return api.getComments(this._movie).then(comments => {
-      this._comments = [...comments];
-      this._setLoadingStatus(false);
-    });
+    this._setLoadCommentsErrorStatus(false);
+    return api
+      .getComments(this._movie)
+      .then(comments => {
+        this._comments = [...comments];
+      })
+      .catch(() => {
+        this._errors.loadComments = getErrorMessage(`Failed to load comments.`);
+        this._setLoadCommentsErrorStatus(true);
+      })
+      .finally(() => {
+        this._setLoadingStatus(false);
+      });
   }
 
   /**
@@ -146,10 +164,18 @@ export default class CommentsListController {
     const { id } = this._movie;
 
     this._setCommentFormDisabledStatus(true);
+    this._setCreateCommentErrorStatus(false);
     return api
       .createComment(id, comment)
       .then(() => {
         return this._onDataChange(this._movie);
+      })
+      .catch(({ message }) => {
+        this._errors.createComment = getErrorMessage(message);
+        form
+          .querySelector(`.film-details__new-comment`)
+          .classList.add(`shaking-head`);
+        this._setCreateCommentErrorStatus(true);
       })
       .finally(() => {
         this._setCommentFormDisabledStatus(false);
@@ -288,6 +314,48 @@ export default class CommentsListController {
       );
     } else if (document.contains(Loader)) {
       unrender(Loader);
+    }
+  }
+
+  /**
+   * показать/скрыть сообщение об ошибке при отправке комментария
+   * @method
+   * @memberof CommentsListController
+   * @private
+   * @param {Boolean} status - true -> показать, false -> скрыть
+   */
+  _setCreateCommentErrorStatus(status) {
+    const { createComment: message } = this._errors;
+    if (status) {
+      render(
+        this._container.querySelector(`.form-details__bottom-container`),
+        message,
+        Positioning.BEFOREEND
+      );
+    } else if (message && document.contains(message)) {
+      unrender(message);
+      this._errors.createComment = null;
+    }
+  }
+
+  /**
+   * показать/скрыть сообщение об ошибке при загрузке комментариев
+   * @method
+   * @memberof CommentsListController
+   * @private
+   * @param {Boolean} status - true -> показать, false -> скрыть
+   */
+  _setLoadCommentsErrorStatus(status) {
+    const { loadComments: message } = this._errors;
+    if (status) {
+      render(
+        this._container.querySelector(`.film-details__comments-wrap`),
+        message,
+        Positioning.BEFOREEND
+      );
+    } else if (message && document.contains(message)) {
+      unrender(message);
+      this._errors.loadComments = null;
     }
   }
 }

@@ -152,7 +152,8 @@ export default class MoviesBoardController {
         .getElement()
         .querySelector(`.films-list__container`),
       this._mostCommentedMovies,
-      this._onDataChange
+      this._onDataChange,
+      this._onShowDetails
     );
     this._mostCommentedMoviesListController.init();
     this._onMostCommentedDataChangeSubscriptions.push(
@@ -174,7 +175,8 @@ export default class MoviesBoardController {
         .getElement()
         .querySelector(`.films-list__container`),
       this._topRatedMovies,
-      this._onDataChange
+      this._onDataChange,
+      this._onShowDetails
     );
     this._topRatedMoviesListController.init();
     this._onTopRatedDataChangeSubscriptions.push(

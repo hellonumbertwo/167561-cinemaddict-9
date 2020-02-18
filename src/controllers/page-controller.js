@@ -193,16 +193,19 @@ export default class PageController {
     if (!this._movies[id].isWatched && isWatched) {
       updatedMovie.watchingDate = moment().toISOString();
     }
-    return api.updateMovie(updatedMovie).then(movie => {
-      this._movies[id] = { ...movie };
-      this._onDataChangeSubscriptions.forEach(subscription => {
-        if (!(subscription instanceof Function)) {
-          return;
-        }
-        subscription(this._movies);
-      });
-      this._manageUserRank();
-    });
+    return api
+      .updateMovie(updatedMovie)
+      .then(movie => {
+        this._movies[id] = { ...movie };
+        this._onDataChangeSubscriptions.forEach(subscription => {
+          if (!(subscription instanceof Function)) {
+            return;
+          }
+          subscription(this._movies);
+        });
+        this._manageUserRank();
+      })
+      .catch(() => {});
   }
 
   /**

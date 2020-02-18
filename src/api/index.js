@@ -1,4 +1,4 @@
-import { getUniqueID } from "./../utils/index";
+import { getUniqueID, getErrorMessage } from "./../utils/index";
 import { ModelMovie, ModelComment } from "./adapter";
 
 const Method = {
@@ -25,10 +25,16 @@ const API = class {
   }
 
   static checkStatus(response) {
-    if (response.status >= 200 && response.status < 300) {
+    if (response.ok) {
       return response;
     } else {
-      throw new Error(`${response.status}: ${response.statusText}`);
+      const contentType = response.headers.get(`content-type`);
+      if (!contentType || !contentType.includes(`application/json`)) {
+        throw new Error(`Oops, something went wrong!`);
+      }
+      return response.json().then(error => {
+        throw new Error(getErrorMessage(error));
+      });
     }
   }
 
