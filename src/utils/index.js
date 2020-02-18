@@ -115,6 +115,31 @@ export const getUserRank = movies => {
   }
 };
 
+/**
+ * получить отформатированное сообщение об ошибке
+ * @function
+ * @param {Object} error
+ * @return {String}
+ */
+export const getErrorMessage = error => {
+  const { message, errors } = error;
+  if (!errors) {
+    return message || `Oops, something went wrong!`;
+  }
+  const errorMessagesList = errors
+    .map(({ fieldName, errorMessage }) => `${fieldName} ${errorMessage}`)
+    .join(`, `);
+  return `${message}: ${errorMessagesList}`
+    .split(``)
+    .map((char, index) => {
+      if (index === 0) {
+        return char.toUpperCase();
+      }
+      return char.toLowerCase();
+    })
+    .join(``);
+};
+
 // ENUMS_______________________
 
 /**
