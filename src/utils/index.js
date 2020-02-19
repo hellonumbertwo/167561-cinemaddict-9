@@ -165,6 +165,12 @@ export const Screens = {
   SEARCH: `Search`
 };
 
+export const Statuses = {
+  WATCHLIST: `watchlist`,
+  WATCHED: `watched`,
+  FAVORITES: `favorite`
+};
+
 /**
  * Позиция элемента внетри родителя при рендеринге в DOM
  * @readonly

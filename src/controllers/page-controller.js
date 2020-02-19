@@ -205,7 +205,9 @@ export default class PageController {
         });
         this._manageUserRank();
       })
-      .catch(() => {});
+      .catch(error => {
+        throw error;
+      });
   }
 
   /**

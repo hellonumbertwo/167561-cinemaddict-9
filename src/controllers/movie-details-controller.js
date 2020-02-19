@@ -115,29 +115,6 @@ export default class MovieDetailsController {
   }
 
   /**
-   * обрабатывает изменение данных фильма: рейтинг и категории (watchlist, watched, favorite)
-   * @method
-   * @memberof MovieDetailsController
-   * @private
-   * @return {Promise}
-   */
-  _changeData() {
-    const form = this._movieDetails
-      .getElement()
-      .querySelector(`.film-details__inner`);
-    const formData = new FormData(form);
-
-    const entry = {
-      isInWatchList: Boolean(formData.get(`watchlist`)),
-      isWatched: Boolean(formData.get(`watched`)),
-      isFavorite: Boolean(formData.get(`favorite`)),
-      personalRate: parseInt(formData.get(`score`), 10) || 0
-    };
-
-    return this._onDataChange({ ...this._movie, ...entry });
-  }
-
-  /**
    * устанавливает обработчики событий: закрытие popup, сменить категорию, сбросить/поставить рейтинг.
    * @method
    * @memberof MovieDetailsController
@@ -153,52 +130,83 @@ export default class MovieDetailsController {
       if (e.target.tagName !== `INPUT`) {
         return;
       }
-      if (e.target.name === `watched`) {
-        this._changePersonalRating();
-      } else {
-        this._changeData();
-      }
+      this._changeMovieStatus(e.target.name);
     });
 
     this._movieRatingPanel
       .getElement()
       .querySelector(`.film-details__user-rating-score`)
-      .addEventListener(`click`, e => {
+      .addEventListener(`change`, e => {
         if (e.target.tagName !== `INPUT`) {
           return;
         }
-        this._changeData();
+
+        this._changePersonalRating(parseInt(e.target.value, 10));
       });
 
     this._movieRatingPanel
       .getElement()
       .querySelector(`.film-details__watched-reset`)
       .addEventListener(`click`, () => {
-        this._changePersonalRating();
+        this._changePersonalRating(0);
       });
 
     document.addEventListener(`keydown`, this._onEscapeKeyDown);
   }
 
   /**
-   * обновить данные фильмы и отображение в DOM
+   * Обновляет категрию фильма: watchlist, watched, favorite
    * @method
    * @memberof MovieDetailsController
    * @private
-   * @param {Array} movies – актуальный список фильмов
+   * @param {String} status
    */
-  _updateMovieData(movies) {
-    if (!this._movie) {
-      return;
-    }
-    this._movie = movies.find(({ id }) => id === this._movie.id);
-    this._updateRatingPanel();
-    this._onDataChangeSubscriptions.forEach(subscription => {
-      if (!(subscription instanceof Function)) {
-        return;
-      }
-      subscription(this._movie);
-    });
+  _changeMovieStatus(status) {
+    const props = {
+      watched: `isWatched`,
+      watchlist: `isInWatchList`,
+      favorite: `isFavorite`
+    };
+
+    const updatedProp = props[status];
+    this._onDataChange({
+      ...this._movie,
+      [updatedProp]: !this._movie[updatedProp]
+    })
+      .then(() => {
+        this._updateRatingPanelInDOM();
+      })
+      .catch(() => {})
+      .finally(() => {
+        this._movieStatusPanel
+          .getElement()
+          .querySelectorAll(`input`)
+          .forEach(input => {
+            const prop = props[input.name];
+            input.checked = this._movie[prop];
+          });
+      });
+  }
+
+  /**
+   * Изменить ценку (рейтинг) фильма
+   * @method
+   * @memberof MovieDetailsController
+   * @param {Number} personalRate
+   * @private
+   */
+  _changePersonalRating(personalRate) {
+    this._setRatingPanelDisableStatus(true);
+    this._onDataChange({
+      ...this._movie,
+      personalRate
+    })
+      .then(() => {})
+      .catch(() => {})
+      .finally(() => {
+        this._updateRatingPanelInDOM();
+        this._setRatingPanelDisableStatus(false);
+      });
   }
 
   /**
@@ -220,44 +228,25 @@ export default class MovieDetailsController {
   }
 
   /**
-   * изменить/установить оценку (рейтинг) фильма
+   * обновить панель рейтинга в DOM: показать/скрыть, отобразить актуальную оценку
    * @method
    * @memberof MovieDetailsController
    * @private
    */
-  _changePersonalRating() {
-    this._setRatingPanelDisableStatus(true);
-    this._changeData()
-      .then(() => {
-        this._resetPersonalRateForm();
-      })
-      .finally(() => {
-        this._setRatingPanelDisableStatus(false);
-      });
-  }
+  _updateRatingPanelInDOM() {
+    const panelNode = this._movieRatingPanel.getElement();
 
-  /**
-   * сбросить(отменить) рейтинг фильма
-   * @method
-   * @memberof MovieDetailsController
-   * @private
-   */
-  _resetPersonalRateForm() {
-    this._movieRatingPanel
-      .getElement()
+    panelNode
       .querySelector(`.film-details__user-rating-score`)
       .querySelectorAll(`input`)
-      .forEach(input => (input.checked = false));
-  }
+      .forEach(input => {
+        if (this._movie.personalRate === parseInt(input.value, 10)) {
+          input.checked = true;
+        } else {
+          input.checked = false;
+        }
+      });
 
-  /**
-   * показать/скрыть панель рейтинга в DOM
-   * @method
-   * @memberof MovieDetailsController
-   * @private
-   */
-  _updateRatingPanel() {
-    const panelNode = this._movieRatingPanel.getElement();
     if (
       this._movie.isWatched &&
       panelNode.classList.contains(`visually-hidden`)
@@ -270,8 +259,31 @@ export default class MovieDetailsController {
     ) {
       panelNode.classList.add(`visually-hidden`);
     }
-    if (!this._movie.isWatched) {
-      this._resetPersonalRateForm();
+  }
+
+  /**
+   * Обновяляет данные фильма после успешной отправки на сервер
+   * @method
+   * @memberof MovieDetailsController
+   * @private
+   * @param {Array} movies – актуальный список фильмов
+   */
+  _updateMovieData(movies) {
+    if (!this._movie) {
+      return;
+    }
+    const movie = movies.find(({ id }) => id === this._movie.id);
+    const needToUpdateComments =
+      movie.comments.length !== this._movie.comments.length;
+    this._movie = { ...movie };
+
+    if (needToUpdateComments) {
+      this._onDataChangeSubscriptions.forEach(subscription => {
+        if (!(subscription instanceof Function)) {
+          return;
+        }
+        subscription(this._movie);
+      });
     }
   }
 

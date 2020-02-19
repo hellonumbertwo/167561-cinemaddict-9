@@ -38,7 +38,7 @@ export default class MovieRatingPanel extends AbstractComponent {
     `;
   }
   _renderRatingGrade() {
-    const grade = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+    const grade = [1, 2, 3, 4, 5, 6, 7, 8, 9];
     return grade
       .map(
         mark =>
