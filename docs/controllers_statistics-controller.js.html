@@ -27,9 +27,10 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>import moment from "moment";
-import { render, Positioning } from "./../utils";
+import { render, Positioning, getUserRank } from "./../utils";
 import StatisticsContainer from "./../components/statistics-container";
 import StatisticsBrief from "../components/statistics-brief";
+import StatisticsProfile from "../components/statistics-profile";
 import Chart from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 
@@ -71,8 +72,10 @@ export default class StatisticsController {
     this._movies = movies;
     this._container = container;
     this._statisticsData = {};
-    this._statistics = new StatisticsContainer();
+    this._statistics = new StatisticsContainer(getUserRank(this._movies));
     this._chart = null;
+    this._rank = null;
+    this._profile = null;
 
     this._filteredMovies = [];
     this._activeFilter = StatsPeriods.ALL_TIME;
@@ -89,6 +92,8 @@ export default class StatisticsController {
       this._statistics.getElement(),
       Positioning.BEFOREEND
     );
+    this._manageUserRank();
+
     this._setFilterByPeriodListeners();
     this._updateFiltersPanel();
 
@@ -186,6 +191,7 @@ export default class StatisticsController {
   _updateStatisticsData(movies) {
     this._movies = movies;
     this._showStatsByPeriod(this._activeFilter);
+    this._manageUserRank();
   }
 
   /**
@@ -292,6 +298,32 @@ export default class StatisticsController {
   }
 
   /**
+   * отобращение актуального ранга пользователя в DOM (render + update)
+   * @method
+   * @memberof PageController
+   * @private
+   */
+  _manageUserRank() {
+    const rank = getUserRank(this._movies);
+    if (!this._profile) {
+      this._profile = new StatisticsProfile(rank);
+      render(
+        this._statistics.getElement(),
+        this._profile.getElement(),
+        Positioning.AFTERBEGIN
+      );
+    } else if (
+      rank !== this._rank &amp;&amp;
+      document.contains(this._profile.getElement())
+    ) {
+      const prevProfileElement = this._profile.getElement();
+      this._profile = new StatisticsProfile(rank);
+      prevProfileElement.replaceWith(this._profile.getElement());
+    }
+    this._rank = rank;
+  }
+
+  /**
    * построить или обновить диаграмму
    * @method
    * @memberof StatisticsController
@@ -391,13 +423,13 @@ export default class StatisticsController {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="CommentController.html">CommentController</a></li><li><a href="CommentsListController.html">CommentsListController</a></li><li><a href="MovieController.html">MovieController</a></li><li><a href="MoviesBoardController.html">MoviesBoardController</a></li><li><a href="MoviesListController.html">MoviesListController</a></li><li><a href="NavigationController.html">NavigationController</a></li><li><a href="PageController.html">PageController</a></li><li><a href="SearchController.html">SearchController</a></li><li><a href="StatisticsController.html">StatisticsController</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#Filters">Filters</a></li><li><a href="global.html#formatDurationFromMinutes">formatDurationFromMinutes</a></li><li><a href="global.html#getMoviesDataByFilters">getMoviesDataByFilters</a></li><li><a href="global.html#getUniqueID">getUniqueID</a></li><li><a href="global.html#Positioning">Positioning</a></li><li><a href="global.html#render">render</a></li><li><a href="global.html#Screens">Screens</a></li><li><a href="global.html#unrender">unrender</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="CommentController.html">CommentController</a></li><li><a href="CommentsListController.html">CommentsListController</a></li><li><a href="MovieController.html">MovieController</a></li><li><a href="MoviesBoardController.html">MoviesBoardController</a></li><li><a href="MoviesListController.html">MoviesListController</a></li><li><a href="NavigationController.html">NavigationController</a></li><li><a href="PageController.html">PageController</a></li><li><a href="SearchController.html">SearchController</a></li><li><a href="StatisticsController.html">StatisticsController</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#Filters">Filters</a></li><li><a href="global.html#formatDurationFromMinutes">formatDurationFromMinutes</a></li><li><a href="global.html#getErrorMessage">getErrorMessage</a></li><li><a href="global.html#getMoviesDataByFilters">getMoviesDataByFilters</a></li><li><a href="global.html#getUniqueID">getUniqueID</a></li><li><a href="global.html#getUserRank">getUserRank</a></li><li><a href="global.html#Positioning">Positioning</a></li><li><a href="global.html#render">render</a></li><li><a href="global.html#Screens">Screens</a></li><li><a href="global.html#unrender">unrender</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Sat Feb 15 2020 23:49:05 GMT+0300 (Moscow Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Thu Feb 20 2020 16:27:51 GMT+0300 (Moscow Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

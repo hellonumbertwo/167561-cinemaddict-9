@@ -37,22 +37,11 @@ export default class MovieController {
    * @private
    */
   _renderCardPreview() {
-    if (
-      this._elementToBeUpdated &&
-      document.body.contains(this._elementToBeUpdated)
-    ) {
-      this._container.replaceChild(
-        this._moviePreview.getElement(),
-        this._elementToBeUpdated
-      );
-    } else {
-      render(
-        this._container,
-        this._moviePreview.getElement(),
-        Positioning.BEFOREEND
-      );
-    }
-    this._elementToBeUpdated = null;
+    render(
+      this._container,
+      this._moviePreview.getElement(),
+      Positioning.BEFOREEND
+    );
   }
 
   /**

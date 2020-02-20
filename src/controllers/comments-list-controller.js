@@ -7,7 +7,7 @@ const Loader = createElement(
   `<p class="film-details__comment-text">Loading...</p>`
 );
 
-const getErrorMessage = message => {
+const getErrorMessageElem = message => {
   return createElement(`<p class="film-details__comment-text">${message}</p>`);
 };
 
@@ -83,7 +83,9 @@ export default class CommentsListController {
         this._comments = [...comments];
       })
       .catch(() => {
-        this._errors.loadComments = getErrorMessage(`Failed to load comments.`);
+        this._errors.loadComments = getErrorMessageElem(
+          `Failed to load comments.`
+        );
         this._setLoadCommentsErrorStatus(true);
       })
       .finally(() => {
@@ -171,7 +173,7 @@ export default class CommentsListController {
         return this._onDataChange(this._movie);
       })
       .catch(({ message }) => {
-        this._errors.createComment = getErrorMessage(message);
+        this._errors.createComment = getErrorMessageElem(message);
         form
           .querySelector(`.film-details__new-comment`)
           .classList.add(`shaking-head`);
@@ -179,6 +181,8 @@ export default class CommentsListController {
       })
       .finally(() => {
         this._setCommentFormDisabledStatus(false);
+        // разрешить закрывать popup по Esc
+        this._onCommentInputBlur();
       });
   }
 
@@ -202,6 +206,7 @@ export default class CommentsListController {
       .then(() => {
         return this._onDataChange(this._movie);
       })
+      .catch(() => {})
       .finally(() => {
         this._onDeleteRequestEndSubscriptions.forEach(subscription => {
           if (!(subscription instanceof Function)) {
@@ -251,7 +256,6 @@ export default class CommentsListController {
    * @private
    */
   _commentFormReset() {
-    this._onCommentInputBlur();
     const newCommentForm = new CommentForm();
     this._commentForm.getElement().replaceWith(newCommentForm.getElement());
     this._commentForm = newCommentForm;
