@@ -35,7 +35,7 @@ const Loader = createElement(
   `&lt;p class="film-details__comment-text">Loading...&lt;/p>`
 );
 
-const getErrorMessage = message => {
+const getErrorMessageElem = message => {
   return createElement(`&lt;p class="film-details__comment-text">${message}&lt;/p>`);
 };
 
@@ -111,7 +111,9 @@ export default class CommentsListController {
         this._comments = [...comments];
       })
       .catch(() => {
-        this._errors.loadComments = getErrorMessage(`Failed to load comments.`);
+        this._errors.loadComments = getErrorMessageElem(
+          `Failed to load comments.`
+        );
         this._setLoadCommentsErrorStatus(true);
       })
       .finally(() => {
@@ -196,10 +198,10 @@ export default class CommentsListController {
     return api
       .createComment(id, comment)
       .then(() => {
-        return this._onDataChange(this._movie);
+        this._onDataChange(this._movie);
       })
       .catch(({ message }) => {
-        this._errors.createComment = getErrorMessage(message);
+        this._errors.createComment = getErrorMessageElem(message);
         form
           .querySelector(`.film-details__new-comment`)
           .classList.add(`shaking-head`);
@@ -207,6 +209,8 @@ export default class CommentsListController {
       })
       .finally(() => {
         this._setCommentFormDisabledStatus(false);
+        // разрешить закрывать popup по Esc
+        this._onCommentInputBlur();
       });
   }
 
@@ -228,8 +232,9 @@ export default class CommentsListController {
     return api
       .deleteComment(comment)
       .then(() => {
-        return this._onDataChange(this._movie);
+        this._onDataChange(this._movie);
       })
+      .catch(() => {})
       .finally(() => {
         this._onDeleteRequestEndSubscriptions.forEach(subscription => {
           if (!(subscription instanceof Function)) {
@@ -241,15 +246,31 @@ export default class CommentsListController {
   }
 
   /**
-   * обновить список комментариев в DOM
+   * Обновить данные фильма и отображение до актуальных
+   * @method
+   * @memberof CommentsListController
+   * @private
+   * @param {Object} movie – объект фильма
+   */
+  _updateData(movie) {
+    const needToUpdateComments =
+      movie.comments.length !== this._movie.comments.length;
+    this._movie = { ...movie };
+
+    if (needToUpdateComments) {
+      this._updateCommentsList();
+    }
+  }
+
+  /**
+   * загрузить и обновить список комментариев в DOM
    * @method
    * @memberof CommentsListController
    * @private
    * @param {Object} movie – объект фильма
    * @return {Promise}
    */
-  _updateCommentsList(movie) {
-    this._movie = movie;
+  _updateCommentsList() {
     return this._loadCommentsByMovieId().then(() => {
       this._container.querySelector(
         `.film-details__comments-list`
@@ -279,7 +300,6 @@ export default class CommentsListController {
    * @private
    */
   _commentFormReset() {
-    this._onCommentInputBlur();
     const newCommentForm = new CommentForm();
     this._commentForm.getElement().replaceWith(newCommentForm.getElement());
     this._commentForm = newCommentForm;
@@ -397,13 +417,13 @@ export default class CommentsListController {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="CommentController.html">CommentController</a></li><li><a href="CommentsListController.html">CommentsListController</a></li><li><a href="MovieController.html">MovieController</a></li><li><a href="MoviesBoardController.html">MoviesBoardController</a></li><li><a href="MoviesListController.html">MoviesListController</a></li><li><a href="NavigationController.html">NavigationController</a></li><li><a href="PageController.html">PageController</a></li><li><a href="SearchController.html">SearchController</a></li><li><a href="StatisticsController.html">StatisticsController</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#Filters">Filters</a></li><li><a href="global.html#formatDurationFromMinutes">formatDurationFromMinutes</a></li><li><a href="global.html#getErrorMessage">getErrorMessage</a></li><li><a href="global.html#getMoviesDataByFilters">getMoviesDataByFilters</a></li><li><a href="global.html#getUniqueID">getUniqueID</a></li><li><a href="global.html#getUserRank">getUserRank</a></li><li><a href="global.html#Positioning">Positioning</a></li><li><a href="global.html#render">render</a></li><li><a href="global.html#Screens">Screens</a></li><li><a href="global.html#unrender">unrender</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="CommentController.html">CommentController</a></li><li><a href="CommentsListController.html">CommentsListController</a></li><li><a href="MovieController.html">MovieController</a></li><li><a href="MoviesBoardController.html">MoviesBoardController</a></li><li><a href="MoviesListController.html">MoviesListController</a></li><li><a href="NavigationController.html">NavigationController</a></li><li><a href="PageController.html">PageController</a></li><li><a href="SearchController.html">SearchController</a></li><li><a href="StatisticsController.html">StatisticsController</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#Filters">Filters</a></li><li><a href="global.html#formatDurationFromMinutes">formatDurationFromMinutes</a></li><li><a href="global.html#getErrorMessage">getErrorMessage</a></li><li><a href="global.html#getMoviesDataByFilters">getMoviesDataByFilters</a></li><li><a href="global.html#getUniqueID">getUniqueID</a></li><li><a href="global.html#getUserRank">getUserRank</a></li><li><a href="global.html#Positioning">Positioning</a></li><li><a href="global.html#render">render</a></li><li><a href="global.html#Screens">Screens</a></li><li><a href="global.html#Statuses">Statuses</a></li><li><a href="global.html#unrender">unrender</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Thu Feb 20 2020 16:27:51 GMT+0300 (Moscow Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Thu Feb 20 2020 22:41:58 GMT+0300 (Moscow Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

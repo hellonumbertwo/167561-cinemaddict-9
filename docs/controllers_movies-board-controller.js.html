@@ -99,9 +99,9 @@ export default class MoviesBoardController {
     this._initCommonList();
     this._initMostCommentesList();
     this._initTopRatedList();
-    this._iniMovieDetails();
+    this._initMovieDetails();
 
-    this._updateExtraListsBoard();
+    this._updateExtraListsBoardInDOM();
     this._setSortingEventListeners();
   }
 
@@ -220,7 +220,7 @@ export default class MoviesBoardController {
    * @memberof MoviesBoardController
    * @private
    */
-  _iniMovieDetails() {
+  _initMovieDetails() {
     this._movieDetailsController = new MovieDetailsController(
       document.getElementById(`main`),
       this._onDataChange
@@ -292,13 +292,12 @@ export default class MoviesBoardController {
    * @param {String} filter – тип фильтра
    */
   _onFilterChange(filter) {
-    const filteredMovies = getMoviesDataByFilters(this._movies)[filter];
     this._currentFilter = filter;
     this._onFilterChangeSubscriptions.forEach(subscription => {
       if (!(subscription instanceof Function)) {
         return;
       }
-      subscription(filteredMovies);
+      subscription(this._getMoviesByFilter());
     });
   }
 
@@ -323,7 +322,7 @@ export default class MoviesBoardController {
       if (!(subscription instanceof Function)) {
         return;
       }
-      subscription(getMoviesDataByFilters(movies)[this._currentFilter]);
+      subscription(this._getMoviesByFilter());
     });
 
     this._onMostCommentedDataChangeSubscriptions.forEach(subscription => {
@@ -340,7 +339,7 @@ export default class MoviesBoardController {
       subscription(this._topRatedMovies);
     });
 
-    this._updateExtraListsBoard();
+    this._updateExtraListsBoardInDOM();
   }
 
   /**
@@ -350,7 +349,7 @@ export default class MoviesBoardController {
    * @private
    * @param {Array} movies – список фильмов с актуальными данными
    */
-  _updateExtraListsBoard() {
+  _updateExtraListsBoardInDOM() {
     if (this._topRatedMovies.length === 0) {
       this._topRatedContainer.getElement().classList.add(`visually-hidden`);
     } else {
@@ -378,6 +377,17 @@ export default class MoviesBoardController {
     const currentMovie = this._movies.find(movie => movie.id === id);
     this._movieDetailsController.show(currentMovie);
   }
+
+  /**
+   * получить отфильтрованный список фильмов
+   * @method
+   * @memberof MoviesBoardController
+   * @private
+   * @return {Array}
+   */
+  _getMoviesByFilter() {
+    return getMoviesDataByFilters(this._movies)[this._currentFilter];
+  }
 }
 </code></pre>
         </article>
@@ -389,13 +399,13 @@ export default class MoviesBoardController {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="CommentController.html">CommentController</a></li><li><a href="CommentsListController.html">CommentsListController</a></li><li><a href="MovieController.html">MovieController</a></li><li><a href="MoviesBoardController.html">MoviesBoardController</a></li><li><a href="MoviesListController.html">MoviesListController</a></li><li><a href="NavigationController.html">NavigationController</a></li><li><a href="PageController.html">PageController</a></li><li><a href="SearchController.html">SearchController</a></li><li><a href="StatisticsController.html">StatisticsController</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#Filters">Filters</a></li><li><a href="global.html#formatDurationFromMinutes">formatDurationFromMinutes</a></li><li><a href="global.html#getErrorMessage">getErrorMessage</a></li><li><a href="global.html#getMoviesDataByFilters">getMoviesDataByFilters</a></li><li><a href="global.html#getUniqueID">getUniqueID</a></li><li><a href="global.html#getUserRank">getUserRank</a></li><li><a href="global.html#Positioning">Positioning</a></li><li><a href="global.html#render">render</a></li><li><a href="global.html#Screens">Screens</a></li><li><a href="global.html#unrender">unrender</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="CommentController.html">CommentController</a></li><li><a href="CommentsListController.html">CommentsListController</a></li><li><a href="MovieController.html">MovieController</a></li><li><a href="MoviesBoardController.html">MoviesBoardController</a></li><li><a href="MoviesListController.html">MoviesListController</a></li><li><a href="NavigationController.html">NavigationController</a></li><li><a href="PageController.html">PageController</a></li><li><a href="SearchController.html">SearchController</a></li><li><a href="StatisticsController.html">StatisticsController</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#Filters">Filters</a></li><li><a href="global.html#formatDurationFromMinutes">formatDurationFromMinutes</a></li><li><a href="global.html#getErrorMessage">getErrorMessage</a></li><li><a href="global.html#getMoviesDataByFilters">getMoviesDataByFilters</a></li><li><a href="global.html#getUniqueID">getUniqueID</a></li><li><a href="global.html#getUserRank">getUserRank</a></li><li><a href="global.html#Positioning">Positioning</a></li><li><a href="global.html#render">render</a></li><li><a href="global.html#Screens">Screens</a></li><li><a href="global.html#Statuses">Statuses</a></li><li><a href="global.html#unrender">unrender</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Thu Feb 20 2020 16:27:51 GMT+0300 (Moscow Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Thu Feb 20 2020 22:41:58 GMT+0300 (Moscow Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

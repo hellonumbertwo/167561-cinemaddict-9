@@ -1,4 +1,4 @@
-import { render, Positioning } from "./../utils/index";
+import { render, Positioning, Statuses } from "./../utils/index";
 import MovieDetails from "../components/movie-details";
 import MovieInfo from "../components/movie-info";
 import MovieStatusPanel from "../components/movie-status-panel";
@@ -47,7 +47,7 @@ export default class MovieDetailsController {
     );
     this._commentsListController.init();
     this._onDataChangeSubscriptions.push(
-      this._commentsListController._updateCommentsList.bind(
+      this._commentsListController._updateData.bind(
         this._commentsListController
       )
     );
@@ -162,13 +162,7 @@ export default class MovieDetailsController {
    * @param {String} status
    */
   _changeMovieStatus(status) {
-    const props = {
-      watched: `isWatched`,
-      watchlist: `isInWatchList`,
-      favorite: `isFavorite`
-    };
-
-    const updatedProp = props[status];
+    const updatedProp = Statuses[status];
     this._onDataChange({
       ...this._movie,
       [updatedProp]: !this._movie[updatedProp]
@@ -182,8 +176,8 @@ export default class MovieDetailsController {
           .getElement()
           .querySelectorAll(`input`)
           .forEach(input => {
-            const prop = props[input.name];
-            input.checked = this._movie[prop];
+            const prop = Statuses[input.name];
+            input.checked = !!this._movie[prop];
           });
       });
   }
@@ -273,18 +267,18 @@ export default class MovieDetailsController {
       return;
     }
     const movie = movies.find(({ id }) => id === this._movie.id);
-    const needToUpdateComments =
-      movie.comments.length !== this._movie.comments.length;
+    // const needToUpdateComments =
+    //   movie.comments.length !== this._movie.comments.length;
     this._movie = { ...movie };
 
-    if (needToUpdateComments) {
-      this._onDataChangeSubscriptions.forEach(subscription => {
-        if (!(subscription instanceof Function)) {
-          return;
-        }
-        subscription(this._movie);
-      });
-    }
+    // if (needToUpdateComments) {
+    this._onDataChangeSubscriptions.forEach(subscription => {
+      if (!(subscription instanceof Function)) {
+        return;
+      }
+      subscription(this._movie);
+    });
+    // }
   }
 
   /**

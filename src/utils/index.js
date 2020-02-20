@@ -165,10 +165,15 @@ export const Screens = {
   SEARCH: `Search`
 };
 
+/**
+ * Доступные значения для статуса фильма
+ * @readonly
+ * @enum {string}
+ */
 export const Statuses = {
-  WATCHLIST: `watchlist`,
-  WATCHED: `watched`,
-  FAVORITES: `favorite`
+  watched: `isWatched`,
+  watchlist: `isInWatchList`,
+  favorite: `isFavorite`
 };
 
 /**

@@ -51,6 +51,7 @@ export default class MoviesListController {
    * @public
    */
   init() {
+    this._onDataChangeSubscriptions = [];
     this._onHandleSorting();
 
     if (this._sortedMoviesList.length > SHOW_MOVIES_STEP) {
@@ -158,6 +159,9 @@ export default class MoviesListController {
       this._onDataChange
     );
     movieController.init();
+    this._onDataChangeSubscriptions.push(
+      movieController._updateMovie.bind(movieController)
+    );
   }
 
   /**
@@ -206,8 +210,19 @@ export default class MoviesListController {
    * @param {Array} movies – актуальный список фильмов
    */
   _onMoviesListDataChange(movies) {
+    const isListChanged = movies.length !== this._initialMoviesList.length;
     this._initialMoviesList = movies;
-    this.init();
+
+    if (isListChanged) {
+      this.init();
+    } else {
+      this._onDataChangeSubscriptions.forEach(subscription => {
+        if (!(subscription instanceof Function)) {
+          return;
+        }
+        subscription(this._initialMoviesList);
+      });
+    }
   }
 
   /**

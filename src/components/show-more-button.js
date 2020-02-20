@@ -6,7 +6,7 @@ export default class ShowMoreButton extends AbstractComponent {
   }
   getTemplate() {
     return `
-      <button class="films-list__show-more" id="show-more">Show more</button>
+      <button class="films-list__show-more">Show more</button>
     `;
   }
 }
