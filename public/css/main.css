@@ -443,11 +443,11 @@ button {
   background-image: url("../images/icons/icon-favorite-active.svg");
 }
 
-.film-card.hover .film-card__poster {
+.film-card:hover .film-card__poster {
   bottom: calc(100% - 340px);
 }
 
-.film-card.hover .film-card__controls {
+.film-card:hover .film-card__controls {
   height: 50px;
 }
 

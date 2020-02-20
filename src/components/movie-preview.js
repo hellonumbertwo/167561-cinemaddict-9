@@ -27,8 +27,6 @@ export default class MoviePreview extends AbstractComponent {
     this._isFavorite = isFavorite;
     this._comments = comments;
     this._releaseDate = releaseDate;
-
-    this._setEventListeners();
   }
 
   getTemplate() {
@@ -78,26 +76,5 @@ export default class MoviePreview extends AbstractComponent {
       return string.slice(0, MAX_DESCRIPTION_LENGTH) + `...`;
     }
     return string;
-  }
-
-  _setEventListeners() {
-    this.getElement().addEventListener(
-      `mouseover`,
-      () => {
-        if (!this.getElement().classList.contains(`hover`)) {
-          this.getElement().classList.add(`hover`);
-        }
-      },
-      false
-    );
-    this.getElement().addEventListener(
-      `mouseout`,
-      () => {
-        if (this.getElement().classList.contains(`hover`)) {
-          this.getElement().classList.remove(`hover`);
-        }
-      },
-      false
-    );
   }
 }
