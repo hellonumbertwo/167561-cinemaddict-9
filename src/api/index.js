@@ -1,4 +1,4 @@
-import { getUniqueID, getErrorMessage } from "./../utils/index";
+import { getUniqueID, getErrorMessage, APIerror } from "./../utils/index";
 import { ModelMovie, ModelComment } from "./adapter";
 
 const Method = {
@@ -25,69 +25,57 @@ const API = class {
   }
 
   static checkStatus(response) {
-    if (response.ok) {
+    const { ok, status, headers, message } = response;
+    if (ok) {
       return response;
     } else {
-      const contentType = response.headers.get(`content-type`);
+      const contentType = headers.get(`content-type`);
       if (!contentType || !contentType.includes(`application/json`)) {
-        throw new Error(`Oops, something went wrong!`);
+        throw new APIerror(status, message || `Oops, something went wrong!`);
       }
       return response.json().then(error => {
-        throw new Error(getErrorMessage(error));
+        const errorMessage = getErrorMessage(error);
+        throw new APIerror(status, errorMessage);
       });
     }
   }
 
   getMovies() {
-    return delay(3000)
-      .then(() => {
-        return this._load({ url: `movies` });
-      })
+    return this._load({ url: `movies` })
       .then(API.toJSON)
       .then(ModelMovie.parseMoviesList);
   }
 
   updateMovie(movie) {
-    return delay(3000)
-      .then(() => {
-        return this._load({
-          url: `movies/${movie.id}`,
-          method: Method.PUT,
-          body: JSON.stringify(ModelMovie.convertToRAW(movie)),
-          headers: new Headers({ "Content-Type": `application/json` })
-        });
-      })
+    return this._load({
+      url: `movies/${movie.id}`,
+      method: Method.PUT,
+      body: JSON.stringify(ModelMovie.convertToRAW(movie)),
+      headers: new Headers({ "Content-Type": `application/json` })
+    })
       .then(API.toJSON)
       .then(ModelMovie.parseMovie);
   }
 
   getComments({ id }) {
-    return delay(3000)
-      .then(() => {
-        return this._load({ url: `comments/${id}` });
-      })
+    return this._load({ url: `comments/${id}` })
       .then(API.toJSON)
       .then(ModelComment.parseCommentsList);
   }
 
   createComment(id, data) {
-    return delay(3000)
-      .then(() => {
-        return this._load({
-          url: `comments/${id}`,
-          method: Method.POST,
-          body: JSON.stringify(ModelComment.convertToRAW(data)),
-          headers: new Headers({ "Content-Type": `application/json` })
-        });
-      })
+    return this._load({
+      url: `comments/${id}`,
+      method: Method.POST,
+      body: JSON.stringify(ModelComment.convertToRAW(data)),
+      headers: new Headers({ "Content-Type": `application/json` })
+    })
       .then(API.toJSON)
       .then(ModelComment.parseComment);
   }
 
   deleteComment({ id }) {
-    return delay(3000).then(() => {
-      return this._load({ url: `comments/${id}`, method: Method.DELETE });
-    });
+    return this._load({ url: `comments/${id}`, method: Method.DELETE });
   }
 
   _load({ url, method = Method.GET, body = null, headers = new Headers() }) {

@@ -1,6 +1,8 @@
 import { render, Positioning, Statuses } from "../utils";
 import MoviePreview from "../components/movie-preview";
 
+const activeControlsClass = `film-card__controls-item--active`;
+
 /**
  * @module
  * @class
@@ -101,6 +103,7 @@ export default class MovieController {
         e => {
           e.preventDefault();
           const prop = Statuses[e.target.dataset.status];
+          e.target.classList.toggle(activeControlsClass);
           this._onDataChange({
             ...this._movie,
             [prop]: !this._movie[prop]
@@ -121,18 +124,23 @@ export default class MovieController {
    * @private
    */
   _updateControlsPanelInDOM() {
-    const activeClass = `film-card__controls-item--active`;
     this._moviePreview
       .getElement()
       .querySelector(`.film-card__controls`)
       .querySelectorAll(`button`)
       .forEach(button => {
         const prop = Statuses[button.dataset.status];
-        if (this._movie[prop] && !button.classList.contains(activeClass)) {
-          button.classList.add(activeClass);
+        if (
+          this._movie[prop] &&
+          !button.classList.contains(activeControlsClass)
+        ) {
+          button.classList.add(activeControlsClass);
         }
-        if (!this._movie[prop] && button.classList.contains(activeClass)) {
-          button.classList.remove(activeClass);
+        if (
+          !this._movie[prop] &&
+          button.classList.contains(activeControlsClass)
+        ) {
+          button.classList.remove(activeControlsClass);
         }
       });
   }

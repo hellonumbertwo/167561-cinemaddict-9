@@ -18,7 +18,8 @@ const SHOW_MOVIES_STEP = 5;
  */
 const Sortings = {
   BY_DATE: `by-date`,
-  BY_RATE: `by-rate`
+  BY_RATE: `by-rate`,
+  DEFAULT: `default`
 };
 
 /**
@@ -39,6 +40,7 @@ export default class MoviesListController {
 
     this._numberOfShownMovies = 0;
     this._onDataChangeSubscriptions = [];
+    this._sortType = Sortings.DEFAULT;
     this._onShowDetails = onShowDetails;
     this._showMoreMovies = this._showMoreMovies.bind(this);
 
@@ -184,6 +186,7 @@ export default class MoviesListController {
    * @param {String} sortType – тип сортировки
    */
   _onHandleSorting(sortType) {
+    this._sortType = sortType;
     switch (sortType) {
       case Sortings.BY_DATE:
         this._sortedMoviesList = this._initialMoviesList
