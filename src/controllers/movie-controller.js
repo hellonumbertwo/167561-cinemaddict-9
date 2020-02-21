@@ -1,5 +1,7 @@
-import { render, Positioning } from "../utils";
+import { render, Positioning, Statuses } from "../utils";
 import MoviePreview from "../components/movie-preview";
+
+const activeControlsClass = `film-card__controls-item--active`;
 
 /**
  * @module
@@ -55,9 +57,9 @@ export default class MovieController {
       `click`,
       e => {
         if (
-          e.target.id === `movie-poster` ||
-          e.target.id === `movie-title` ||
-          e.target.id === `movie-comments-title`
+          e.target.classList.contains(`film-card__poster`) ||
+          e.target.classList.contains(`film-card__title`) ||
+          e.target.classList.contains(`film-card__comments`)
         ) {
           this._showMovieDetails(this._movie);
         }
@@ -100,13 +102,75 @@ export default class MovieController {
         `click`,
         e => {
           e.preventDefault();
-          const status = [e.target.dataset.status];
+          const prop = Statuses[e.target.dataset.status];
+          e.target.classList.toggle(activeControlsClass);
           this._onDataChange({
             ...this._movie,
-            [status]: !this._movie[e.target.dataset.status]
-          });
+            [prop]: !this._movie[prop]
+          })
+            .then(() => {})
+            .catch(() => {
+              this._updateControlsPanelInDOM();
+            });
         },
         false
       );
+  }
+
+  /**
+   * обновить панель со статусами фильма (watchlist, watched, favorite) в DOM
+   * @method
+   * @memberof MovieController
+   * @private
+   */
+  _updateControlsPanelInDOM() {
+    this._moviePreview
+      .getElement()
+      .querySelector(`.film-card__controls`)
+      .querySelectorAll(`button`)
+      .forEach(button => {
+        const prop = Statuses[button.dataset.status];
+        if (
+          this._movie[prop] &&
+          !button.classList.contains(activeControlsClass)
+        ) {
+          button.classList.add(activeControlsClass);
+        }
+        if (
+          !this._movie[prop] &&
+          button.classList.contains(activeControlsClass)
+        ) {
+          button.classList.remove(activeControlsClass);
+        }
+      });
+  }
+
+  /**
+   * обновить счетчик комментариев в DOM
+   * @method
+   * @memberof MovieController
+   * @private
+   */
+  _updateCommentsCounterInDOM() {
+    this._moviePreview
+      .getElement()
+      .querySelector(
+        `.film-card__comments`
+      ).innerHTML = `${this._movie.comments.length} comments`;
+  }
+
+  /**
+   * обновить данные и отображение в DOM фильма до актулаьных
+   * @method
+   * @memberof MovieController
+   * @private
+   * @param {Array} movies - актуальный список фильмов
+   */
+  _updateMovie(movies) {
+    if (movies.find(({ id }) => id === this._movie.id)) {
+      this._movie = movies.find(({ id }) => id === this._movie.id);
+      this._updateControlsPanelInDOM();
+      this._updateCommentsCounterInDOM();
+    }
   }
 }

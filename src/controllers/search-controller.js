@@ -14,15 +14,26 @@ import MoviesListController from "./movies-list-controller";
  * @param {Func} onDataChange – обработчик, который вызывается при изменении данных в списке фильмов.
  */
 export default class SearchController {
-  constructor(container, movies, onScreenChange, onDataChange) {
+  constructor(container, movies, onScreenChange, onDataChange, onShowDetails) {
     this._container = container;
     this._movies = movies;
     this._onScreenChange = onScreenChange;
     this._onDataChange = onDataChange;
-    this._searchResultMovies = movies;
+    this._onShowDetails = onShowDetails;
+    this._request = null;
 
     this._searchLine = new SearchLine();
     this._searchResults = new SearchResults(this._searchResultMovies.length);
+  }
+
+  get _searchResultMovies() {
+    if (!this._request) {
+      return [];
+    }
+    const regexp = new RegExp(`${this._request}`, `gi`);
+    return this._movies.filter(({ title }) => {
+      return regexp.test(title);
+    });
   }
 
   /**
@@ -48,7 +59,8 @@ export default class SearchController {
     this._moviesListController = new MoviesListController(
       this._searchResults.getElement().querySelector(`.films-list__container`),
       this._searchResultMovies,
-      this._onDataChange
+      this._onDataChange,
+      this._onShowDetails
     );
     this._moviesListController.init();
     this._onChangeResultsSubscriptions.push(
@@ -101,10 +113,8 @@ export default class SearchController {
       .querySelector(`.search__field`)
       .addEventListener(`input`, e => {
         if (e.target.value.length >= 3) {
-          this._searchResultMovies = this._movies.filter(({ title }) => {
-            const regexp = new RegExp(`${e.target.value}`, `gi`);
-            return regexp.test(title);
-          });
+          this._request = e.target.value;
+
           this._onChangeResultsSubscriptions.forEach(subscription => {
             if (!(subscription instanceof Function)) {
               return;
@@ -115,7 +125,7 @@ export default class SearchController {
           this._onScreenChange(Screens.SEARCH);
         }
         if (e.target.value.length === 0) {
-          this._searchResultMovies = [];
+          this._request = null;
           this._onScreenChange(Screens.FILMS);
         }
       });
@@ -151,11 +161,12 @@ export default class SearchController {
    */
   _updateMoviesListData(movies) {
     this._movies = movies;
+
     this._onDataChangeSubscriptions.forEach(subscription => {
       if (!(subscription instanceof Function)) {
         return;
       }
-      subscription(this._movies);
+      subscription(this._searchResultMovies);
     });
   }
 }

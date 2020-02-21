@@ -35,12 +35,17 @@ api
     );
     pageController.init();
   })
-  .catch(({ message }) => {
+  .catch(error => {
+    const message =
+      error.name === `APIerror` ? error.message : `Something went wrong`;
     render(
       document.getElementById(`main`),
       Error(message),
       Positioning.BEFOREEND
     );
+    if (error.name !== `APIerror`) {
+      throw error;
+    }
   })
   .finally(() => {
     unrender(Loader);

@@ -18,7 +18,8 @@ const SHOW_MOVIES_STEP = 5;
  */
 const Sortings = {
   BY_DATE: `by-date`,
-  BY_RATE: `by-rate`
+  BY_RATE: `by-rate`,
+  DEFAULT: `default`
 };
 
 /**
@@ -39,6 +40,7 @@ export default class MoviesListController {
 
     this._numberOfShownMovies = 0;
     this._onDataChangeSubscriptions = [];
+    this._sortType = Sortings.DEFAULT;
     this._onShowDetails = onShowDetails;
     this._showMoreMovies = this._showMoreMovies.bind(this);
 
@@ -51,6 +53,7 @@ export default class MoviesListController {
    * @public
    */
   init() {
+    this._onDataChangeSubscriptions = [];
     this._onHandleSorting();
 
     if (this._sortedMoviesList.length > SHOW_MOVIES_STEP) {
@@ -158,6 +161,9 @@ export default class MoviesListController {
       this._onDataChange
     );
     movieController.init();
+    this._onDataChangeSubscriptions.push(
+      movieController._updateMovie.bind(movieController)
+    );
   }
 
   /**
@@ -180,6 +186,7 @@ export default class MoviesListController {
    * @param {String} sortType – тип сортировки
    */
   _onHandleSorting(sortType) {
+    this._sortType = sortType;
     switch (sortType) {
       case Sortings.BY_DATE:
         this._sortedMoviesList = this._initialMoviesList
@@ -206,8 +213,19 @@ export default class MoviesListController {
    * @param {Array} movies – актуальный список фильмов
    */
   _onMoviesListDataChange(movies) {
+    const isListChanged = movies.length !== this._initialMoviesList.length;
     this._initialMoviesList = movies;
-    this.init();
+
+    if (isListChanged) {
+      this.init();
+    } else {
+      this._onDataChangeSubscriptions.forEach(subscription => {
+        if (!(subscription instanceof Function)) {
+          return;
+        }
+        subscription(this._initialMoviesList);
+      });
+    }
   }
 
   /**

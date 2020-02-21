@@ -116,6 +116,25 @@ export const getUserRank = movies => {
 };
 
 /**
+ * создает ошибку (ошибка которую получили с сервера)
+ * @function
+ * @param {Number} status
+ * @param {String} message
+ */
+export function APIerror(status, message) {
+  this.name = "APIerror";
+  this.status = status;
+  this.message = message;
+  this.prototype = Object.create(Error.prototype);
+
+  if (Error.captureStackTrace) {
+    Error.captureStackTrace(this, this.constructor);
+  } else {
+    this.stack = new Error().stack;
+  }
+}
+
+/**
  * получить отформатированное сообщение об ошибке
  * @function
  * @param {Object} error
@@ -165,10 +184,15 @@ export const Screens = {
   SEARCH: `Search`
 };
 
+/**
+ * Доступные значения для статуса фильма
+ * @readonly
+ * @enum {string}
+ */
 export const Statuses = {
-  WATCHLIST: `watchlist`,
-  WATCHED: `watched`,
-  FAVORITES: `favorite`
+  watched: `isWatched`,
+  watchlist: `isInWatchList`,
+  favorite: `isFavorite`
 };
 
 /**

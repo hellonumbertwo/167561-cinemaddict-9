@@ -170,7 +170,7 @@ export default class CommentsListController {
     return api
       .createComment(id, comment)
       .then(() => {
-        return this._onDataChange(this._movie);
+        this._onDataChange(this._movie);
       })
       .catch(({ message }) => {
         this._errors.createComment = getErrorMessageElem(message);
@@ -204,7 +204,7 @@ export default class CommentsListController {
     return api
       .deleteComment(comment)
       .then(() => {
-        return this._onDataChange(this._movie);
+        this._onDataChange(this._movie);
       })
       .catch(() => {})
       .finally(() => {
@@ -218,15 +218,31 @@ export default class CommentsListController {
   }
 
   /**
-   * обновить список комментариев в DOM
+   * Обновить данные фильма и отображение до актуальных
+   * @method
+   * @memberof CommentsListController
+   * @private
+   * @param {Object} movie – объект фильма
+   */
+  _updateData(movie) {
+    const needToUpdateComments =
+      movie.comments.length !== this._movie.comments.length;
+    this._movie = { ...movie };
+
+    if (needToUpdateComments) {
+      this._updateCommentsList();
+    }
+  }
+
+  /**
+   * загрузить и обновить список комментариев в DOM
    * @method
    * @memberof CommentsListController
    * @private
    * @param {Object} movie – объект фильма
    * @return {Promise}
    */
-  _updateCommentsList(movie) {
-    this._movie = movie;
+  _updateCommentsList() {
     return this._loadCommentsByMovieId().then(() => {
       this._container.querySelector(
         `.film-details__comments-list`

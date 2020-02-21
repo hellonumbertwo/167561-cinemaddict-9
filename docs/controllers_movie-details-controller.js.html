@@ -26,7 +26,7 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import { render, Positioning } from "./../utils/index";
+            <pre class="prettyprint source linenums"><code>import { render, Positioning, Statuses } from "./../utils/index";
 import MovieDetails from "../components/movie-details";
 import MovieInfo from "../components/movie-info";
 import MovieStatusPanel from "../components/movie-status-panel";
@@ -75,7 +75,7 @@ export default class MovieDetailsController {
     );
     this._commentsListController.init();
     this._onDataChangeSubscriptions.push(
-      this._commentsListController._updateCommentsList.bind(
+      this._commentsListController._updateData.bind(
         this._commentsListController
       )
     );
@@ -190,13 +190,7 @@ export default class MovieDetailsController {
    * @param {String} status
    */
   _changeMovieStatus(status) {
-    const props = {
-      watched: `isWatched`,
-      watchlist: `isInWatchList`,
-      favorite: `isFavorite`
-    };
-
-    const updatedProp = props[status];
+    const updatedProp = Statuses[status];
     this._onDataChange({
       ...this._movie,
       [updatedProp]: !this._movie[updatedProp]
@@ -210,8 +204,8 @@ export default class MovieDetailsController {
           .getElement()
           .querySelectorAll(`input`)
           .forEach(input => {
-            const prop = props[input.name];
-            input.checked = this._movie[prop];
+            const prop = Statuses[input.name];
+            input.checked = !!this._movie[prop];
           });
       });
   }
@@ -301,18 +295,18 @@ export default class MovieDetailsController {
       return;
     }
     const movie = movies.find(({ id }) => id === this._movie.id);
-    const needToUpdateComments =
-      movie.comments.length !== this._movie.comments.length;
+    // const needToUpdateComments =
+    //   movie.comments.length !== this._movie.comments.length;
     this._movie = { ...movie };
 
-    if (needToUpdateComments) {
-      this._onDataChangeSubscriptions.forEach(subscription => {
-        if (!(subscription instanceof Function)) {
-          return;
-        }
-        subscription(this._movie);
-      });
-    }
+    // if (needToUpdateComments) {
+    this._onDataChangeSubscriptions.forEach(subscription => {
+      if (!(subscription instanceof Function)) {
+        return;
+      }
+      subscription(this._movie);
+    });
+    // }
   }
 
   /**
@@ -366,13 +360,13 @@ export default class MovieDetailsController {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="CommentController.html">CommentController</a></li><li><a href="CommentsListController.html">CommentsListController</a></li><li><a href="MovieController.html">MovieController</a></li><li><a href="MoviesBoardController.html">MoviesBoardController</a></li><li><a href="MoviesListController.html">MoviesListController</a></li><li><a href="NavigationController.html">NavigationController</a></li><li><a href="PageController.html">PageController</a></li><li><a href="SearchController.html">SearchController</a></li><li><a href="StatisticsController.html">StatisticsController</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#Filters">Filters</a></li><li><a href="global.html#formatDurationFromMinutes">formatDurationFromMinutes</a></li><li><a href="global.html#getErrorMessage">getErrorMessage</a></li><li><a href="global.html#getMoviesDataByFilters">getMoviesDataByFilters</a></li><li><a href="global.html#getUniqueID">getUniqueID</a></li><li><a href="global.html#getUserRank">getUserRank</a></li><li><a href="global.html#Positioning">Positioning</a></li><li><a href="global.html#render">render</a></li><li><a href="global.html#Screens">Screens</a></li><li><a href="global.html#unrender">unrender</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="CommentController.html">CommentController</a></li><li><a href="CommentsListController.html">CommentsListController</a></li><li><a href="MovieController.html">MovieController</a></li><li><a href="MoviesBoardController.html">MoviesBoardController</a></li><li><a href="MoviesListController.html">MoviesListController</a></li><li><a href="NavigationController.html">NavigationController</a></li><li><a href="PageController.html">PageController</a></li><li><a href="SearchController.html">SearchController</a></li><li><a href="StatisticsController.html">StatisticsController</a></li></ul><h3>Global</h3><ul><li><a href="global.html#APIerror">APIerror</a></li><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#Filters">Filters</a></li><li><a href="global.html#formatDurationFromMinutes">formatDurationFromMinutes</a></li><li><a href="global.html#getErrorMessage">getErrorMessage</a></li><li><a href="global.html#getMoviesDataByFilters">getMoviesDataByFilters</a></li><li><a href="global.html#getUniqueID">getUniqueID</a></li><li><a href="global.html#getUserRank">getUserRank</a></li><li><a href="global.html#Positioning">Positioning</a></li><li><a href="global.html#render">render</a></li><li><a href="global.html#Screens">Screens</a></li><li><a href="global.html#Statuses">Statuses</a></li><li><a href="global.html#unrender">unrender</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Thu Feb 20 2020 16:27:51 GMT+0300 (Moscow Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Fri Feb 21 2020 23:48:44 GMT+0300 (Moscow Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

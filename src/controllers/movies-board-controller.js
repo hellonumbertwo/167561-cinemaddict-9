@@ -3,7 +3,6 @@ import Content from "../components/content";
 import Sorting from "../components/sorting";
 import ExtraMoviesList from "../components/extra-movies-list";
 import MoviesListController from "./movies-list-controller";
-import MovieDetailsController from "./movie-details-controller";
 
 /**
  * @module
@@ -16,18 +15,17 @@ import MovieDetailsController from "./movie-details-controller";
  */
 
 export default class MoviesBoardController {
-  constructor(container, movies, onDataChange) {
+  constructor(container, movies, onDataChange, onShowDetails) {
     this._container = container;
     this._movies = movies;
     this._onDataChange = onDataChange;
+    this._onShowDetails = onShowDetails;
     this._currentFilter = Filters.ALL;
 
     this._content = new Content();
     this._sorting = new Sorting();
     this._topRatedContainer = new ExtraMoviesList(`Top rated`);
     this._mostCommentedContainer = new ExtraMoviesList(`Most commented`);
-
-    this._onShowDetails = this._onShowDetails.bind(this);
   }
 
   get _mostCommentedMovies() {
@@ -71,9 +69,8 @@ export default class MoviesBoardController {
     this._initCommonList();
     this._initMostCommentesList();
     this._initTopRatedList();
-    this._iniMovieDetails();
 
-    this._updateExtraListsBoard();
+    this._updateExtraListsBoardInDOM();
     this._setSortingEventListeners();
   }
 
@@ -187,25 +184,6 @@ export default class MoviesBoardController {
   }
 
   /**
-   * инициализировать контроллер для popup с полезной информацией, который будет управлять его отрисовкой и изменением данных
-   * @method
-   * @memberof MoviesBoardController
-   * @private
-   */
-  _iniMovieDetails() {
-    this._movieDetailsController = new MovieDetailsController(
-      document.getElementById(`main`),
-      this._onDataChange
-    );
-
-    this._onDetailsDataChangeSubscriptions.push(
-      this._movieDetailsController._updateMovieData.bind(
-        this._movieDetailsController
-      )
-    );
-  }
-
-  /**
    * установить событие для панели с сортировками – сортировать список при клике на тип сортировки
    * @method
    * @memberof MoviesBoardController
@@ -264,13 +242,12 @@ export default class MoviesBoardController {
    * @param {String} filter – тип фильтра
    */
   _onFilterChange(filter) {
-    const filteredMovies = getMoviesDataByFilters(this._movies)[filter];
     this._currentFilter = filter;
     this._onFilterChangeSubscriptions.forEach(subscription => {
       if (!(subscription instanceof Function)) {
         return;
       }
-      subscription(filteredMovies);
+      subscription(this._getMoviesByFilter());
     });
   }
 
@@ -295,7 +272,7 @@ export default class MoviesBoardController {
       if (!(subscription instanceof Function)) {
         return;
       }
-      subscription(getMoviesDataByFilters(movies)[this._currentFilter]);
+      subscription(this._getMoviesByFilter());
     });
 
     this._onMostCommentedDataChangeSubscriptions.forEach(subscription => {
@@ -312,7 +289,7 @@ export default class MoviesBoardController {
       subscription(this._topRatedMovies);
     });
 
-    this._updateExtraListsBoard();
+    this._updateExtraListsBoardInDOM();
   }
 
   /**
@@ -322,7 +299,7 @@ export default class MoviesBoardController {
    * @private
    * @param {Array} movies – список фильмов с актуальными данными
    */
-  _updateExtraListsBoard() {
+  _updateExtraListsBoardInDOM() {
     if (this._topRatedMovies.length === 0) {
       this._topRatedContainer.getElement().classList.add(`visually-hidden`);
     } else {
@@ -340,14 +317,13 @@ export default class MoviesBoardController {
   }
 
   /**
-   * показать popup с подробной информацией по выбранному фильму
+   * получить отфильтрованный список фильмов
    * @method
    * @memberof MoviesBoardController
    * @private
-   * @param {Object} movie – объект фильма
+   * @return {Array}
    */
-  _onShowDetails({ id }) {
-    const currentMovie = this._movies.find(movie => movie.id === id);
-    this._movieDetailsController.show(currentMovie);
+  _getMoviesByFilter() {
+    return getMoviesDataByFilters(this._movies)[this._currentFilter];
   }
 }

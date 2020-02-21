@@ -42,15 +42,26 @@ import MoviesListController from "./movies-list-controller";
  * @param {Func} onDataChange – обработчик, который вызывается при изменении данных в списке фильмов.
  */
 export default class SearchController {
-  constructor(container, movies, onScreenChange, onDataChange) {
+  constructor(container, movies, onScreenChange, onDataChange, onShowDetails) {
     this._container = container;
     this._movies = movies;
     this._onScreenChange = onScreenChange;
     this._onDataChange = onDataChange;
-    this._searchResultMovies = movies;
+    this._onShowDetails = onShowDetails;
+    this._request = null;
 
     this._searchLine = new SearchLine();
     this._searchResults = new SearchResults(this._searchResultMovies.length);
+  }
+
+  get _searchResultMovies() {
+    if (!this._request) {
+      return [];
+    }
+    const regexp = new RegExp(`${this._request}`, `gi`);
+    return this._movies.filter(({ title }) => {
+      return regexp.test(title);
+    });
   }
 
   /**
@@ -76,7 +87,8 @@ export default class SearchController {
     this._moviesListController = new MoviesListController(
       this._searchResults.getElement().querySelector(`.films-list__container`),
       this._searchResultMovies,
-      this._onDataChange
+      this._onDataChange,
+      this._onShowDetails
     );
     this._moviesListController.init();
     this._onChangeResultsSubscriptions.push(
@@ -129,10 +141,8 @@ export default class SearchController {
       .querySelector(`.search__field`)
       .addEventListener(`input`, e => {
         if (e.target.value.length >= 3) {
-          this._searchResultMovies = this._movies.filter(({ title }) => {
-            const regexp = new RegExp(`${e.target.value}`, `gi`);
-            return regexp.test(title);
-          });
+          this._request = e.target.value;
+
           this._onChangeResultsSubscriptions.forEach(subscription => {
             if (!(subscription instanceof Function)) {
               return;
@@ -143,7 +153,7 @@ export default class SearchController {
           this._onScreenChange(Screens.SEARCH);
         }
         if (e.target.value.length === 0) {
-          this._searchResultMovies = [];
+          this._request = null;
           this._onScreenChange(Screens.FILMS);
         }
       });
@@ -179,11 +189,12 @@ export default class SearchController {
    */
   _updateMoviesListData(movies) {
     this._movies = movies;
+
     this._onDataChangeSubscriptions.forEach(subscription => {
       if (!(subscription instanceof Function)) {
         return;
       }
-      subscription(this._movies);
+      subscription(this._searchResultMovies);
     });
   }
 }
@@ -197,13 +208,13 @@ export default class SearchController {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="CommentController.html">CommentController</a></li><li><a href="CommentsListController.html">CommentsListController</a></li><li><a href="MovieController.html">MovieController</a></li><li><a href="MoviesBoardController.html">MoviesBoardController</a></li><li><a href="MoviesListController.html">MoviesListController</a></li><li><a href="NavigationController.html">NavigationController</a></li><li><a href="PageController.html">PageController</a></li><li><a href="SearchController.html">SearchController</a></li><li><a href="StatisticsController.html">StatisticsController</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#Filters">Filters</a></li><li><a href="global.html#formatDurationFromMinutes">formatDurationFromMinutes</a></li><li><a href="global.html#getErrorMessage">getErrorMessage</a></li><li><a href="global.html#getMoviesDataByFilters">getMoviesDataByFilters</a></li><li><a href="global.html#getUniqueID">getUniqueID</a></li><li><a href="global.html#getUserRank">getUserRank</a></li><li><a href="global.html#Positioning">Positioning</a></li><li><a href="global.html#render">render</a></li><li><a href="global.html#Screens">Screens</a></li><li><a href="global.html#unrender">unrender</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="CommentController.html">CommentController</a></li><li><a href="CommentsListController.html">CommentsListController</a></li><li><a href="MovieController.html">MovieController</a></li><li><a href="MoviesBoardController.html">MoviesBoardController</a></li><li><a href="MoviesListController.html">MoviesListController</a></li><li><a href="NavigationController.html">NavigationController</a></li><li><a href="PageController.html">PageController</a></li><li><a href="SearchController.html">SearchController</a></li><li><a href="StatisticsController.html">StatisticsController</a></li></ul><h3>Global</h3><ul><li><a href="global.html#APIerror">APIerror</a></li><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#Filters">Filters</a></li><li><a href="global.html#formatDurationFromMinutes">formatDurationFromMinutes</a></li><li><a href="global.html#getErrorMessage">getErrorMessage</a></li><li><a href="global.html#getMoviesDataByFilters">getMoviesDataByFilters</a></li><li><a href="global.html#getUniqueID">getUniqueID</a></li><li><a href="global.html#getUserRank">getUserRank</a></li><li><a href="global.html#Positioning">Positioning</a></li><li><a href="global.html#render">render</a></li><li><a href="global.html#Screens">Screens</a></li><li><a href="global.html#Statuses">Statuses</a></li><li><a href="global.html#unrender">unrender</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Thu Feb 20 2020 16:27:51 GMT+0300 (Moscow Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Fri Feb 21 2020 23:48:44 GMT+0300 (Moscow Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

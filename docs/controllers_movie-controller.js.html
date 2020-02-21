@@ -26,8 +26,10 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import { render, Positioning } from "../utils";
+            <pre class="prettyprint source linenums"><code>import { render, Positioning, Statuses } from "../utils";
 import MoviePreview from "../components/movie-preview";
+
+const activeControlsClass = `film-card__controls-item--active`;
 
 /**
  * @module
@@ -65,22 +67,11 @@ export default class MovieController {
    * @private
    */
   _renderCardPreview() {
-    if (
-      this._elementToBeUpdated &amp;&amp;
-      document.body.contains(this._elementToBeUpdated)
-    ) {
-      this._container.replaceChild(
-        this._moviePreview.getElement(),
-        this._elementToBeUpdated
-      );
-    } else {
-      render(
-        this._container,
-        this._moviePreview.getElement(),
-        Positioning.BEFOREEND
-      );
-    }
-    this._elementToBeUpdated = null;
+    render(
+      this._container,
+      this._moviePreview.getElement(),
+      Positioning.BEFOREEND
+    );
   }
 
   /**
@@ -94,9 +85,9 @@ export default class MovieController {
       `click`,
       e => {
         if (
-          e.target.id === `movie-poster` ||
-          e.target.id === `movie-title` ||
-          e.target.id === `movie-comments-title`
+          e.target.classList.contains(`film-card__poster`) ||
+          e.target.classList.contains(`film-card__title`) ||
+          e.target.classList.contains(`film-card__comments`)
         ) {
           this._showMovieDetails(this._movie);
         }
@@ -139,14 +130,76 @@ export default class MovieController {
         `click`,
         e => {
           e.preventDefault();
-          const status = [e.target.dataset.status];
+          const prop = Statuses[e.target.dataset.status];
+          e.target.classList.toggle(activeControlsClass);
           this._onDataChange({
             ...this._movie,
-            [status]: !this._movie[e.target.dataset.status]
-          });
+            [prop]: !this._movie[prop]
+          })
+            .then(() => {})
+            .catch(() => {
+              this._updateControlsPanelInDOM();
+            });
         },
         false
       );
+  }
+
+  /**
+   * обновить панель со статусами фильма (watchlist, watched, favorite) в DOM
+   * @method
+   * @memberof MovieController
+   * @private
+   */
+  _updateControlsPanelInDOM() {
+    this._moviePreview
+      .getElement()
+      .querySelector(`.film-card__controls`)
+      .querySelectorAll(`button`)
+      .forEach(button => {
+        const prop = Statuses[button.dataset.status];
+        if (
+          this._movie[prop] &amp;&amp;
+          !button.classList.contains(activeControlsClass)
+        ) {
+          button.classList.add(activeControlsClass);
+        }
+        if (
+          !this._movie[prop] &amp;&amp;
+          button.classList.contains(activeControlsClass)
+        ) {
+          button.classList.remove(activeControlsClass);
+        }
+      });
+  }
+
+  /**
+   * обновить счетчик комментариев в DOM
+   * @method
+   * @memberof MovieController
+   * @private
+   */
+  _updateCommentsCounterInDOM() {
+    this._moviePreview
+      .getElement()
+      .querySelector(
+        `.film-card__comments`
+      ).innerHTML = `${this._movie.comments.length} comments`;
+  }
+
+  /**
+   * обновить данные и отображение в DOM фильма до актулаьных
+   * @method
+   * @memberof MovieController
+   * @private
+   * @param {Array} movies - актуальный список фильмов
+   */
+  _updateMovie(movies) {
+    if (movies.find(({ id }) => id === this._movie.id)) {
+      this._movie = movies.find(({ id }) => id === this._movie.id);
+      this._updateControlsPanelInDOM();
+      this._updateCommentsCounterInDOM();
+    }
   }
 }
 </code></pre>
@@ -159,13 +212,13 @@ export default class MovieController {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="CommentController.html">CommentController</a></li><li><a href="CommentsListController.html">CommentsListController</a></li><li><a href="MovieController.html">MovieController</a></li><li><a href="MoviesBoardController.html">MoviesBoardController</a></li><li><a href="MoviesListController.html">MoviesListController</a></li><li><a href="NavigationController.html">NavigationController</a></li><li><a href="PageController.html">PageController</a></li><li><a href="SearchController.html">SearchController</a></li><li><a href="StatisticsController.html">StatisticsController</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#Filters">Filters</a></li><li><a href="global.html#formatDurationFromMinutes">formatDurationFromMinutes</a></li><li><a href="global.html#getErrorMessage">getErrorMessage</a></li><li><a href="global.html#getMoviesDataByFilters">getMoviesDataByFilters</a></li><li><a href="global.html#getUniqueID">getUniqueID</a></li><li><a href="global.html#getUserRank">getUserRank</a></li><li><a href="global.html#Positioning">Positioning</a></li><li><a href="global.html#render">render</a></li><li><a href="global.html#Screens">Screens</a></li><li><a href="global.html#unrender">unrender</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="CommentController.html">CommentController</a></li><li><a href="CommentsListController.html">CommentsListController</a></li><li><a href="MovieController.html">MovieController</a></li><li><a href="MoviesBoardController.html">MoviesBoardController</a></li><li><a href="MoviesListController.html">MoviesListController</a></li><li><a href="NavigationController.html">NavigationController</a></li><li><a href="PageController.html">PageController</a></li><li><a href="SearchController.html">SearchController</a></li><li><a href="StatisticsController.html">StatisticsController</a></li></ul><h3>Global</h3><ul><li><a href="global.html#APIerror">APIerror</a></li><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#Filters">Filters</a></li><li><a href="global.html#formatDurationFromMinutes">formatDurationFromMinutes</a></li><li><a href="global.html#getErrorMessage">getErrorMessage</a></li><li><a href="global.html#getMoviesDataByFilters">getMoviesDataByFilters</a></li><li><a href="global.html#getUniqueID">getUniqueID</a></li><li><a href="global.html#getUserRank">getUserRank</a></li><li><a href="global.html#Positioning">Positioning</a></li><li><a href="global.html#render">render</a></li><li><a href="global.html#Screens">Screens</a></li><li><a href="global.html#Statuses">Statuses</a></li><li><a href="global.html#unrender">unrender</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Thu Feb 20 2020 16:27:51 GMT+0300 (Moscow Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Fri Feb 21 2020 23:48:44 GMT+0300 (Moscow Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>
