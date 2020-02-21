@@ -31,7 +31,7 @@ export default class NavigationController {
     this._onScreenChange = onScreenChange;
     this._onFilterChange = onFilterChange;
     this._filters = [];
-    this._currentScreen = Screens.FILM;
+    this._currentScreen = Screens.FILMS;
     this._activeFilter = Filters.ALL;
   }
 
@@ -42,10 +42,14 @@ export default class NavigationController {
    */
   init() {
     this._processFiltersData();
+
     this._navigation = new Navigation(this._filters);
-    this._setFiltersPanel();
+    if (this._currentScreen === Screens.SEARCH) {
+      this._navigation.getElement().classList.add(`visually-hidden`);
+    }
     render(this._container, this._navigation.getElement(), `afterbegin`);
     this._setEventListeners();
+    this._setActiveFilter();
   }
 
   /**
@@ -115,7 +119,7 @@ export default class NavigationController {
       }
       this._onFilterChange(e.target.dataset.filter);
       this._activeFilter = e.target.dataset.filter;
-      this._setFiltersPanel();
+      this._setActiveFilter();
     });
   }
 
@@ -143,7 +147,7 @@ export default class NavigationController {
     ) {
       statsLink.classList.add(ACTIVE_CLASS);
     }
-    this._setFiltersPanel();
+    this._setActiveFilter();
   }
 
   /**
@@ -152,7 +156,7 @@ export default class NavigationController {
    * @memberof NavigationController
    * @private
    */
-  _setFiltersPanel() {
+  _setActiveFilter() {
     this._navigation
       .getElement()
       .querySelectorAll(`.main-navigation__item`)

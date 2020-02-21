@@ -9,6 +9,7 @@ import NavigationController from "./navigation-controller";
 import StatisticsController from "./statistics-controller";
 import MoviesBoardController from "./movies-board-controller";
 import SearchController from "./search-controller";
+import MovieDetailsController from "./movie-details-controller";
 import Footer from "../components/footer";
 import Profile from "../components/profile";
 import api from "./../api/index";
@@ -27,7 +28,7 @@ const Plug = createElement(`<section class="films">
  * @module
  * @class
  * @name PageController
- * @classdesc контроллер
+ * @classdesc контроллер - отдает контроллерам актуальные данные, управляет переключением экранов и popup.
  * @param {String} containerId – id родительского контенйера для рендеринга.
  * @param {Array} movies – список фильмов.
  */
@@ -37,34 +38,42 @@ export default class PageController {
     this._movies = movies;
 
     this._currentScreen = Screens.FILMS;
+    this._rank = null;
+    this._profile = null;
+    this._footer = new Footer(movies);
+
     this._updateScreen = this._updateScreen.bind(this);
     this._onFilterChange = this._onFilterChange.bind(this);
+    this._onDataChange = this._onDataChange.bind(this);
+    this._onShowDetails = this._onShowDetails.bind(this);
+
     this._updateScreenSubscriptions = [];
     this._onFilterChangeSubscriptions = [];
     this._onDataChangeSubscriptions = [];
-    this._onDataChange = this._onDataChange.bind(this);
-    this._rank = null;
-    this._profile = null;
 
     this._navigationController = new NavigationController(
-      container,
-      movies,
+      this._container,
+      this._movies,
       this._updateScreen,
       this._onFilterChange
     );
     this._moviesBoardController = new MoviesBoardController(
-      container,
-      movies,
-      this._onDataChange
+      this._container,
+      this._movies,
+      this._onDataChange,
+      this._onShowDetails
     );
-    this._statisticsController = new StatisticsController(container, movies);
+    this._statisticsController = new StatisticsController(
+      this._container,
+      this._movies
+    );
     this._searchController = new SearchController(
       document.getElementById(`header`),
-      movies,
+      this._movies,
       this._updateScreen,
-      this._onDataChange
+      this._onDataChange,
+      this._onShowDetails
     );
-    this._footer = new Footer(movies);
   }
 
   /**
@@ -89,6 +98,7 @@ export default class PageController {
     this._moviesBoardController.init();
 
     this._manageUserRank();
+    this._initMovieDetails();
     this._setEventsSubscriptions();
     this._updateScreen(this._currentScreen);
   }
@@ -203,6 +213,12 @@ export default class PageController {
           }
           subscription(this._movies);
         });
+        this._updateScreenSubscriptions.forEach(subscription => {
+          if (!(subscription instanceof Function)) {
+            return;
+          }
+          subscription(this._currentScreen);
+        });
         this._manageUserRank();
       })
       .catch(error => {
@@ -234,5 +250,36 @@ export default class PageController {
       prevProfileElement.replaceWith(this._profile.getElement());
     }
     this._rank = rank;
+  }
+
+  /**
+   * инициализировать контроллер для popup с полезной информацией, который будет управлять его отрисовкой и изменением данных
+   * @method
+   * @memberof MoviesBoardController
+   * @private
+   */
+  _initMovieDetails() {
+    this._movieDetailsController = new MovieDetailsController(
+      document.getElementById(`main`),
+      this._onDataChange
+    );
+
+    this._onDataChangeSubscriptions.push(
+      this._movieDetailsController._updateMovieData.bind(
+        this._movieDetailsController
+      )
+    );
+  }
+
+  /**
+   * показать popup с подробной информацией по выбранному фильму
+   * @method
+   * @memberof MoviesBoardController
+   * @private
+   * @param {Object} movie – объект фильма
+   */
+  _onShowDetails({ id }) {
+    const currentMovie = this._movies.find(movie => movie.id === id);
+    this._movieDetailsController.show(currentMovie);
   }
 }

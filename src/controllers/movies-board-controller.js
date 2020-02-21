@@ -3,7 +3,6 @@ import Content from "../components/content";
 import Sorting from "../components/sorting";
 import ExtraMoviesList from "../components/extra-movies-list";
 import MoviesListController from "./movies-list-controller";
-import MovieDetailsController from "./movie-details-controller";
 
 /**
  * @module
@@ -16,18 +15,17 @@ import MovieDetailsController from "./movie-details-controller";
  */
 
 export default class MoviesBoardController {
-  constructor(container, movies, onDataChange) {
+  constructor(container, movies, onDataChange, onShowDetails) {
     this._container = container;
     this._movies = movies;
     this._onDataChange = onDataChange;
+    this._onShowDetails = onShowDetails;
     this._currentFilter = Filters.ALL;
 
     this._content = new Content();
     this._sorting = new Sorting();
     this._topRatedContainer = new ExtraMoviesList(`Top rated`);
     this._mostCommentedContainer = new ExtraMoviesList(`Most commented`);
-
-    this._onShowDetails = this._onShowDetails.bind(this);
   }
 
   get _mostCommentedMovies() {
@@ -71,7 +69,6 @@ export default class MoviesBoardController {
     this._initCommonList();
     this._initMostCommentesList();
     this._initTopRatedList();
-    this._initMovieDetails();
 
     this._updateExtraListsBoardInDOM();
     this._setSortingEventListeners();
@@ -182,25 +179,6 @@ export default class MoviesBoardController {
     this._onTopRatedDataChangeSubscriptions.push(
       this._topRatedMoviesListController._onListChange.bind(
         this._topRatedMoviesListController
-      )
-    );
-  }
-
-  /**
-   * инициализировать контроллер для popup с полезной информацией, который будет управлять его отрисовкой и изменением данных
-   * @method
-   * @memberof MoviesBoardController
-   * @private
-   */
-  _initMovieDetails() {
-    this._movieDetailsController = new MovieDetailsController(
-      document.getElementById(`main`),
-      this._onDataChange
-    );
-
-    this._onDetailsDataChangeSubscriptions.push(
-      this._movieDetailsController._updateMovieData.bind(
-        this._movieDetailsController
       )
     );
   }
@@ -336,18 +314,6 @@ export default class MoviesBoardController {
         .getElement()
         .classList.remove(`visually-hidden`);
     }
-  }
-
-  /**
-   * показать popup с подробной информацией по выбранному фильму
-   * @method
-   * @memberof MoviesBoardController
-   * @private
-   * @param {Object} movie – объект фильма
-   */
-  _onShowDetails({ id }) {
-    const currentMovie = this._movies.find(movie => movie.id === id);
-    this._movieDetailsController.show(currentMovie);
   }
 
   /**
