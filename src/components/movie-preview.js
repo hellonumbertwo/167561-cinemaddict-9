@@ -1,32 +1,18 @@
 import AbstractComponent from "./abstract-component";
-import { formatDurationFromMinutes } from "./../utils/index";
+import { formatDurationFromMinutes, Statuses } from "./../utils/index";
 
 export default class MoviePreview extends AbstractComponent {
-  constructor({
-    title,
-    poster,
-    rate,
-    duration,
-    description,
-    genresList,
-    isInWatchList,
-    isWatched,
-    isFavorite,
-    comments,
-    releaseDate
-  }) {
+  constructor(movie) {
     super();
-    this._title = title;
-    this._poster = poster;
-    this._rate = rate;
-    this._duration = duration;
-    this._description = description;
-    this._genresList = genresList;
-    this._isInWatchList = isInWatchList;
-    this._isWatched = isWatched;
-    this._isFavorite = isFavorite;
-    this._comments = comments;
-    this._releaseDate = releaseDate;
+    this._movie = movie;
+    this._title = movie.title;
+    this._poster = movie.poster;
+    this._rate = movie.rate;
+    this._duration = movie.duration;
+    this._description = movie.description;
+    this._genresList = movie.genresList;
+    this._comments = movie.comments;
+    this._releaseDate = movie.releaseDate;
   }
 
   getTemplate() {
@@ -47,15 +33,16 @@ export default class MoviePreview extends AbstractComponent {
         )}</p>
         <a class="film-card__comments">${this._comments.length} comments</a>
         <form class="film-card__controls">
-            <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist ${
-              this._isInWatchList ? `film-card__controls-item--active` : ``
-            }" data-status="watchlist">Add to watchlist</button>
-            <button class="film-card__controls-item button film-card__controls-item--mark-as-watched ${
-              this._isWatched ? `film-card__controls-item--active` : ``
-            }" data-status="watched">Mark as watched</button>
-            <button class="film-card__controls-item button film-card__controls-item--favorite ${
-              this._isFavorite ? `film-card__controls-item--active` : ``
-            }" data-status="favorite">Mark as favorite</button>
+        ${Object.keys(Statuses)
+          .map(status => {
+            const { name, text, prop } = Statuses[status];
+            return `
+          <button class="film-card__controls-item button film-card__controls-item--${name} ${
+              this._movie[prop] ? `film-card__controls-item--active` : ``
+            }" data-status="${name}">${text}</button>
+          `;
+          })
+          .join(``)}
         </form>
     </article>
     `;

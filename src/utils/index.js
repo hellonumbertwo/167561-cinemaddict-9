@@ -116,6 +116,31 @@ export const getUserRank = movies => {
 };
 
 /**
+ * выбрать данные о статусе по имени
+ * @function
+ * @param {String} name
+ * @return {Object}
+ */
+export const getStatusDataByName = name => {
+  return Object.keys(Statuses).reduce((obj, key) => {
+    if (Statuses[key].name === name) {
+      obj = { ...Statuses[key] };
+    }
+    return obj;
+  }, {});
+};
+
+/**
+ * вернуть строку без знаков пунктуации
+ * @function
+ * @param {String} string
+ * @return {String}
+ */
+export const removePunctuation = string => {
+  return string.replace(/[^A-Za-z0-9\s]/g, ``).replace(/\s{2,}/g, ` `);
+};
+
+/**
  * создает ошибку (ошибка которую получили с сервера)
  * @function
  * @param {Number} status
@@ -159,6 +184,18 @@ export const getErrorMessage = error => {
     .join(``);
 };
 
+/**
+ * создать delay на n милесекунд
+ * @function
+ * @param {Number} ms
+ * @return {Promise}
+ */
+export const delay = ms => {
+  return new Promise(resolve => {
+    setTimeout(resolve, ms);
+  });
+};
+
 // ENUMS_______________________
 
 /**
@@ -187,12 +224,24 @@ export const Screens = {
 /**
  * Доступные значения для статуса фильма
  * @readonly
- * @enum {string}
+ * @enum {Object}
  */
 export const Statuses = {
-  watched: `isWatched`,
-  watchlist: `isInWatchList`,
-  favorite: `isFavorite`
+  WATCHED: {
+    name: `watched`,
+    text: `Already watched`,
+    prop: `isWatched`
+  },
+  WATCHLIST: {
+    name: `watchlist`,
+    text: `Add to watchlist`,
+    prop: `isInWatchList`
+  },
+  FAVORITE: {
+    name: `favorite`,
+    text: `Add to favorites`,
+    prop: `isFavorite`
+  }
 };
 
 /**

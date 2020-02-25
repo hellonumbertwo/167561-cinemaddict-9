@@ -1,4 +1,4 @@
-import { render, Positioning, Statuses } from "../utils";
+import { render, Positioning, getStatusDataByName } from "../utils";
 import MoviePreview from "../components/movie-preview";
 
 const activeControlsClass = `film-card__controls-item--active`;
@@ -102,7 +102,7 @@ export default class MovieController {
         `click`,
         e => {
           e.preventDefault();
-          const prop = Statuses[e.target.dataset.status];
+          const { prop } = getStatusDataByName(e.target.dataset.status);
           e.target.classList.toggle(activeControlsClass);
           this._onDataChange({
             ...this._movie,
@@ -129,7 +129,7 @@ export default class MovieController {
       .querySelector(`.film-card__controls`)
       .querySelectorAll(`button`)
       .forEach(button => {
-        const prop = Statuses[button.dataset.status];
+        const { prop } = getStatusDataByName(button.dataset.status);
         if (
           this._movie[prop] &&
           !button.classList.contains(activeControlsClass)

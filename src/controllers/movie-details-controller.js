@@ -1,4 +1,4 @@
-import { render, Positioning, Statuses } from "./../utils/index";
+import { render, Positioning, getStatusDataByName } from "./../utils/index";
 import MovieDetails from "../components/movie-details";
 import MovieInfo from "../components/movie-info";
 import MovieStatusPanel from "../components/movie-status-panel";
@@ -162,7 +162,7 @@ export default class MovieDetailsController {
    * @param {String} status
    */
   _changeMovieStatus(status) {
-    const updatedProp = Statuses[status];
+    const { prop: updatedProp } = getStatusDataByName(status);
     this._onDataChange({
       ...this._movie,
       [updatedProp]: !this._movie[updatedProp]
@@ -176,7 +176,7 @@ export default class MovieDetailsController {
           .getElement()
           .querySelectorAll(`input`)
           .forEach(input => {
-            const prop = Statuses[input.name];
+            const { prop } = getStatusDataByName(input.name);
             input.checked = !!this._movie[prop];
           });
       });

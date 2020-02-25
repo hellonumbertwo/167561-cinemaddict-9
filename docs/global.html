@@ -214,7 +214,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_index.js.html">utils/index.js</a>, <a href="utils_index.js.html#line169">line 169</a>
+        <a href="utils_index.js.html">utils/index.js</a>, <a href="utils_index.js.html#line206">line 206</a>
     </li></ul></dd>
     
 
@@ -410,7 +410,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_index.js.html">utils/index.js</a>, <a href="utils_index.js.html#line203">line 203</a>
+        <a href="utils_index.js.html">utils/index.js</a>, <a href="utils_index.js.html#line252">line 252</a>
     </li></ul></dd>
     
 
@@ -482,7 +482,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_index.js.html">utils/index.js</a>, <a href="utils_index.js.html#line181">line 181</a>
+        <a href="utils_index.js.html">utils/index.js</a>, <a href="utils_index.js.html#line218">line 218</a>
     </li></ul></dd>
     
 
@@ -500,7 +500,7 @@
 
         
             
-<h4 class="name" id="Statuses"><span class="type-signature">(constant) </span>Statuses<span class="type-signature"> :string</span></h4>
+<h4 class="name" id="Statuses"><span class="type-signature">(constant) </span>Statuses<span class="type-signature"> :Object</span></h4>
 
 
 
@@ -515,7 +515,7 @@
     <ul>
         <li>
             
-<span class="param-type">string</span>
+<span class="param-type">Object</span>
 
 
         </li>
@@ -554,7 +554,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_index.js.html">utils/index.js</a>, <a href="utils_index.js.html#line192">line 192</a>
+        <a href="utils_index.js.html">utils/index.js</a>, <a href="utils_index.js.html#line229">line 229</a>
     </li></ul></dd>
     
 
@@ -706,7 +706,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_index.js.html">utils/index.js</a>, <a href="utils_index.js.html#line124">line 124</a>
+        <a href="utils_index.js.html">utils/index.js</a>, <a href="utils_index.js.html#line149">line 149</a>
     </li></ul></dd>
     
 
@@ -731,6 +731,161 @@
 
 
 
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="delay"><span class="type-signature"></span>delay<span class="signature">(ms)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    создать delay на n милесекунд
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>ms</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="utils_index.js.html">utils/index.js</a>, <a href="utils_index.js.html#line193">line 193</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -843,7 +998,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_index.js.html">utils/index.js</a>, <a href="utils_index.js.html#line143">line 143</a>
+        <a href="utils_index.js.html">utils/index.js</a>, <a href="utils_index.js.html#line168">line 168</a>
     </li></ul></dd>
     
 
@@ -880,6 +1035,161 @@
     <dd>
         
 <span class="param-type">String</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="getStatusDataByName"><span class="type-signature"></span>getStatusDataByName<span class="signature">(name)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    выбрать данные о статусе по имени
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="utils_index.js.html">utils/index.js</a>, <a href="utils_index.js.html#line124">line 124</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Object</span>
 
 
     </dd>
@@ -1109,6 +1419,161 @@
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
         <a href="utils_index.js.html">utils/index.js</a>, <a href="utils_index.js.html#line103">line 103</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">String</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="removePunctuation"><span class="type-signature"></span>removePunctuation<span class="signature">(string)</span><span class="type-signature"> &rarr; {String}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    вернуть строку без знаков пунктуации
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>string</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="utils_index.js.html">utils/index.js</a>, <a href="utils_index.js.html#line139">line 139</a>
     </li></ul></dd>
     
 
@@ -1492,13 +1957,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="CommentController.html">CommentController</a></li><li><a href="CommentsListController.html">CommentsListController</a></li><li><a href="MovieController.html">MovieController</a></li><li><a href="MoviesBoardController.html">MoviesBoardController</a></li><li><a href="MoviesListController.html">MoviesListController</a></li><li><a href="NavigationController.html">NavigationController</a></li><li><a href="PageController.html">PageController</a></li><li><a href="SearchController.html">SearchController</a></li><li><a href="StatisticsController.html">StatisticsController</a></li></ul><h3>Global</h3><ul><li><a href="global.html#APIerror">APIerror</a></li><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#Filters">Filters</a></li><li><a href="global.html#formatDurationFromMinutes">formatDurationFromMinutes</a></li><li><a href="global.html#getErrorMessage">getErrorMessage</a></li><li><a href="global.html#getMoviesDataByFilters">getMoviesDataByFilters</a></li><li><a href="global.html#getUniqueID">getUniqueID</a></li><li><a href="global.html#getUserRank">getUserRank</a></li><li><a href="global.html#Positioning">Positioning</a></li><li><a href="global.html#render">render</a></li><li><a href="global.html#Screens">Screens</a></li><li><a href="global.html#Statuses">Statuses</a></li><li><a href="global.html#unrender">unrender</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="CommentController.html">CommentController</a></li><li><a href="CommentsListController.html">CommentsListController</a></li><li><a href="MovieController.html">MovieController</a></li><li><a href="MoviesBoardController.html">MoviesBoardController</a></li><li><a href="MoviesListController.html">MoviesListController</a></li><li><a href="NavigationController.html">NavigationController</a></li><li><a href="PageController.html">PageController</a></li><li><a href="SearchController.html">SearchController</a></li><li><a href="StatisticsController.html">StatisticsController</a></li></ul><h3>Global</h3><ul><li><a href="global.html#APIerror">APIerror</a></li><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#delay">delay</a></li><li><a href="global.html#Filters">Filters</a></li><li><a href="global.html#formatDurationFromMinutes">formatDurationFromMinutes</a></li><li><a href="global.html#getErrorMessage">getErrorMessage</a></li><li><a href="global.html#getMoviesDataByFilters">getMoviesDataByFilters</a></li><li><a href="global.html#getStatusDataByName">getStatusDataByName</a></li><li><a href="global.html#getUniqueID">getUniqueID</a></li><li><a href="global.html#getUserRank">getUserRank</a></li><li><a href="global.html#Positioning">Positioning</a></li><li><a href="global.html#removePunctuation">removePunctuation</a></li><li><a href="global.html#render">render</a></li><li><a href="global.html#Screens">Screens</a></li><li><a href="global.html#Statuses">Statuses</a></li><li><a href="global.html#unrender">unrender</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Fri Feb 21 2020 23:48:44 GMT+0300 (Moscow Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Tue Feb 25 2020 18:50:37 GMT+0300 (Moscow Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>
