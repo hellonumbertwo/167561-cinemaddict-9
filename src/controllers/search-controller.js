@@ -1,4 +1,9 @@
-import { render, Screens, Positioning } from "./../utils/index";
+import {
+  render,
+  Screens,
+  Positioning,
+  removePunctuation
+} from "./../utils/index";
 import SearchLine from "../components/search-line";
 import SearchResults from "../components/search-results";
 import MoviesListController from "./movies-list-controller";
@@ -30,9 +35,9 @@ export default class SearchController {
     if (!this._request) {
       return [];
     }
-    const regexp = new RegExp(`${this._request}`, `gi`);
+    const regexp = new RegExp(`${removePunctuation(this._request)}`, `gi`);
     return this._movies.filter(({ title }) => {
-      return regexp.test(title);
+      return regexp.test(removePunctuation(title));
     });
   }
 

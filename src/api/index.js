@@ -8,12 +8,6 @@ const Method = {
   DELETE: `DELETE`
 };
 
-const delay = ms => {
-  return new Promise(resolve => {
-    setTimeout(resolve, ms);
-  });
-};
-
 const API = class {
   constructor({ endPoint, authorization }) {
     this._endPoint = endPoint;
