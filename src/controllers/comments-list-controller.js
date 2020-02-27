@@ -15,8 +15,8 @@ const getErrorMessageElem = message => {
  * @module
  * @class
  * @name CommentsListController
- * @classdesc контроллер для отрисовки списка фильмов.
- * @param {String} containerId – id родительского контенйера для рендеринга.
+ * @classdesc контроллер для управления списком комментариев – загрузка и отображение списка, добавление/удаление комментария.
+ * @param {String} containerId – id родительского контейнера для рендеринга.
  * @param {Func} onDataChange – обработчик, который вызывается при изменении данных в списке по фильму
  */
 export default class CommentsListController {
@@ -125,7 +125,7 @@ export default class CommentsListController {
   }
 
   /**
-   * отрисова список комментариев в DOM
+   * отрисовать список комментариев в DOM
    * @method
    * @memberof CommentsListController
    * @private
@@ -218,7 +218,7 @@ export default class CommentsListController {
   }
 
   /**
-   * Обновить данные фильма и отображение до актуальных
+   * обновить данные фильма и отображение до актуальных
    * @method
    * @memberof CommentsListController
    * @private

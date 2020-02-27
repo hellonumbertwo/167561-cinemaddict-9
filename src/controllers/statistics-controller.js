@@ -18,7 +18,7 @@ const ChartColors = {
 };
 
 /**
- * Фильтры статистики просмотренных фильмов по периодам.
+ * фильтры статистики просмотренных фильмов по периодам.
  * @memberof StatisticsController
  * @readonly
  * @enum {string}
@@ -35,8 +35,8 @@ const StatsPeriods = {
  * @module
  * @class
  * @name StatisticsController
- * @classdesc контроллер для управления навигацией – отрисовка, переключение экранов статистики и списка, выбор фильтров.
- * @param {String} containerId – id родительского контенйера для рендеринга.
+ * @classdesc контроллер для управления отображением данных статистики по просмотренным фильмам с диаграммой.
+ * @param {String} containerId – id родительского контейнера для рендеринга.
  * @param {Array} movies – список фильмов.
  */
 export default class StatisticsController {
@@ -167,7 +167,7 @@ export default class StatisticsController {
   }
 
   /**
-   * покзаать статистику за выбранный период времени
+   * показать статистику за выбранный период времени
    * @method
    * @memberof StatisticsController
    * @private
@@ -270,7 +270,7 @@ export default class StatisticsController {
   }
 
   /**
-   * отобращение актуального ранга пользователя в DOM (render + update)
+   * отображение актуального ранга пользователя в DOM (render + update)
    * @method
    * @memberof PageController
    * @private

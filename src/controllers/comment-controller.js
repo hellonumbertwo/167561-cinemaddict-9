@@ -6,7 +6,7 @@ import Comment from "./../components/comment";
  * @class
  * @name CommentController
  * @classdesc контроллер для управления комментарием: отрисовка и удаление в DOM.
- * @param {String} containerId – id родительского контенйера для рендеринга.
+ * @param {String} containerId – id родительского контейнера для рендеринга.
  * @param {Object} comment – объект комментария.
  * @param {Func} onRemoveComment – обработчик, который вызывается при нажании на кнопку `Delete`.
  */

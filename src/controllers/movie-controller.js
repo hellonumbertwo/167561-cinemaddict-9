@@ -8,8 +8,8 @@ const activeControlsClass = `film-card__controls-item--active`;
  * @class
  * @name MovieController
  * @classdesc контроллер для работы с карточкой фильма – отрисовка, обновление данных.
- * @param {String} containerId – id родительского контенйера для рендеринга.
- * @param {Func} onShowDetails - обработчик, который вызывает при открытии popup (котролирует, что единовременно открыт только один popup).
+ * @param {String} containerId – id родительского контейнера для рендеринга.
+ * @param {Func} onShowDetails - обработчик, который вызывается при открытии popup (котролирует, что единовременно открыт только один popup).
  * @param {Func} onDataChange – обработчик, который вызывается при изменении данных в списке по фильму.
  */
 export default class MovieController {
@@ -33,7 +33,7 @@ export default class MovieController {
   }
 
   /**
-   * отрисовывает и обноляет DOM элемент для карточки фильма
+   * отрисовывает DOM элемент для карточки фильма
    * @method
    * @memberof MovieController
    * @private
@@ -47,7 +47,7 @@ export default class MovieController {
   }
 
   /**
-   * устанавливает событие - открыть popup с информацией о фильме по клику на постер, комментарии или название
+   * устанавливает событие - `открыть popup с информацией о фильме по клику на постер, комментарии или название`
    * @method
    * @memberof MovieController
    * @private
@@ -89,7 +89,7 @@ export default class MovieController {
   }
 
   /**
-   * устанавливет обработчик события – снять/добавить категорию (favorites, watchlist, watched) фильмы из карточки preview
+   * устанавливет обработчик события – `снять/добавить категорию` (favorites, watchlist, watched) фильма из карточки preview
    * @method
    * @memberof MovieController
    * @private

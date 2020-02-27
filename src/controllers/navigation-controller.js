@@ -18,8 +18,8 @@ const ACTIVE_CLASS = `main-navigation__item--active`;
  * @module
  * @class
  * @name NavigationController
- * @classdesc контроллер дя управления навигацией – отрисовка, переключение экранов статистики и списка, выбор фильтров.
- * @param {String} containerId – id родительского контенйера для рендеринга.
+ * @classdesc контроллер для управления навигацией – отрисовка, переключение экранов статистики и списка, выбор фильтров.
+ * @param {String} containerId – id родительского контейнера для рендеринга.
  * @param {Array} movies – список фильмов.
  * @param {Func} onScreenChange - обратотчик,который вызывается при переключении на экран статистики и обратно.
  * @param {Func} onFilterChange – обработчик, который вызывается при выборе фильтра.
@@ -181,7 +181,7 @@ export default class NavigationController {
   }
 
   /**
-   * Обновить панель навигации в DOM, когда данные по фильмам изменились
+   * обновить панель навигации в DOM, когда данные по фильмам изменились
    * @method
    * @memberof NavigationController
    * @param {Array} movies – список фильмов

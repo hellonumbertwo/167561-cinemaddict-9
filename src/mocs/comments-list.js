@@ -25,7 +25,7 @@ const createComment = () => {
     `Espinosa`
   ])}`;
 
-  // дата самого старого комментария не раньше 5 лет назал
+  // дата самого старого комментария не раньше 5 лет назад
   const theOldestCommentDate = new Date().setFullYear(
     new Date().getFullYear() - 5
   );
