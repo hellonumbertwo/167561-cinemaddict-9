@@ -1,5 +1,5 @@
 import { render, Positioning, getStatusDataByName } from "./../utils/index";
-import MovieDetails from "../components/movie-details";
+import MovieDetails from "../components/movie-popup";
 import MovieInfo from "../components/movie-info";
 import MovieStatusPanel from "../components/movie-status-panel";
 import MovieRatingPanel from "../components/movie-rating-panel";
@@ -9,8 +9,8 @@ import CommentsListController from "./comments-list-controller";
  * @module
  * @class
  * @name MovieController
- * @classdesc контроллер для работы с popup c подробной информацией о фильме: отрисовка, изменение и обновление данных.
- * @param {String} containerId – id родительского контенйера для рендеринга.
+ * @classdesc контроллер для работы c подробной информацией о фильме (popup): отрисовка, изменение и обновление данных.
+ * @param {String} containerId – id родительского контейнера для рендеринга.
  * @param {Object} movie – объект фильма.
  * @param {Func} onDataChange – обработчик, который вызывается при изменении данных в списке по фильму.
  */
@@ -115,7 +115,7 @@ export default class MovieDetailsController {
   }
 
   /**
-   * устанавливает обработчики событий: закрытие popup, сменить категорию, сбросить/поставить рейтинг.
+   * устанавливает обработчики событий: `закрытие popup`, `сменить категорию`, `сбросить/добавить рейтинг`.
    * @method
    * @memberof MovieDetailsController
    * @private
@@ -155,7 +155,7 @@ export default class MovieDetailsController {
   }
 
   /**
-   * Обновляет категрию фильма: watchlist, watched, favorite
+   * обновляет категрию фильма: watchlist, watched, favorite
    * @method
    * @memberof MovieDetailsController
    * @private
@@ -183,7 +183,7 @@ export default class MovieDetailsController {
   }
 
   /**
-   * Изменить ценку (рейтинг) фильма
+   * изменить ценку (рейтинг) фильма
    * @method
    * @memberof MovieDetailsController
    * @param {Number} personalRate
@@ -256,7 +256,7 @@ export default class MovieDetailsController {
   }
 
   /**
-   * Обновяляет данные фильма после успешной отправки на сервер
+   * обновяляет данные фильма после успешной отправки на сервер
    * @method
    * @memberof MovieDetailsController
    * @private
@@ -267,22 +267,18 @@ export default class MovieDetailsController {
       return;
     }
     const movie = movies.find(({ id }) => id === this._movie.id);
-    // const needToUpdateComments =
-    //   movie.comments.length !== this._movie.comments.length;
     this._movie = { ...movie };
 
-    // if (needToUpdateComments) {
     this._onDataChangeSubscriptions.forEach(subscription => {
       if (!(subscription instanceof Function)) {
         return;
       }
       subscription(this._movie);
     });
-    // }
   }
 
   /**
-   * удаляет обработчик собылия `Закрыть popup по Esc`, если после ввода комментария получило фокус.
+   * удаляет обработчик события `Закрыть popup по Esc`, если поле ввода комментария получило фокус.
    * @method
    * @memberof MovieDetailsController
    * @private
@@ -292,7 +288,7 @@ export default class MovieDetailsController {
   }
 
   /**
-   * устанавливает обработчик собылия `Закрыть popup по Esc`, если после ввода комментария не в фокусе.
+   * устанавливает обработчик собылия `Закрыть popup по Esc`, если поле ввода комментария не в фокусе.
    * @method
    * @memberof MovieDetailsController
    * @private

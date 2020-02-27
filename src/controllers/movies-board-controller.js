@@ -8,8 +8,8 @@ import MoviesListController from "./movies-list-controller";
  * @module
  * @class
  * @name MoviesBoardController
- * @classdesc контроллер для управления доской со списком фильмов: отрисовка, фильтрация, сортировка, обновление данных.
- * @param {String} container – id родительского контенйера для рендеринга.
+ * @classdesc контроллер для управления доской со списком фильмов: отрисовка, фильтрация, обновление данных.
+ * @param {String} container – id родительского контейнера для рендеринга.
  * @param {Object} movies – список фильмов.
  * @param {Func} onDataChange – обработчик, который вызывается при изменении данных в списке фильмов.
  */
@@ -293,7 +293,7 @@ export default class MoviesBoardController {
   }
 
   /**
-   * Обновить панель с extra списками: `Top Rated` и `Most Commented`
+   * обновить панель с extra списками: `Top Rated` и `Most Commented` в DOM
    * @method
    * @memberof MoviesBoardController
    * @private

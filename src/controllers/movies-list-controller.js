@@ -11,7 +11,7 @@ import MovieController from "./movie-controller";
 const SHOW_MOVIES_STEP = 5;
 
 /**
- * типы сиртировки списка фильмов
+ * типы сортировки списка фильмов
  * @readonly
  * @enum {string}
  * @memberof MoviesListController
@@ -26,8 +26,8 @@ const Sortings = {
  * @module
  * @class
  * @name MoviesListController
- * @classdesc контроллер для отрисовки списка фильмов.
- * @param {String} containerId – id родительского контенйера для рендеринга.
+ * @classdesc контроллер для отрисовки списка фильмов – отрисовка по частям + сортировка.
+ * @param {String} containerId – id родительского контейнера для рендеринга.
  * @param {Func} onDataChange – обработчик, который вызывается при изменении данных в списке по фильму
  */
 export default class MoviesListController {
@@ -39,7 +39,6 @@ export default class MoviesListController {
     this._plug = createElement(`<p>There is no movies for your request.</p>`);
 
     this._numberOfShownMovies = 0;
-    this._onDataChangeSubscriptions = [];
     this._sortType = Sortings.DEFAULT;
     this._onShowDetails = onShowDetails;
     this._showMoreMovies = this._showMoreMovies.bind(this);
@@ -56,7 +55,10 @@ export default class MoviesListController {
     this._onDataChangeSubscriptions = [];
     this._onHandleSorting();
 
-    if (this._sortedMoviesList.length > SHOW_MOVIES_STEP) {
+    if (
+      this._sortedMoviesList.length > SHOW_MOVIES_STEP &&
+      !document.contains(this._showMoreButton.getElement())
+    ) {
       render(this._container, this._showMoreButton.getElement(), `afterend`);
       this._setShowMoreEventListener();
     }
@@ -102,7 +104,7 @@ export default class MoviesListController {
   }
 
   /**
-   * рендерит доволнительно несколько фильмов к уже отрисованным в DOM
+   * рендерит дополнительно часть списка к уже отрисованным в DOM фильмам
    * @method
    * @memberof MoviesListController
    * @private
@@ -123,7 +125,7 @@ export default class MoviesListController {
   }
 
   /**
-   * скрывает/показывет кнопку "ahow more", в зависимости от того, есть ли не отрендеренные фильмы в списке
+   * скрывает/показывет кнопку "show more", в зависимости от того, есть ли неотрисованные фильмы в списке
    * @method
    * @memberof MoviesListController
    * @private
@@ -147,7 +149,7 @@ export default class MoviesListController {
   }
 
   /**
-   * для конкретного фильма инициализует контроллер, который упраляет его отриосвкой и изменением данных
+   * для конкретного фильма инициализует контроллер, который управляет его отрисовкой и изменением данных
    * @method
    * @memberof MoviesListController
    * @private
@@ -202,6 +204,8 @@ export default class MoviesListController {
         this._sortedMoviesList = this._initialMoviesList.slice();
         break;
     }
+
+    this._onDataChangeSubscriptions = [];
     this._renderMoviesListFromScratch();
   }
 
@@ -229,7 +233,7 @@ export default class MoviesListController {
   }
 
   /**
-   * обновляет и рендерит новый список фильмов, например, список по для другого фильтра или результаты поиска.
+   * обновляет и рендерит новый список фильмов, например, список для другого фильтра или результаты поиска.
    * @method
    * @memberof MoviesListController
    * @private

@@ -28,8 +28,8 @@ const Plug = createElement(`<section class="films">
  * @module
  * @class
  * @name PageController
- * @classdesc контроллер - отдает контроллерам актуальные данные, управляет переключением экранов и popup.
- * @param {String} containerId – id родительского контенйера для рендеринга.
+ * @classdesc контроллер - отдает соответствующим контроллерам актуальные данные, управляет переключением экранов и popup.
+ * @param {String} containerId – id родительского контейнера для рендеринга.
  * @param {Array} movies – список фильмов.
  */
 export default class PageController {
@@ -174,7 +174,7 @@ export default class PageController {
   }
 
   /**
-   * вызывает прослушивальщики для события `смена фильтра` (доска со списком фильмов)
+   * вызывает слушатели для события `смена фильтра` (доска со списком фильмов)
    * @method
    * @memberof PageController
    * @private
@@ -227,7 +227,7 @@ export default class PageController {
   }
 
   /**
-   * отобращение актуального ранга пользователя в DOM (render + update)
+   * отображение актуального ранга пользователя в DOM (render + update)
    * @method
    * @memberof PageController
    * @private

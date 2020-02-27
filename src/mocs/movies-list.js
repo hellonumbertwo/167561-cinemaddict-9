@@ -10,7 +10,7 @@ const NUMBER_OF_MOVIES = 34;
 const SHOW_MOVIES_STEP = 5;
 
 const createMovie = () => {
-  // продолжительность фильма в милесекундах - минимум час
+  // продолжительность фильма в милисекундах - минимум час
   const duration = Math.round(Math.random() * 1000 * 60 * 60 + 60000 * 60);
 
   // массив жанров – 1-3 жанра на фильм

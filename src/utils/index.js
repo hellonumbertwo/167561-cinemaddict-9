@@ -35,7 +35,7 @@ export const unrender = element => {
 /**
  * Создать элемент из template
  * @param {string} template - разметка
- * @return {HTMLElement} - элемент, который можно отрендерит в DOM
+ * @return {HTMLElement} - элемент для отрисовки
  */
 export const createElement = template => {
   const newTemplate = document.createElement(`template`);
@@ -83,7 +83,7 @@ export const formatDurationFromMinutes = duration => {
 /**
  * получить уникальный id для пользователя
  * @function
- * @return {number} - возыращает уникальный id
+ * @return {number} - возвращает уникальный id
  */
 export const getUniqueID = () => {
   return (
@@ -185,7 +185,7 @@ export const getErrorMessage = error => {
 };
 
 /**
- * создать delay на n милесекунд
+ * создать delay на n милисекунд
  * @function
  * @param {Number} ms
  * @return {Promise}
@@ -245,7 +245,7 @@ export const Statuses = {
 };
 
 /**
- * Позиция элемента внетри родителя при рендеринге в DOM
+ * Позиция элемента внутри родителя при рендеринге в DOM
  * @readonly
  * @enum {string}
  */

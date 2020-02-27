@@ -12,10 +12,10 @@ import MoviesListController from "./movies-list-controller";
  * @module
  * @class
  * @name SearchController
- * @classdesc контроллер дя управления навигацией – отрисовка, переключение экранов статистики и списка, выбор фильтров.
- * @param {String} containerId – id родительского контенйера для рендеринга.
+ * @classdesc контроллер для управления поиском по фильмам.
+ * @param {String} containerId – id родительского контейнера для рендеринга.
  * @param {Array} movies – список фильмов.
- * @param {Func} onScreenChange - обратотчик,который вызывается при переключении на экран статистики и обратно.
+ * @param {Func} onScreenChange - обратотчик, который вызывается при переключении на экран статистики и обратно.
  * @param {Func} onDataChange – обработчик, который вызывается при изменении данных в списке фильмов.
  */
 export default class SearchController {
@@ -158,7 +158,7 @@ export default class SearchController {
   }
 
   /**
-   * обносить список фильмов на актуальный, если данные изсенились.
+   * обновить список фильмов на актуальный, если данные изменились.
    * @method
    * @memberof SearchController
    * @param {Array} movies – актуальный список фильмов.
