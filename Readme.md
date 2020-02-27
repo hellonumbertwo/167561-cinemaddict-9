@@ -1,7 +1,7 @@
-# Личный проект «Киноман» [![Build status][travis-image]][travis-url]
+# Личный проект «Киноман»
 
-- Студент: [Ксюша Кузнецова](https://up.htmlacademy.ru/ecmascript/9/user/167561).
-- Наставник: `Максим Петриков`.
+- Demo – https://hellonumbertwo.github.io/167561-cinemaddict-9/
+- Docs – https://hellonumbertwo.github.io/167561-cinemaddict-9/docs
 
 ---
 
