@@ -1,7 +1,7 @@
 # Личный проект «Киноман»
 
-- Demo – https://hellonumbertwo.github.io/167561-cinemaddict-9/
-- Docs – https://hellonumbertwo.github.io/167561-cinemaddict-9/docs
+- [Посмотреть demo](https://hellonumbertwo.github.io/167561-cinemaddict-9/)
+- [Посмотреть документацию](https://hellonumbertwo.github.io/167561-cinemaddict-9/docs)
 
 ---
 
