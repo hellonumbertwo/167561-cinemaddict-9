@@ -50,7 +50,7 @@ export default class CommentController {
    * @method
    * @memberof CommentController
    * @param {Boolean} status – true -> loading, false - loading ended
-   * @param {Object} id
+   * @param {Object} movie
    * @private
    */
   _onSetLoadingStatus(status, { id }) {
