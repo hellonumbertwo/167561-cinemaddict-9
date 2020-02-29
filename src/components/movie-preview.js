@@ -37,7 +37,7 @@ export default class MoviePreview extends AbstractComponent {
           .map(status => {
             const { name, text, prop } = Statuses[status];
             return `
-          <button class="film-card__controls-item button film-card__controls-item--${name} ${
+          <button type="button" class="film-card__controls-item film-card__controls-item--${name} ${
               this._movie[prop] ? `film-card__controls-item--active` : ``
             }" data-status="${name}">${text}</button>
           `;

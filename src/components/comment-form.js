@@ -12,6 +12,7 @@ export default class CommentForm extends AbstractComponent {
 
         <label class="film-details__comment-label">
           <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+          <span style="font-size: 12px; line-height: 2;">* Ctrl/Command + Enter to add a comment</span>
         </label>
 
         <div class="film-details__emoji-list">

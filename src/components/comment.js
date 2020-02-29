@@ -25,7 +25,7 @@ export default class Comment extends AbstractComponent {
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${this._author}</span>
           <span class="film-details__comment-day">${this._formattedDate}</span>
-          <button class="film-details__comment-delete">Delete</button>
+          <button type="button" class="film-details__comment-delete">Delete</button>
         </p>
       </div>
     </li>
