@@ -220,15 +220,16 @@ export default class MoviesListController {
     const isListChanged = movies.length !== this._initialMoviesList.length;
     this._initialMoviesList = movies;
 
+    this._onDataChangeSubscriptions.forEach(subscription => {
+      if (!(subscription instanceof Function)) {
+        return;
+      }
+      subscription(this._initialMoviesList);
+    });
     if (isListChanged) {
-      this.init();
-    } else {
-      this._onDataChangeSubscriptions.forEach(subscription => {
-        if (!(subscription instanceof Function)) {
-          return;
-        }
-        subscription(this._initialMoviesList);
-      });
+      setTimeout(() => {
+        this.init();
+      }, 800);
     }
   }
 
