@@ -12,4 +12,6 @@ Thumbs.db
 node_modules/
 
 # Папка с собранными файлами проекта
-public/
+public/docs
+public/bundle.js
+public/bundle.js.map

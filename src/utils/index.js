@@ -137,7 +137,7 @@ export const getStatusDataByName = name => {
  * @return {String}
  */
 export const removePunctuation = string => {
-  return string.replace(/[^A-Za-z0-9\s]/g, ``).replace(/\s{2,}/g, ` `);
+  return string.replace(/[^A-Za-zА-Яа-я0-9\s]/g, ``).replace(/\s{2,}/g, ` `);
 };
 
 /**

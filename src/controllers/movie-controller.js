@@ -171,6 +171,8 @@ export default class MovieController {
       this._movie = movies.find(({ id }) => id === this._movie.id);
       this._updateControlsPanelInDOM();
       this._updateCommentsCounterInDOM();
+    } else if (this._container.contains(this._moviePreview.getElement())) {
+      this._moviePreview.getElement().classList.add(`film-card--removing`);
     }
   }
 }

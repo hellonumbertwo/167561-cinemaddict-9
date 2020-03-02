@@ -35,7 +35,9 @@ export default class SearchController {
     if (!this._request) {
       return [];
     }
-    const regexp = new RegExp(`${removePunctuation(this._request)}`, `gi`);
+
+    const regexp = new RegExp(`${this._request}`, `gi`);
+
     return this._movies.filter(({ title }) => {
       return regexp.test(removePunctuation(title));
     });
@@ -117,8 +119,9 @@ export default class SearchController {
       .getElement()
       .querySelector(`.search__field`)
       .addEventListener(`input`, e => {
-        if (e.target.value.length >= 3) {
-          this._request = e.target.value;
+        const string = removePunctuation(e.target.value);
+        if (string.length >= 3) {
+          this._request = string;
 
           this._onChangeResultsSubscriptions.forEach(subscription => {
             if (!(subscription instanceof Function)) {
